@@ -13,9 +13,15 @@ namespace UBS {
 
 		public string mName = "Build Step";
 
-		public UnityEngine.RuntimePlatform mPlatform;
+		public string mPlatform;
+		public string mSubPlatform;
 
+
+		public List<string> mScenes = new List<string>();
+		public List<UnityEngine.Object> mSceneAssets = new List<Object>();
 		#endregion
+
+
 
 	}
 }
