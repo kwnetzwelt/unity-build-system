@@ -39,7 +39,7 @@ public class UBSEditorWindow : EditorWindow {
 		// selectable Build Processes
 		//
 
-		mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1]);
+		mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1],GUILayout.MaxWidth(kListWidth),GUILayout.MinWidth(kListWidth));
 
 		bool odd = true;
 		if(mData != null)
