@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace UBS
 {
-	public class BuildCollection
+	public class BuildCollection : ScriptableObject
 	{
 		public BuildCollection ()
 		{

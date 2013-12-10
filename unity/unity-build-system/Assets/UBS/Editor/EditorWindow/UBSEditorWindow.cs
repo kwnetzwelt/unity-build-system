@@ -121,19 +121,25 @@ public class UBSEditorWindow : EditorWindow {
 
 		mScrollPositions = new Vector2[3];
 
-		mData = new BuildCollection();
+		mData = BuildCollection.CreateInstance<BuildCollection>();
 
-		BuildProcess p = new BuildProcess();
+		BuildProcess p = BuildProcess.CreateInstance<BuildProcess>();
 		p.mName = "iOS Debug";
 		
 		mData.mProcesses.Add(p);
 
-		p = new BuildProcess();
+		p = BuildProcess.CreateInstance<BuildProcess>();
 		p.mName = "iOS Release";
 		mData.mProcesses.Add(p);
 
 		mInitialized = true;
 
+		Undo.undoRedoPerformed += OnUndoRedoPerformed;
+	}
+
+	void OnUndoRedoPerformed()
+	{
+		this.Repaint();
 	}
 
 	void DoSelectBuildProcess (BuildProcess pProcess)
@@ -143,6 +149,7 @@ public class UBSEditorWindow : EditorWindow {
 
 	void OnDestroy()
 	{
+		Undo.undoRedoPerformed -= OnUndoRedoPerformed;
 		mData = null;
 		mInitialized = false;
 	}

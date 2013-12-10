@@ -4,7 +4,8 @@ using System;
 
 namespace UBS
 {
-	public class BuildStep {
+
+	public class BuildStep : ScriptableObject {
 
 		public string mTypeName = "";
 

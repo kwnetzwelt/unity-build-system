@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace UBS {
 
-	public class BuildProcess {
+	public class BuildProcess : ScriptableObject {
 		#region data
 
 		public List<UBS.BuildStep> mPreBuildSteps = new List<BuildStep>();

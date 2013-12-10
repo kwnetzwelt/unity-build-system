@@ -63,7 +63,8 @@ namespace UBS
 			GUILayout.Label("Build Process", Styles.detailsTitle);
 
 			Styles.HorizontalSeparator();
-
+			
+			Undo.RecordObject(mEditedBuildProcess, "Edit Build Process Details");
 			pProcess.mName = EditorGUILayout.TextField("Name", mEditedBuildProcess.mName);
 
 			int platformIdx = mBuildTargets.ToList().IndexOf( mEditedBuildProcess.mPlatform );
@@ -105,10 +106,13 @@ namespace UBS
 			if(selected != null)
 			{
 				var assetPath = AssetDatabase.GetAssetPath(selected);
-				if(!assetPath.EndsWith(".scene"))
+				if(!assetPath.EndsWith(".unity"))
+				{
 					return pScene;
+				}
 			}
-
+			if(selected != pScene)
+				Undo.RecordObject(mEditedBuildProcess, "Set Scene Entry");
 			return selected;
 
 		}
@@ -116,7 +120,7 @@ namespace UBS
 		UBS.BuildStep StepDrawer(UnityEngine.Rect pRect, UBS.BuildStep pStep)
 		{
 			if(pStep == null)
-				pStep = new BuildStep();
+				pStep = BuildStep.CreateInstance<BuildStep>();
 
 
 
@@ -124,12 +128,15 @@ namespace UBS
 			int selected = 0; 
 			if(pStep.mTypeName != null)
 			{
+				pStep.InferType();
 				selected = mBuildStepProviders.IndexOf(pStep.mType) +1;
 			}
 			int idx = EditorGUI.Popup(pRect, "Class", selected, mSelectableBuildStepProviders);
 
 			if(idx != selected)
 			{
+				Undo.RecordObject(pStep, "Set Build Step Class Reference");
+
 				if(idx == 0)
 					pStep.SetType(null);
 				else
