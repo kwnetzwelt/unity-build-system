@@ -91,6 +91,27 @@ namespace UBS
 				return mSelectableListEntryOdd;
 			}
 		}
+
+		static GUIStyle mToolButton;
+		public static GUIStyle toolButton {
+			get
+			{
+				if(mToolButton == null)
+				{
+					mToolButton = new GUIStyle( "TE toolbarbutton" );
+
+					mToolButton.fontSize = 24;
+					mToolButton.fontStyle = FontStyle.Bold;
+					mToolButton.fixedHeight = 28;
+					mToolButton.padding = new RectOffset( 5, 5, 5, 5);
+					mToolButton.contentOffset = new Vector2(-1,-3);
+					mToolButton.clipping = TextClipping.Overflow;
+
+				}
+				return mToolButton;
+			}
+
+		}
 		
 		static GUIStyle mSelectedListEntry;
 		public static GUIStyle selectedListEntry

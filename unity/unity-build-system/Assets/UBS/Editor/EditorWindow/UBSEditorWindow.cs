@@ -9,10 +9,12 @@ public class UBSEditorWindow : EditorWindow {
 	const int kMinHeight = 400;
 	const int kListWidth = 200;
 
-	[MenuItem ("Window/Build System")]
-	public static void Init () 
+
+
+	public static void Init (BuildCollection pCollection) 
 	{
 		var window = EditorWindow.GetWindow<UBSEditorWindow>("Build System",true);
+		window.mData = pCollection;
 		window.position = new Rect(50,50, kMinWidth + 50 + kListWidth,kMinHeight + 50);
 
 	}
@@ -21,11 +23,25 @@ public class UBSEditorWindow : EditorWindow {
 	#endregion
 
 
-
 	#region gui rendering
+	string mSearchContent = "";
 	string mStatusMessage = "Ready";
 	Vector2[] mScrollPositions;
 	BuildProcessEditor mEditor = new BuildProcessEditor();
+
+	void SearchField()
+	{
+		GUILayout.BeginHorizontal( UBS.Styles.detailsGroup );
+		{
+			mSearchContent = GUILayout.TextField(mSearchContent,"SearchTextField");
+			if(GUILayout.Button("", string.IsNullOrEmpty(mSearchContent)? "SearchCancelButtonEmpty" : "SearchCancelButton"))
+			{
+				mSearchContent = "";
+			}
+		}
+		GUILayout.EndHorizontal();
+	}
+
 	void OnGUI()
 	{
 		Initialize();
@@ -39,19 +55,39 @@ public class UBSEditorWindow : EditorWindow {
 		// selectable Build Processes
 		//
 
-		mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1],GUILayout.MaxWidth(kListWidth),GUILayout.MinWidth(kListWidth));
-
+		mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1],"GameViewBackground",GUILayout.MaxWidth(kListWidth),GUILayout.MinWidth(kListWidth));
+		SearchField();
 		bool odd = true;
 		if(mData != null)
 		{
 			foreach(var process in mData.mProcesses)
 			{
-				RenderSelectableBuildProcess(process,odd);
-				odd = !odd;
+				if( string.IsNullOrEmpty(mSearchContent) || process.mName.StartsWith(mSearchContent))
+				{
+					RenderSelectableBuildProcess(process,odd);
+					odd = !odd;
+				}
 			}
 		}
 		GUILayout.EndScrollView();
 
+		GUILayout.BeginVertical(GUILayout.Width(32));
+		{
+			if(GUILayout.Button("+",UBS.Styles.toolButton))
+			{
+				var el = ScriptableObject.CreateInstance<BuildProcess>();
+				Undo.RecordObject(mData, "Add Build Process");
+				mData.mProcesses.Add(el);
+			}
+			GUI.enabled = mSelectedBuildProcess != null;
+			if(GUILayout.Button("-",UBS.Styles.toolButton))
+			{
+				Undo.RecordObject(mData, "Add Build Process");
+				mData.mProcesses.Remove(mSelectedBuildProcess);
+			}
+			GUI.enabled = true;
+		}
+		GUILayout.EndVertical();
 		Styles.VerticalLine();
 		//
 		// selected Build Process
@@ -121,17 +157,6 @@ public class UBSEditorWindow : EditorWindow {
 
 		mScrollPositions = new Vector2[3];
 
-		mData = BuildCollection.CreateInstance<BuildCollection>();
-
-		BuildProcess p = BuildProcess.CreateInstance<BuildProcess>();
-		p.mName = "iOS Debug";
-		
-		mData.mProcesses.Add(p);
-
-		p = BuildProcess.CreateInstance<BuildProcess>();
-		p.mName = "iOS Release";
-		mData.mProcesses.Add(p);
-
 		mInitialized = true;
 
 		Undo.undoRedoPerformed += OnUndoRedoPerformed;
@@ -149,6 +174,10 @@ public class UBSEditorWindow : EditorWindow {
 
 	void OnDestroy()
 	{
+		if(mEditor != null)
+			mEditor.OnDestroy();
+
+		AssetDatabase.SaveAssets();
 		Undo.undoRedoPerformed -= OnUndoRedoPerformed;
 		mData = null;
 		mInitialized = false;

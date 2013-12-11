@@ -46,6 +46,14 @@ namespace UBS
 
 		}
 
+		public void OnDestroy()
+		{
+			if(mEditedBuildProcess != null)
+				SaveScenesToStringList();
+
+			mEditedBuildProcess = null;
+		}
+
 		public void OnGUI(BuildProcess pProcess)
 		{
 
@@ -54,6 +62,9 @@ namespace UBS
 
 			if(pProcess != mEditedBuildProcess)
 			{
+				if(mEditedBuildProcess != null)
+					SaveScenesToStringList();
+
 				mEditedBuildProcess = pProcess;
 				LoadScenesFromStringList();
 			}
@@ -78,7 +89,6 @@ namespace UBS
 
 			ReorderableListGUI.Title("Included Scenes");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
-
 
 			Styles.HorizontalSeparator();
 
