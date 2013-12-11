@@ -4,8 +4,9 @@ using System;
 
 namespace UBS
 {
+	[Serializable]
+	public class BuildStep {
 
-	public class BuildStep : ScriptableObject {
 
 		public string mTypeName = "";
 

@@ -16,6 +16,7 @@ namespace UBS
 		string[] mBuildTargets;
 
 		BuildProcess mEditedBuildProcess;
+		BuildCollection mCollection;
 
 		public BuildProcessEditor ()
 		{
@@ -54,7 +55,7 @@ namespace UBS
 			mEditedBuildProcess = null;
 		}
 
-		public void OnGUI(BuildProcess pProcess)
+		public void OnGUI(BuildProcess pProcess, BuildCollection pCollection)
 		{
 
 			if(pProcess == null)
@@ -66,6 +67,8 @@ namespace UBS
 					SaveScenesToStringList();
 
 				mEditedBuildProcess = pProcess;
+				mCollection = pCollection;
+
 				LoadScenesFromStringList();
 			}
 
@@ -75,7 +78,7 @@ namespace UBS
 
 			Styles.HorizontalSeparator();
 			
-			Undo.RecordObject(mEditedBuildProcess, "Edit Build Process Details");
+			Undo.RecordObject(mCollection, "Edit Build Process Details");
 			pProcess.mName = EditorGUILayout.TextField("Name", mEditedBuildProcess.mName);
 
 			int platformIdx = mBuildTargets.ToList().IndexOf( mEditedBuildProcess.mPlatform );
@@ -122,7 +125,7 @@ namespace UBS
 				}
 			}
 			if(selected != pScene)
-				Undo.RecordObject(mEditedBuildProcess, "Set Scene Entry");
+				Undo.RecordObject(mCollection, "Set Scene Entry");
 			return selected;
 
 		}
@@ -130,7 +133,7 @@ namespace UBS
 		UBS.BuildStep StepDrawer(UnityEngine.Rect pRect, UBS.BuildStep pStep)
 		{
 			if(pStep == null)
-				pStep = BuildStep.CreateInstance<BuildStep>();
+				pStep = new BuildStep();
 
 
 
@@ -145,7 +148,7 @@ namespace UBS
 
 			if(idx != selected)
 			{
-				Undo.RecordObject(pStep, "Set Build Step Class Reference");
+				Undo.RecordObject(mCollection, "Set Build Step Class Reference");
 
 				if(idx == 0)
 					pStep.SetType(null);

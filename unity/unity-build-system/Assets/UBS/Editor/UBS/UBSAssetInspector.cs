@@ -32,7 +32,10 @@ public class UBSAssetInspector : Editor
 			bool odd = false;
 			foreach(var e in data.mProcesses)
 			{
+				if(e == null)
+					break;
 				GUILayout.Label( e.mName, odd? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry );
+				odd = !odd;
 			}
 		}
 		GUILayout.EndVertical();
@@ -45,8 +48,8 @@ public class UBSAssetInspector : Editor
 	[MenuItem("Assets/Create/UBS Build Collection")]
 	public static void CreateBuildCollectionMenuCommand()
 	{
-		var asset = ScriptableObject.CreateInstance<BuildCollection>();
-
+		var asset = new BuildCollection();
+		asset.hideFlags = HideFlags.None;
 		var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
 		if(String.IsNullOrEmpty( path ))

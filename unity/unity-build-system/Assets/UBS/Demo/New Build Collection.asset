@@ -11,4 +11,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a470a96fe5e00430599fcd94f14ed5ed, type: 3}
   m_Name: New Build Collection
   m_EditorClassIdentifier: 
-  mProcesses: []
+  mProcesses:
+  - mPreBuildSteps:
+    - mTypeName: MyCustomStep
+    mPostBuildSteps: []
+    mName: Build Step
+    mPlatform: 
+    mSubPlatform: 
+    mScenes:
+    - Assets/UBS/Demo/scene1.unity
+    mSceneAssets:
+    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace UBS
 {
+	[Serializable]
 	public class BuildCollection : ScriptableObject
 	{
 		public BuildCollection ()

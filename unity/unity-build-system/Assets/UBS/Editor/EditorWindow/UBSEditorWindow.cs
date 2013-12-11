@@ -62,6 +62,12 @@ public class UBSEditorWindow : EditorWindow {
 		{
 			foreach(var process in mData.mProcesses)
 			{
+				if(process == null)
+				{
+					mData.mProcesses.Remove(process);
+					GUIUtility.ExitGUI();
+					return;
+				}
 				if( string.IsNullOrEmpty(mSearchContent) || process.mName.StartsWith(mSearchContent))
 				{
 					RenderSelectableBuildProcess(process,odd);
@@ -75,7 +81,7 @@ public class UBSEditorWindow : EditorWindow {
 		{
 			if(GUILayout.Button("+",UBS.Styles.toolButton))
 			{
-				var el = ScriptableObject.CreateInstance<BuildProcess>();
+				var el = new BuildProcess();
 				Undo.RecordObject(mData, "Add Build Process");
 				mData.mProcesses.Add(el);
 			}
@@ -94,7 +100,7 @@ public class UBSEditorWindow : EditorWindow {
 		//
 		mScrollPositions[2] = GUILayout.BeginScrollView(mScrollPositions[2]);
 
-		mEditor.OnGUI(mSelectedBuildProcess);
+		mEditor.OnGUI(mSelectedBuildProcess, mData);
 
 		GUILayout.EndScrollView();
 
@@ -177,7 +183,10 @@ public class UBSEditorWindow : EditorWindow {
 		if(mEditor != null)
 			mEditor.OnDestroy();
 
+		EditorUtility.SetDirty(mData);
+
 		AssetDatabase.SaveAssets();
+
 		Undo.undoRedoPerformed -= OnUndoRedoPerformed;
 		mData = null;
 		mInitialized = false;
