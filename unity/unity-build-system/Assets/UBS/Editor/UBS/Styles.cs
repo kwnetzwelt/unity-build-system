@@ -57,7 +57,60 @@ namespace UBS
 				return mList;
 			}
 		}
-		
+
+		static GUIStyle mBoldKey;
+		public static GUIStyle boldKey
+		{
+			get
+			{
+				if(mBoldKey == null)
+				{
+					mBoldKey = new GUIStyle();
+					mBoldKey.normal.textColor = GetColor(0x000000ff);
+					mBoldKey.fontStyle = FontStyle.Bold;
+					mBoldKey.alignment = TextAnchor.MiddleLeft;
+					
+					
+				}
+				return mBoldKey;
+			}
+		}
+
+		static GUIStyle mNormalValue;
+		public static GUIStyle normalValue
+		{
+			get
+			{
+				if(mNormalValue == null)
+				{
+					mNormalValue = new GUIStyle();
+					mNormalValue.normal.textColor = GetColor(0x000000ff);
+					mNormalValue.fontStyle = FontStyle.Normal;
+					mNormalValue.alignment = TextAnchor.MiddleLeft;
+					
+					
+				}
+				return mNormalValue;
+			}
+		}
+
+		static GUIStyle mSelectableListEntryText;
+		public static GUIStyle selectableListEntryText
+		{
+			get
+			{
+				if(mSelectableListEntryText == null)
+				{
+					mSelectableListEntryText = new GUIStyle(list);
+					mSelectableListEntryText.normal.textColor = GetColor(0xb5b5b5ff);
+					mSelectableListEntryText.fontStyle = FontStyle.Bold;
+
+					
+				}
+				return mSelectableListEntryText;
+			}
+		}
+
 		static GUIStyle mSelectableListEntry;
 		public static GUIStyle selectableListEntry
 		{
@@ -385,6 +438,23 @@ namespace UBS
 			}
 		}
 
+		static GUIStyle mProgressBar;
+		public static GUIStyle progressBar
+		{
+			get
+			{
+				if(mProgressBar == null)
+				{
+					mProgressBar = new GUIStyle();
+					mProgressBar.alignment = TextAnchor.MiddleCenter;
+					mProgressBar.stretchWidth = true;
+					mProgressBar.stretchHeight = true;
+					mProgressBar.margin = new RectOffset(5,5,1,1);
+					mProgressBar.normal.background  = GetTexture(0x128ce1ff);
+				}
+				return mProgressBar;
+			}
+		}
 
 		public static void HorizontalSeparator()
 		{
@@ -481,6 +551,9 @@ namespace UBS
 				return mRenameInstanceContent;
 			}
 		}
+
+
+
 	}
 }
 

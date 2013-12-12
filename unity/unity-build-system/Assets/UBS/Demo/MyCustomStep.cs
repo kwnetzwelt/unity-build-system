@@ -4,19 +4,20 @@ using UBS;
 
 public class MyCustomStep : IBuildStepProvider {
 
-
+	int i = 0;
+	int target = 0;
 	public void BuildStepStart(BuildConfiguration pConfiguration)
 	{
-
+		target = (new System.Random()).Next(100);
 	}
 
 	public void BuildStepUpdate()
 	{
-
+		i++;
 	}
 	public bool IsBuildStepDone()
 	{
-		return true;
+		return i >= target;
 	}
 
 }

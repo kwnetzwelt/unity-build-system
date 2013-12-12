@@ -17,6 +17,7 @@ namespace UBS {
 
 		public string mSubPlatform;
 
+		public bool mSelected;
 		
 		public List<string> mScenes = new List<string>();
 

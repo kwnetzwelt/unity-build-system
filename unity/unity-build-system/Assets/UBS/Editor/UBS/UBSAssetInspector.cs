@@ -34,15 +34,36 @@ public class UBSAssetInspector : Editor
 			{
 				if(e == null)
 					break;
-				GUILayout.Label( e.mName, odd? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry );
+				GUILayout.BeginHorizontal(odd? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
+				{
+					GUILayout.Label( e.mName, UBS.Styles.selectableListEntryText );
+					GUILayout.FlexibleSpace();
+					var sel = GUILayout.Toggle( e.mSelected , "");
+					if(sel != e.mSelected)
+					{
+						e.mSelected = sel;
+						EditorUtility.SetDirty(data);
+					}
+				}
+				GUILayout.EndHorizontal();
 				odd = !odd;
 			}
 		}
 		GUILayout.EndVertical();
-		if(GUILayout.Button("Edit"))
+
+		GUILayout.BeginHorizontal();
 		{
-			UBSEditorWindow.Init(data);
+			if(GUILayout.Button("Edit"))
+			{
+				UBSEditorWindow.Init(data);
+			}
+			GUILayout.Space(5);
+			if(GUILayout.Button("Run selected builds"))
+			{
+				UBSBuildWindow.Init( data );
+			}
 		}
+		GUILayout.EndHorizontal();
 	}
 
 	[MenuItem("Assets/Create/UBS Build Collection")]
