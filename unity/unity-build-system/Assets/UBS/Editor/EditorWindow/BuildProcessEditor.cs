@@ -13,7 +13,6 @@ namespace UBS
 		static List<System.Type> mBuildStepProviders;
 		string[] mSelectableBuildStepProviders;
 
-		string[] mBuildTargets;
 
 		BuildProcess mEditedBuildProcess;
 		BuildCollection mCollection;
@@ -41,7 +40,6 @@ namespace UBS
 			// create list of available build targets
 			//
 
-			mBuildTargets = System.Enum.GetNames(typeof( BuildTarget ));
 
 
 
@@ -81,14 +79,11 @@ namespace UBS
 			Undo.RecordObject(mCollection, "Edit Build Process Details");
 			pProcess.mName = EditorGUILayout.TextField("Name", mEditedBuildProcess.mName);
 
-			int platformIdx = mBuildTargets.ToList().IndexOf( mEditedBuildProcess.mPlatform );
-			if(platformIdx == -1)
-				platformIdx = 0;
-			int idx = EditorGUILayout.Popup( "Platform", platformIdx, mBuildTargets );
-			if(idx != platformIdx)
-			{
-				mEditedBuildProcess.mPlatform = mBuildTargets[idx];
-			}
+
+			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup( "Platform", mEditedBuildProcess.mPlatform );
+			mEditedBuildProcess.mBuildOptions = (BuildOptions)EditorGUILayout.EnumMaskField( "Build Options", mEditedBuildProcess.mBuildOptions );
+			DrawOutputPathSelector();
+
 
 			ReorderableListGUI.Title("Included Scenes");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
@@ -111,6 +106,8 @@ namespace UBS
 			GUILayout.EndVertical();
 
 		}
+
+
 		UnityEngine.Object SceneDrawer(UnityEngine.Rect pRect, UnityEngine.Object pScene)
 		{
 
@@ -187,6 +184,67 @@ namespace UBS
 		}
 
 #endregion
+
+
+#region platform specific stuff
+		
+		
+		void DrawOutputPathSelector ()
+		{
+			GUILayout.BeginHorizontal();
+			{
+				EditorGUILayout.LabelField("Output Path", mEditedBuildProcess.mOutputPath);
+				if(GUILayout.Button("...", GUILayout.Width(40)))
+				{
+					mEditedBuildProcess.mOutputPath = OpenPlatformSpecificOutputSelector();
+				}
+			}
+			GUILayout.EndHorizontal();
+		}
+		string OpenPlatformSpecificOutputSelector()
+		{
+			const string kTitle = "Select Output Path";
+			
+			switch(mEditedBuildProcess.mPlatform)
+			{
+				
+			case BuildTarget.Android: 
+				return EditorUtility.SaveFilePanel(kTitle, mEditedBuildProcess.mOutputPath, "android", "apk");
+				
+			case BuildTarget.iPhone:
+				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath, "iOSDeployment");
+				
+			case BuildTarget.MetroPlayer:
+				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath, "MetroDeployment");
+				
+			case BuildTarget.BB10:
+				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath,"BlackBerryDeployment");
+				
+			case BuildTarget.NaCl:
+				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath,"NativeClientDeployment");
+				
+			case BuildTarget.WebPlayer:
+				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath,"WebPlayerDeployment");
+				
+				
+			case BuildTarget.StandaloneOSXUniversal:
+			case BuildTarget.StandaloneOSXIntel64:
+			case BuildTarget.StandaloneOSXIntel:
+				
+			case BuildTarget.StandaloneLinux:
+			case BuildTarget.StandaloneLinux64:
+			case BuildTarget.StandaloneLinuxUniversal:
+				
+			case BuildTarget.StandaloneWindows:
+			case BuildTarget.StandaloneWindows64:
+				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath, "StandaloneDeployment");
+				
+			}
+			return "";
+		}
+
+#endregion
+
 	}
 }
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -13,9 +14,12 @@ namespace UBS {
 
 		public string mName = "Build Step";
 
-		public string mPlatform;
+		public string mOutputPath = "";
 
-		public string mSubPlatform;
+		public BuildTarget mPlatform;
+		public BuildOptions mBuildOptions;
+
+
 
 		public bool mSelected;
 		

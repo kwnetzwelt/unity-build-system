@@ -9,6 +9,10 @@ public class MyCustomStep : IBuildStepProvider {
 	public void BuildStepStart(BuildConfiguration pConfiguration)
 	{
 		target = (new System.Random()).Next(100);
+
+		Debug.Log(pConfiguration.AssetsDirectory);
+		Debug.Log(pConfiguration.ProjectDirectory);
+		Debug.Log(pConfiguration.ResourcesDirectory);
 	}
 
 	public void BuildStepUpdate()

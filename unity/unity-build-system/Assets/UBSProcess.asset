@@ -11,50 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3437d7e12a8040d1ac947bd9848d962, type: 3}
   m_Name: UBSProcess
   m_EditorClassIdentifier: 
-  mCollection: {fileID: 11400000, guid: b87aea33ec2cb4644bf641b6dd632831, type: 2}
-  mSelectedProcesses:
-  - mPreBuildSteps:
-    - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
-    mPostBuildSteps:
-    - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
-    mName: Build Step
-    mPlatform: StandaloneOSXIntel
-    mSubPlatform: 
-    mSelected: 1
-    mScenes:
-    - Assets/UBS/Demo/scene1.unity
-    mSceneAssets:
-    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
-  - mPreBuildSteps:
-    - mTypeName: MyCustomStep
-    mPostBuildSteps:
-    - mTypeName: MyCustomStep
-    mName: Build Step2
-    mPlatform: StandaloneWindows
-    mSubPlatform: 
-    mSelected: 1
-    mScenes:
-    - 
-    - 
-    mSceneAssets:
-    - {fileID: 0}
-    - {fileID: 0}
-  - mPreBuildSteps:
-    - mTypeName: MyCustomStep
-    mPostBuildSteps:
-    - mTypeName: MyCustomStep
-    mName: Android
-    mPlatform: Android
-    mSubPlatform: 
-    mSelected: 1
-    mScenes:
-    - Assets/UBS/Demo/scene1.unity
-    mSceneAssets:
-    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
-  mCurrentBuildProcessIndex: 3
+  mCollection: {fileID: 11400000, guid: bdb358dc8edd049d88a59134a9f5c3d9, type: 2}
+  mSelectedProcesses: []
+  mCurrentBuildProcessIndex: 0
   mCurrent: 0
   mCurrentState: 5

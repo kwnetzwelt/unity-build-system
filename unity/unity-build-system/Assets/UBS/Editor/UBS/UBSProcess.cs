@@ -186,8 +186,7 @@ namespace UBS
 		{
 			mCurrentBuildConfiguration = new BuildConfiguration();
 
-			BuildTarget buildTarget = (BuildTarget)System.Enum.Parse(typeof(BuildTarget), CurrentProcess.mPlatform);
-			EditorUserBuildSettings.SwitchActiveBuildTarget(buildTarget);
+			EditorUserBuildSettings.SwitchActiveBuildTarget(CurrentProcess.mPlatform);
 			
 			var scenes = new EditorBuildSettingsScene[CurrentProcess.mScenes.Count];
 			for(int i = 0;i< scenes.Length;i++)
@@ -220,6 +219,23 @@ namespace UBS
 		void DoBuilding()
 		{
 			// TODO Implement actual building
+
+			if(BuildPipeline.isBuildingPlayer)
+				return;
+
+			List<string> scenes = new List<string>();
+
+			foreach(var scn in EditorBuildSettings.scenes)
+			{
+				if(scn.enabled)
+					scenes.Add(scn.path);
+			}
+
+			BuildPipeline.BuildPlayer(
+				scenes.ToArray(),
+				CurrentProcess.mOutputPath,
+				CurrentProcess.mPlatform,
+				CurrentProcess.mBuildOptions);
 
 			mCurrentState = UBSState.postSteps;
 			Save();

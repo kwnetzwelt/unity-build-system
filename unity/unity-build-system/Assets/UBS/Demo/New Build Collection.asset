@@ -7,50 +7,26 @@ MonoBehaviour:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a470a96fe5e00430599fcd94f14ed5ed, type: 3}
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 11500000, guid: fc8d2406aa8b041a8b1e5e7a4b16f2ee, type: 3}
   m_Name: New Build Collection
   m_EditorClassIdentifier: 
   mProcesses:
   - mPreBuildSteps:
     - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
-    mPostBuildSteps:
-    - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
-    - mTypeName: MyCustomStep
+    mPostBuildSteps: []
     mName: Build Step
-    mPlatform: StandaloneOSXIntel
-    mSubPlatform: 
-    mSelected: 1
-    mScenes:
-    - Assets/UBS/Demo/scene1.unity
-    mSceneAssets:
-    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
-  - mPreBuildSteps:
-    - mTypeName: MyCustomStep
-    mPostBuildSteps:
-    - mTypeName: MyCustomStep
-    mName: Build Step2
-    mPlatform: StandaloneWindows
-    mSubPlatform: 
-    mSelected: 1
-    mScenes:
-    - 
-    - 
-    mSceneAssets:
-    - {fileID: 0}
-    - {fileID: 0}
-  - mPreBuildSteps:
-    - mTypeName: MyCustomStep
-    mPostBuildSteps:
-    - mTypeName: MyCustomStep
-    mName: Android
-    mPlatform: Android
-    mSubPlatform: 
-    mSelected: 1
-    mScenes:
-    - Assets/UBS/Demo/scene1.unity
-    mSceneAssets:
-    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
+    mOutputPath: /Users/kaiwegner/Build/unity-build-system/unity/unity-build-system/Deployment
+    mPlatform: 6
+    mBuildOptions: 0
+    mMetroBuildType: 0
+    mBlackBerryBuildType: 0
+    mBlackBerrySubtarget: 0
+    mAndroidBuildSubtarget: 0
+    mPS3BuildSubarget: 0
+    mXBoxBuildSubtarget: 0
+    mWiiBuildDebugLevel: 0
+    mWiiBuildSubtarget: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
