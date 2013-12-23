@@ -4,7 +4,7 @@ using UBS;
 using System.IO;
 using UnityEditor;
 
-public class GenericPreFlightCheck : IBuildStepProvider {
+public class AndroidPreBuildCheck : IBuildStepProvider {
 
 	bool mIsDone = false;
 
@@ -14,7 +14,7 @@ public class GenericPreFlightCheck : IBuildStepProvider {
 	{
 		UBSProcess ubs = UBSProcess.LoadUBSProcess();
 		BuildProcess process = ubs.GetCurrentProcess();
-		
+
 		if(process.mPlatform == BuildTarget.Android)
 		{
 			if(!CheckAndroidPlayerSettings())
