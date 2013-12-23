@@ -12,7 +12,19 @@ public class GenericPreFlightCheck : IBuildStepProvider {
 
 	public void BuildStepStart (BuildConfiguration pConfiguration)
 	{
-		CheckOutputPath();
+		UBSProcess ubs = UBSProcess.LoadUBSProcess();
+		BuildProcess process = ubs.GetCurrentProcess();
+		
+		if(process.mPlatform == BuildTarget.Android)
+		{
+			if(!CheckAndroidPlayerSettings())
+			{
+				EditorApplication.ExecuteMenuItem("Edit/Project Settings/Player");
+				return;
+			}
+		}
+
+		CheckOutputPath(process);
 	}
 
 	public void BuildStepUpdate ()
@@ -27,19 +39,46 @@ public class GenericPreFlightCheck : IBuildStepProvider {
 
 	#endregion
 
-	void CheckOutputPath()
+	void CancelProcess(string pMessage)
+	{
+		UBSProcess ubs = UBSProcess.LoadUBSProcess();
+		ubs.Cancel(pMessage);
+	}
+
+	bool CheckAndroidPlayerSettings()
+	{
+		if(PlayerSettings.Android.keystoreName.Length > 0 && 
+			PlayerSettings.Android.keystorePass.Length == 0 &&
+		    PlayerSettings.Android.keyaliasName.Length > 0)
+		{
+			CancelProcess("Please provide a kestore password.");
+			return false;
+		}
+		else if(PlayerSettings.Android.keyaliasName.Length > 0 &&
+				PlayerSettings.Android.keyaliasPass.Length == 0)
+		{
+			CancelProcess("Please provide a keyalias password.");
+			return false;
+		}
+		return true;
+	}
+
+	void CheckOutputPath(BuildProcess pProcess)
 	{
 		string error = "";
-		UBSProcess ubs = UBSProcess.LoadUBSProcess();
-		BuildProcess process = ubs.GetCurrentProcess();
 		
-		if(process.mOutputPath.Length == 0) {
+
+		if(pProcess.mOutputPath.Length == 0) {
 			error = "Please provide an output path.";
-			ubs.Cancel(error);
+			CancelProcess(error);
 			return;
 		}
 		
-		DirectoryInfo dir = new DirectoryInfo(process.mOutputPath);
+		DirectoryInfo dir;
+		if(pProcess.mPlatform == BuildTarget.Android)
+			dir = new DirectoryInfo(Path.GetDirectoryName(pProcess.mOutputPath));
+		else
+			dir = new DirectoryInfo(pProcess.mOutputPath);
 		
 		try
 		{
@@ -55,7 +94,7 @@ public class GenericPreFlightCheck : IBuildStepProvider {
 		
 		if(error.Length > 0)
 		{
-			ubs.Cancel(error);
+			CancelProcess(error);
 		}
 	}
 }
