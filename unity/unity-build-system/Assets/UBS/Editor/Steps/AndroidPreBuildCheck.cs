@@ -4,6 +4,9 @@ using UBS;
 using System.IO;
 using UnityEditor;
 
+[BuildStepPlatformFilter(BuildTarget.Android)]
+[BuildStepTypeFilter(EBuildStepType.PreBuildStep)]
+[BuildStepDescriptionAttribute("Checks for valid platform, valid output path and valid keystore settings. ")]
 public class AndroidPreBuildCheck : IBuildStepProvider {
 
 	bool mIsDone = false;

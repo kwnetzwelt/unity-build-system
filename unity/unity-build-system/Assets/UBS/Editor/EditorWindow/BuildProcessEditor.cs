@@ -8,10 +8,70 @@ using System.Linq;
 
 namespace UBS
 {
+	internal class BuildStepProviderEntry
+	{
+		public BuildStepProviderEntry( System.Type pType)
+		{
+			if(pType == null)
+			{
+				mName = "None";
+				return;
+			}
+			mType = pType;
+			mName = mType.ToString();
+
+			foreach(var a in mType.GetCustomAttributes(true))
+			{
+				if(a is BuildStepDescriptionAttribute)
+					mDescription = a as BuildStepDescriptionAttribute;
+				else if(a is BuildStepPlatformFilterAttribute)
+					mPlatformFilter = a as BuildStepPlatformFilterAttribute;
+				else if(a is BuildStepTypeFilterAttribute)
+					mTypeFilter = a as BuildStepTypeFilterAttribute;
+			}
+		}
+		public string mName;
+		public System.Type mType;
+		public BuildStepDescriptionAttribute mDescription;
+		public BuildStepPlatformFilterAttribute mPlatformFilter;
+		public BuildStepTypeFilterAttribute mTypeFilter;
+		public override string ToString ()
+		{
+			return mName;
+		}
+
+		public string GetDescription ()
+		{
+			if(mDescription != null && mDescription.mDescription != null)
+				return mDescription.mDescription;
+			return "";
+		}
+
+		public bool CheckFilters (EBuildStepType pDrawingBuildStepType, BuildTarget pPlatform)
+		{
+			if(mPlatformFilter != null)
+			{
+				if(mPlatformFilter.mBuildTarget != pPlatform)
+				{
+					return false;
+				}
+			}
+			if(mTypeFilter != null)
+			{
+				if(mTypeFilter.mBuildStepType != pDrawingBuildStepType)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
 	public class BuildProcessEditor
 	{
+		EBuildStepType mDrawingBuildStepType = EBuildStepType.invalid;
 		static List<System.Type> mBuildStepProviders;
-		string[] mSelectableBuildStepProviders;
+		BuildStepProviderEntry[] mSelectableBuildStepProviders;
 
 
 		BuildProcess mEditedBuildProcess;
@@ -26,11 +86,12 @@ namespace UBS
 #if UBS_DEBUG
 			Debug.Log("Found " + mBuildStepProviders.Count + " BuildStepProviders");
 #endif
-			mSelectableBuildStepProviders = new string[mBuildStepProviders.Count+1];
-			mSelectableBuildStepProviders[0] = "None";
+			mSelectableBuildStepProviders = new BuildStepProviderEntry[mBuildStepProviders.Count+1];
+			mSelectableBuildStepProviders[0] = new BuildStepProviderEntry(null);
 			for(int i = 0;i<mBuildStepProviders.Count;i++)
 			{
-				mSelectableBuildStepProviders[i+1] = mBuildStepProviders[i].Name;
+				mSelectableBuildStepProviders[i+1] = new BuildStepProviderEntry(mBuildStepProviders[i]);
+
 #if UBS_DEBUG
 				Debug.Log(">" + mBuildStepProviders[i].Name);
 #endif
@@ -84,12 +145,12 @@ namespace UBS
 			mEditedBuildProcess.mBuildOptions = (BuildOptions)EditorGUILayout.EnumMaskField( "Build Options", mEditedBuildProcess.mBuildOptions );
 			DrawOutputPathSelector();
 
-
 			ReorderableListGUI.Title("Included Scenes");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
 
 			Styles.HorizontalSeparator();
 
+			mDrawingBuildStepType = EBuildStepType.PreBuildStep;
 			ReorderableListGUI.Title("Pre Build Steps");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mPreBuildSteps, StepDrawer);
 
@@ -99,6 +160,7 @@ namespace UBS
 			Styles.HorizontalSeparator();
 
 
+			mDrawingBuildStepType = EBuildStepType.PostBuildStep;
 			ReorderableListGUI.Title("Post Build Steps");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mPostBuildSteps, StepDrawer);
 
@@ -129,19 +191,21 @@ namespace UBS
 
 		UBS.BuildStep StepDrawer(UnityEngine.Rect pRect, UBS.BuildStep pStep)
 		{
+
 			if(pStep == null)
 				pStep = new BuildStep();
-
-
-
 
 			int selected = 0; 
 			if(pStep.mTypeName != null)
 			{
 				pStep.InferType();
-				selected = mBuildStepProviders.IndexOf(pStep.mType) +1;
+				selected = mBuildStepProviders.IndexOf(pStep.mType) + 1;
 			}
-			int idx = EditorGUI.Popup(pRect, "Class", selected, mSelectableBuildStepProviders);
+			GUIContent[] displayedProviders = GetBuildStepProvidersFiltered();
+
+			int idx = EditorGUI.Popup(pRect, new GUIContent("Class"), selected, displayedProviders);
+
+
 
 			if(idx != selected)
 			{
@@ -155,6 +219,24 @@ namespace UBS
 
 			return pStep;
 		}
+
+		GUIContent[] GetBuildStepProvidersFiltered()
+		{
+			List<GUIContent> outList = new List<GUIContent>();
+			foreach(var bsp in mSelectableBuildStepProviders)
+			{
+				if(bsp.mName == "None" || bsp.CheckFilters(mDrawingBuildStepType, mEditedBuildProcess.mPlatform))
+				{
+					string desc = bsp.GetDescription();
+					if(desc != null)
+						outList.Add(new GUIContent(bsp.mName, desc));
+					else
+						outList.Add(new GUIContent(bsp.mName));
+				}
+			}
+			return outList.ToArray();
+		}
+
 #region data manipulation
 
 		public void SaveScenesToStringList()
