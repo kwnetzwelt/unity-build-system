@@ -107,6 +107,11 @@ namespace UBS
 
 		#region public interface
 
+		public BuildProcess GetCurrentProcess()
+		{
+			return CurrentProcess;
+		}
+
 		public static string GetProcessPath()
 		{
 			return EditorPrefs.GetString(kProcessPathKey, kProcessPath);
@@ -159,6 +164,25 @@ namespace UBS
 				case UBSState.done: OnDone(); break;
 			}
 		}
+		
+		public void Cancel(string pMessage)
+		{
+			if(pMessage.Length > 0)
+			{
+				if(EditorUtility.DisplayDialog("UBS: Error occured!", pMessage, "Ok - my fault."))
+					Cancel();
+			}
+			else 
+				Cancel();
+		}
+
+		public void Cancel()
+		{
+			mCurrentState = UBSState.invalid;
+			mPreStepWalker.Clear();
+			mPostStepWalker.Clear();
+		}
+
 		#endregion
 
 
@@ -256,8 +280,10 @@ namespace UBS
 
 		void Save()
 		{
-			EditorUtility.SetDirty(this);
-			AssetDatabase.SaveAssets();
+			if(this != null) {
+				EditorUtility.SetDirty(this);
+				AssetDatabase.SaveAssets();
+			}
 		}
 
 
@@ -343,7 +369,10 @@ namespace UBS
 
 		public bool IsDone()
 		{
-			return mIndex == mSteps.Count;
+			if(mSteps != null)
+				return mIndex == mSteps.Count;
+			else
+				return false;
 		}
 
 		public float Progress

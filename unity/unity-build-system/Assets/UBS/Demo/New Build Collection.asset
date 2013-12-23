@@ -13,20 +13,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mProcesses:
   - mPreBuildSteps:
+    - mTypeName: GenericPreFlightCheck
     - mTypeName: MyCustomStep
     mPostBuildSteps: []
     mName: Build Step
-    mOutputPath: /Users/kaiwegner/Build/unity-build-system/unity/unity-build-system/Deployment
+    mOutputPath: /Users/marcel/Desktop/builds
     mPlatform: 6
     mBuildOptions: 0
-    mMetroBuildType: 0
-    mBlackBerryBuildType: 0
-    mBlackBerrySubtarget: 0
-    mAndroidBuildSubtarget: 0
-    mPS3BuildSubarget: 0
-    mXBoxBuildSubtarget: 0
-    mWiiBuildDebugLevel: 0
-    mWiiBuildSubtarget: 0
-    mSelected: 0
+    mSelected: 1
     mScenes: []
     mSceneAssets: []
