@@ -14,16 +14,18 @@ MonoBehaviour:
   mCollection: {fileID: 11400000, guid: bdb358dc8edd049d88a59134a9f5c3d9, type: 2}
   mSelectedProcesses:
   - mPreBuildSteps:
-    - mTypeName: GenericPreFlightCheck
+    - mTypeName: UpdateVersionCode
     - mTypeName: MyCustomStep
     mPostBuildSteps: []
     mName: Build Step
-    mOutputPath: /Users/marcel/Desktop/builds
-    mPlatform: 6
+    mOutputPath: /Users/marcel/Desktop/builds/android.apk
+    mPlatform: 13
     mBuildOptions: 0
     mSelected: 1
-    mScenes: []
-    mSceneAssets: []
+    mScenes:
+    - Assets/UBS/Demo/scene1.unity
+    mSceneAssets:
+    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
   mCurrentBuildProcessIndex: 1
   mCurrent: 0
   mCurrentState: 5

@@ -109,6 +109,8 @@ public class UBSEditorWindow : EditorWindow {
 		GUILayout.EndHorizontal();
 
 		Styles.HorizontalLine();
+		RenderBuildVersion();
+		Styles.HorizontalLine();
 		RenderStatusBar();
 		
 		GUILayout.EndVertical();
@@ -136,12 +138,22 @@ public class UBSEditorWindow : EditorWindow {
 
 	}
 
-
-
 	void RenderStatusBar()
 	{
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(mStatusMessage, UBS.Styles.statusMessage);
+		GUILayout.EndHorizontal();
+	}
+
+	void RenderBuildVersion()
+	{
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Build version:", UBS.Styles.mediumHint);
+		// TODO make this more pretty
+		GUILayout.Label("Versionname:");
+		mData.versionName = GUILayout.TextField(mData.versionName);
+		GUILayout.Label("Versioncode:");
+		mData.versionCode = GUILayout.TextField(mData.versionCode);
 		GUILayout.EndHorizontal();
 	}
 	#endregion

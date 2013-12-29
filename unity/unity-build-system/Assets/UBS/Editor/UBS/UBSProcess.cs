@@ -198,6 +198,7 @@ namespace UBS
 			mCurrentState = UBSState.invalid;
 			mPreStepWalker.Clear();
 			mPostStepWalker.Clear();
+			Save();
 		}
 
 		#endregion

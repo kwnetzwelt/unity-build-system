@@ -315,9 +315,6 @@ namespace UBS
 			}
 		}
 		
-		
-		
-		
 		static GUIStyle mDetailsDescription;
 		public static GUIStyle detailsDescription
 		{
