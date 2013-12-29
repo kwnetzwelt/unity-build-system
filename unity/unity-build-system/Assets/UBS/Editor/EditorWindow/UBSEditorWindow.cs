@@ -45,6 +45,8 @@ public class UBSEditorWindow : EditorWindow {
 	void OnGUI()
 	{
 		Initialize();
+		if(!mInitialized)
+			return;
 
 		GUILayout.BeginVertical();
 		mScrollPositions[0] = GUILayout.BeginScrollView(mScrollPositions[0]);
@@ -158,7 +160,7 @@ public class UBSEditorWindow : EditorWindow {
 
 	void Initialize()
 	{
-		if(mInitialized)
+		if(mInitialized || mData == null)
 			return;
 
 		mScrollPositions = new Vector2[3];
