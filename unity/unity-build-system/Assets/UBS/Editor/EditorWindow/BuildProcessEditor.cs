@@ -213,6 +213,13 @@ namespace UBS
 			ReorderableListGUI.Title("Included Scenes");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
 
+			//TODO - improve layout
+			if(GUILayout.Button("Copy scenes from settings"))
+				CopyScenesFromSettings();
+
+			if(GUILayout.Button("Clear scenes"))
+				mEditedBuildProcess.mSceneAssets.Clear();
+
 			Styles.HorizontalSeparator();
 
 			mDrawingBuildStepType = EBuildStepType.PreBuildStep;
@@ -312,6 +319,17 @@ namespace UBS
 		}
 
 #region data manipulation
+
+		void CopyScenesFromSettings ()
+		{
+			mEditedBuildProcess.mScenes.Clear();
+			EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
+			foreach(EditorBuildSettingsScene scene in scenes)
+			{
+				mEditedBuildProcess.mScenes.Add(scene.path);
+			}
+			LoadScenesFromStringList();
+		}
 
 		public void SaveScenesToStringList()
 		{
