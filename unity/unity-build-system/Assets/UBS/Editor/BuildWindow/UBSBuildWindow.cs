@@ -102,8 +102,6 @@ namespace UBS
 			}
 
 
-
-
 			GUILayout.BeginVertical("HelpBox");
 			{
 				KeyValue( "Collection:", mProcess.BuildCollection.name );
@@ -123,6 +121,21 @@ namespace UBS
 			}
 			GUILayout.EndVertical();
 
+			if (UBSProcess.BuildBehavior == UBSBuildBehavior.manual && mProcess.CurrentState == UBSState.building) 
+			{
+				GUILayout.BeginVertical("Action");
+				GUILayout.Label ("Buildpipeline not available in free Unity");
+				if (GUILayout.Button(string.Format ("Build {0} manually", mProcess.CurrentProcessName)))
+				{
+					System.Reflection.Assembly asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
+					var M = asm
+						.GetType("UnityEditor.BuildPlayerWindow")
+						.GetMethod("ShowBuildPlayerWindow", System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+					M.Invoke(null, null);
+				}
+				GUILayout.EndVertical();
+			}
+
 		}
 
 
@@ -130,8 +143,8 @@ namespace UBS
 		{
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(pKey, Styles.boldKey, GUILayout.Width(120));
-				GUILayout.Label(pValue.ToString(), Styles.normalValue, GUILayout.Width(180));
+				GUILayout.Label(pKey, Styles.boldKey, GUILayout.Width(140));
+				GUILayout.Label(pValue.ToString(), Styles.normalValue, GUILayout.Width(140));
 			}
 			GUILayout.EndHorizontal();
 		}
@@ -141,7 +154,7 @@ namespace UBS
 		{
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(pKey, Styles.boldKey, GUILayout.Width(120));
+				GUILayout.Label(pKey, Styles.boldKey, GUILayout.Width(140));
 				GUILayout.Label(Mathf.RoundToInt(pValue * 100).ToString() + "%", Styles.progressBar, GUILayout.Width(160 * pValue), GUILayout.Height(18));
 				GUILayout.FlexibleSpace();
 			}

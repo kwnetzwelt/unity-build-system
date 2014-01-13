@@ -23,6 +23,16 @@ namespace UBS
 
 
 		#region data
+
+		public static UBSBuildBehavior BuildBehavior 
+		{
+			get 
+			{
+				return UnityEditorInternal.InternalEditorUtility.HasPro () ? 
+					UBSBuildBehavior.auto : UBSBuildBehavior.manual;
+			}
+		}
+
 		[SerializeField]
 		BuildConfiguration mCurrentBuildConfiguration;
 		BuildConfiguration CurrentBuildConfiguration
@@ -150,6 +160,7 @@ namespace UBS
 			var process = AssetDatabase.LoadAssetAtPath( GetProcessPath(), typeof(UBSProcess));
 			return process as UBSProcess;
 		}
+		
 
 		public void MoveNext()
 		{
@@ -247,6 +258,18 @@ namespace UBS
 			if(BuildPipeline.isBuildingPlayer)
 				return;
 
+			if (BuildBehavior != UBSBuildBehavior.auto) 
+			{
+				/*
+				System.Reflection.Assembly asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
+				var M = asm
+					.GetType("UnityEditor.BuildPlayerWindow")
+					.GetMethod("ShowBuildPlayerWindow", System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+				M.Invoke(null, null);
+				*/
+				return;
+			}
+
 			List<string> scenes = new List<string>();
 
 			foreach(var scn in EditorBuildSettings.scenes)
@@ -261,8 +284,35 @@ namespace UBS
 				CurrentProcess.mPlatform,
 				CurrentProcess.mBuildOptions);
 
+			OnBuildDone ();
+		}
+
+		void OnBuildDone() 
+		{
 			mCurrentState = UBSState.postSteps;
 			Save();
+		}
+
+		[UnityEditor.Callbacks.PostProcessBuild]
+		public static void OnPostProcessBuild(BuildTarget target, string buildPath)
+		{
+			if (BuildBehavior == UBSBuildBehavior.auto)
+				return;
+
+			UBSProcess p = UBSProcess.LoadUBSProcess ();
+			if (p.mCurrentState == UBSState.building && target == p.CurrentProcess.mPlatform)
+			{
+				string relativeBuildPath = Helpers.GetProjectRelativePath (buildPath);
+				if (p.CurrentProcess.mOutputPath != relativeBuildPath) 
+				{
+					Debug.Log(
+						string.Format("Manually selected build path \"{0}\" differs from specified UBS build path \"{1}\" in process \"{2}\". Using manually selected one.",
+					    	relativeBuildPath, p.CurrentProcess.mOutputPath, p.CurrentProcessName)
+						);
+					p.CurrentProcess.mOutputPath = relativeBuildPath;
+				}
+				p.OnBuildDone();
+			}
 		}
 
 		void DoPostSteps()
@@ -289,7 +339,10 @@ namespace UBS
 
 	}
 
-
+	public enum UBSBuildBehavior {
+		auto,
+		manual
+	}
 
 	public enum UBSState
 	{

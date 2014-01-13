@@ -65,6 +65,21 @@ namespace UBS
 			}
 			return BuildTargetGroup.Unknown;
 		}
+
+		public static string GetProjectRelativePath(string absolutePath)
+		{	
+			// Otherwise, the Uri will retain the Assets-relative fix
+			Uri projectUri = new Uri(new Uri(UnityEngine.Application.dataPath + "/../").ToString());
+			Uri targetUri = new Uri (absolutePath);
+			return projectUri.MakeRelativeUri(targetUri).ToString ();
+		}
+
+		public static string GetAbsolutePathRelativeToProject(string relativePath) 
+		{
+			// Otherwise, the Uri will retain the Assets-relative fix
+			Uri projectUri = new Uri(new Uri(UnityEngine.Application.dataPath + "/../").ToString());
+			return new Uri (projectUri + relativePath).AbsolutePath;
+		}
 	}
 }
 

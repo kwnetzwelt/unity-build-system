@@ -185,7 +185,8 @@ public class UBSEditorWindow : EditorWindow {
 		if(mEditor != null)
 			mEditor.OnDestroy();
 
-		EditorUtility.SetDirty(mData);
+		if (mData)
+			EditorUtility.SetDirty(mData);
 
 		AssetDatabase.SaveAssets();
 
