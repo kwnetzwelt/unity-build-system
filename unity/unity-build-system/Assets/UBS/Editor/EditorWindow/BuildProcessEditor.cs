@@ -195,11 +195,18 @@ namespace UBS
 			if(pStep == null)
 				pStep = new BuildStep();
 
+			var filtered = new List<BuildStepProviderEntry>( mSelectableBuildStepProviders );
+			filtered = filtered.FindAll ( (obj) => {
+				if(obj.mName == "None")
+					return false;
+				return obj.CheckFilters(mDrawingBuildStepType, mEditedBuildProcess.mPlatform);
+			});
+			
 			int selected = 0; 
 			if(pStep.mTypeName != null)
 			{
 				pStep.InferType();
-				selected = mBuildStepProviders.IndexOf(pStep.mType) + 1;
+				selected = filtered.FindIndex( (obj) => {return obj.mType == pStep.mType;}) +1;
 			}
 			GUIContent[] displayedProviders = GetBuildStepProvidersFiltered();
 
@@ -211,10 +218,12 @@ namespace UBS
 			{
 				Undo.RecordObject(mCollection, "Set Build Step Class Reference");
 
+
+
 				if(idx == 0)
 					pStep.SetType(null);
 				else
-					pStep.SetType(mBuildStepProviders[idx-1]);
+					pStep.SetType(filtered[idx -1].mType);
 			}
 
 			return pStep;
