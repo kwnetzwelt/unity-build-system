@@ -278,7 +278,7 @@ namespace UBS
 				EditorGUILayout.LabelField("Output Path", mEditedBuildProcess.mOutputPath);
 				if(GUILayout.Button("...", GUILayout.Width(40)))
 				{
-					mEditedBuildProcess.mOutputPath = OpenPlatformSpecificOutputSelector();
+					mEditedBuildProcess.mOutputPath = Helpers.GetProjectRelativePath(OpenPlatformSpecificOutputSelector());
 				}
 			}
 			GUILayout.EndHorizontal();
@@ -286,27 +286,28 @@ namespace UBS
 		string OpenPlatformSpecificOutputSelector()
 		{
 			const string kTitle = "Select Output Path";
-			
+			string absOutputPath = Helpers.GetAbsolutePathRelativeToProject (mEditedBuildProcess.mOutputPath);
+
 			switch(mEditedBuildProcess.mPlatform)
 			{
 				
 			case BuildTarget.Android: 
-				return EditorUtility.SaveFilePanel(kTitle, mEditedBuildProcess.mOutputPath, "android", "apk");
+				return EditorUtility.SaveFilePanel(kTitle, absOutputPath, "android", "apk");
 				
 			case BuildTarget.iPhone:
-				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath, "iOSDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath, "iOSDeployment");
 				
 			case BuildTarget.MetroPlayer:
-				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath, "MetroDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath, "MetroDeployment");
 				
 			case BuildTarget.BB10:
-				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath,"BlackBerryDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath,"BlackBerryDeployment");
 				
 			case BuildTarget.NaCl:
-				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath,"NativeClientDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath,"NativeClientDeployment");
 				
 			case BuildTarget.WebPlayer:
-				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath,"WebPlayerDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath,"WebPlayerDeployment");
 				
 				
 			case BuildTarget.StandaloneOSXUniversal:
@@ -319,7 +320,7 @@ namespace UBS
 				
 			case BuildTarget.StandaloneWindows:
 			case BuildTarget.StandaloneWindows64:
-				return EditorUtility.SaveFolderPanel(kTitle, mEditedBuildProcess.mOutputPath, "StandaloneDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath, "StandaloneDeployment");
 				
 			}
 			return "";
