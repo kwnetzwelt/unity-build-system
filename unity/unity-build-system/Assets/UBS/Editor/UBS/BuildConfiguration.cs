@@ -14,6 +14,7 @@ using System.IO;
 
 namespace UBS
 {
+	[Serializable]
 	public class BuildConfiguration
 	{
 		public BuildConfiguration ()
@@ -25,22 +26,32 @@ namespace UBS
 			ProjectDirectory = di.Parent.FullName;
 		}
 
+		[SerializeField]
+		string mResourcesDirectory;
+
+		
+		[SerializeField]
+		string mAssetsDirectory;
+
+		[SerializeField]
+		string mProjectDirectory;
+
 		public string ResourcesDirectory
 		{
-			get;
-			private set;
+			get { return mResourcesDirectory; }
+			private set { mResourcesDirectory = value; }
 		}
 
 		public string AssetsDirectory
 		{
-			get;
-			private set;
+			get { return mAssetsDirectory; }
+			private set { mAssetsDirectory = value; }
 		}
 
 		public string ProjectDirectory
 		{
-			get;
-			private set;
+			get { return mProjectDirectory; }
+			private set { mProjectDirectory = value; }
 		}
 
 	}

@@ -66,7 +66,10 @@ namespace UBS
 				if(mBoldKey == null)
 				{
 					mBoldKey = new GUIStyle();
-					mBoldKey.normal.textColor = GetColor(0x000000ff);
+					if(EditorGUIUtility.isProSkin)
+						mBoldKey.normal.textColor = GetColor(0xffffffff);
+					else
+						mBoldKey.normal.textColor = GetColor(0x000000ff);
 					mBoldKey.fontStyle = FontStyle.Bold;
 					mBoldKey.alignment = TextAnchor.MiddleLeft;
 					
@@ -84,7 +87,10 @@ namespace UBS
 				if(mNormalValue == null)
 				{
 					mNormalValue = new GUIStyle();
-					mNormalValue.normal.textColor = GetColor(0x000000ff);
+					if(EditorGUIUtility.isProSkin)
+						mNormalValue.normal.textColor = GetColor(0xffffffff);
+					else
+						mNormalValue.normal.textColor = GetColor(0x000000ff);
 					mNormalValue.fontStyle = FontStyle.Normal;
 					mNormalValue.alignment = TextAnchor.MiddleLeft;
 					

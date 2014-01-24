@@ -62,7 +62,10 @@ namespace UBS
 		[SerializeField]
 		UBSState mCurrentState = UBSState.invalid;
 
+		[SerializeField]
 		UBSStepListWalker mPreStepWalker = new UBSStepListWalker();
+
+		[SerializeField]
 		UBSStepListWalker mPostStepWalker = new UBSStepListWalker();
 
 		public UBSState CurrentState
@@ -367,6 +370,7 @@ namespace UBS
 
 		IBuildStepProvider mCurrentStep;
 		
+		[SerializeField]
 		BuildConfiguration mConfiguration;
 		
 		public UBSStepListWalker()

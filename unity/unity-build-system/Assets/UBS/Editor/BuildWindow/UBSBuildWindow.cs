@@ -15,6 +15,7 @@ namespace UBS
 {
 	public class UBSBuildWindow : EditorWindow
 	{
+		const float kHeight = 25;
 
 		[NonSerialized]
 		UBSProcess mProcess;
@@ -27,10 +28,11 @@ namespace UBS
 
 		public static void Init(BuildCollection pData)
 		{
-			var window = EditorWindow.GetWindow<UBSBuildWindow>("Build",true);
+			var window = EditorWindow.GetWindow<UBSBuildWindow>(true,"Build",true);
 
 			window.position = new Rect(50,50, 300,300);
-			window.minSize = new Vector2(300,300);
+			window.minSize = new Vector2(310,260);
+			window.maxSize = new Vector2(310,260);
 			window.Run(pData);
 		}
 
@@ -101,26 +103,53 @@ namespace UBS
 				return;
 			}
 
-
-			GUILayout.BeginVertical("HelpBox");
-			{
-				KeyValue( "Collection:", mProcess.BuildCollection.name );
-
-				KeyValue( "CurrentProcess: ", mProcess.CurrentProcessName );
-
-				KeyValue( "CurrentState: ", mProcess.CurrentState );
-				
-				KeyProgress( "Pre Steps Progress: ", mProcess.SubPreWalker.Progress );
-				KeyValue( "Pre Step Current: ", mProcess.SubPreWalker.Step );
-				KeyProgress( "Post Steps Progress: ", mProcess.SubPostWalker.Progress );
-				KeyValue( "Post Step Current: ", mProcess.SubPostWalker.Step );
+			GUI.Box(new Rect(0,0,300,300), "");
 
 
-				KeyProgress( "Progress: ", mProcess.Progress );
+			float fTop = 0;
+			float fLeft = 5;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyValue( "Collection:", mProcess.BuildCollection.name );
+			GUI.EndGroup();
 
-			}
-			GUILayout.EndVertical();
+			fTop += kHeight;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyValue( "CurrentProcess: ", mProcess.CurrentProcessName );
+			GUI.EndGroup();
 
+			fTop += kHeight;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyValue( "CurrentState: ", mProcess.CurrentState );
+			GUI.EndGroup();
+
+
+			fTop += kHeight;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyProgress( "Pre Steps Progress: ", mProcess.SubPreWalker.Progress );
+			GUI.EndGroup();
+
+			fTop += kHeight;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyValue( "Pre Step Current: ", mProcess.SubPreWalker.Step );
+			GUI.EndGroup();
+			
+			fTop += kHeight;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyProgress( "Post Steps Progress: ", mProcess.SubPostWalker.Progress );
+			GUI.EndGroup();
+			
+			fTop += kHeight;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyValue( "Post Step Current: ", mProcess.SubPostWalker.Step );
+			GUI.EndGroup();
+
+			fTop += kHeight;
+			GUI.BeginGroup(new Rect(fLeft,fTop, 300, kHeight));
+			KeyProgress( "Progress: ", mProcess.Progress );
+			GUI.EndGroup();
+
+			fTop += kHeight;
+			GUILayout.BeginArea(new Rect(fLeft,fTop, 300, kHeight));
 			if (UBSProcess.BuildBehavior == UBSBuildBehavior.manual && mProcess.CurrentState == UBSState.building) 
 			{
 				GUILayout.BeginVertical("Action");
@@ -135,30 +164,22 @@ namespace UBS
 				}
 				GUILayout.EndVertical();
 			}
-
+			GUILayout.EndArea();
 		}
 
 
 		void KeyValue(string pKey, object pValue)
 		{
-			GUILayout.BeginHorizontal();
-			{
-				GUILayout.Label(pKey, Styles.boldKey, GUILayout.Width(140));
-				GUILayout.Label(pValue.ToString(), Styles.normalValue, GUILayout.Width(140));
-			}
-			GUILayout.EndHorizontal();
+			GUI.Label(new Rect(0,0,140,25),pKey, Styles.boldKey);
+			GUI.Label(new Rect(150,0,140,25),pValue.ToString(), Styles.normalValue);
+
 		}
 
 
 		void KeyProgress(string pKey, float pValue)
 		{
-			GUILayout.BeginHorizontal();
-			{
-				GUILayout.Label(pKey, Styles.boldKey, GUILayout.Width(140));
-				GUILayout.Label(Mathf.RoundToInt(pValue * 100).ToString() + "%", Styles.progressBar, GUILayout.Width(160 * pValue), GUILayout.Height(18));
-				GUILayout.FlexibleSpace();
-			}
-			GUILayout.EndHorizontal();
+			GUI.Label(new Rect(0,0,140,25),pKey, Styles.boldKey);
+			EditorGUI.ProgressBar(new Rect(150,5, 140, 15), pValue, Mathf.RoundToInt(pValue * 100).ToString() + "%");
 		}
 
 	}
