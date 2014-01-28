@@ -256,9 +256,8 @@ namespace UBS
 
 		void DoBuilding()
 		{
-			// TODO Implement actual building
 
-			if(BuildPipeline.isBuildingPlayer)
+			if(BuildPipeline.isBuildingPlayer || BuildBehavior != UBSBuildBehavior.auto)
 				return;
 
 			if (BuildBehavior != UBSBuildBehavior.auto) 
@@ -302,17 +301,17 @@ namespace UBS
 			if (BuildBehavior == UBSBuildBehavior.auto)
 				return;
 
+			buildPath = Helpers.GetProjectRelativePath (buildPath);
 			UBSProcess p = UBSProcess.LoadUBSProcess ();
 			if (p.mCurrentState == UBSState.building && target == p.CurrentProcess.mPlatform)
 			{
-				string relativeBuildPath = Helpers.GetProjectRelativePath (buildPath);
-				if (p.CurrentProcess.mOutputPath != relativeBuildPath) 
+				if (p.CurrentProcess.mOutputPath != buildPath) 
 				{
 					Debug.Log(
 						string.Format("Manually selected build path \"{0}\" differs from specified UBS build path \"{1}\" in process \"{2}\". Using manually selected one.",
-					    	relativeBuildPath, p.CurrentProcess.mOutputPath, p.CurrentProcessName)
+					    	buildPath, p.CurrentProcess.mOutputPath, p.CurrentProcessName)
 						);
-					p.CurrentProcess.mOutputPath = relativeBuildPath;
+					p.CurrentProcess.mOutputPath = buildPath;
 				}
 				p.OnBuildDone();
 			}

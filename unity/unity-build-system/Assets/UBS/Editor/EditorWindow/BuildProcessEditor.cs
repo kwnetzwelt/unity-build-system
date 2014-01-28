@@ -295,28 +295,28 @@ namespace UBS
 		string OpenPlatformSpecificOutputSelector()
 		{
 			const string kTitle = "Select Output Path";
-			string absOutputPath = Helpers.GetAbsolutePathRelativeToProject (mEditedBuildProcess.mOutputPath);
+			string path = Helpers.GetAbsolutePathRelativeToProject (mEditedBuildProcess.mOutputPath);
 
 			switch(mEditedBuildProcess.mPlatform)
 			{
 				
 			case BuildTarget.Android: 
-				return EditorUtility.SaveFilePanel(kTitle, absOutputPath, "android", "apk");
+				return EditorUtility.SaveFilePanel(kTitle, path, "android", "apk");
 				
 			case BuildTarget.iPhone:
-				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath, "iOSDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
 				
 			case BuildTarget.MetroPlayer:
-				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath, "MetroDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
 				
 			case BuildTarget.BB10:
-				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath,"BlackBerryDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, path,"BlackBerryDeployment");
 				
 			case BuildTarget.NaCl:
-				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath,"NativeClientDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, path,"NativeClientDeployment");
 				
 			case BuildTarget.WebPlayer:
-				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath,"WebPlayerDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, path,"WebPlayerDeployment");
 				
 				
 			case BuildTarget.StandaloneOSXUniversal:
@@ -329,7 +329,7 @@ namespace UBS
 				
 			case BuildTarget.StandaloneWindows:
 			case BuildTarget.StandaloneWindows64:
-				return EditorUtility.SaveFolderPanel(kTitle, absOutputPath, "StandaloneDeployment");
+				return EditorUtility.SaveFolderPanel(kTitle, path, "StandaloneDeployment");
 				
 			}
 			return "";
