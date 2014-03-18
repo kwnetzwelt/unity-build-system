@@ -14,9 +14,11 @@ public class UpdateVersionCode :  IBuildStepProvider{
 	string mOutput = "";
 	Process mProc;
 	#region IBuildStepProvider implementation
-	
+	BuildConfiguration mConfig;
+
 	public void BuildStepStart (BuildConfiguration pConfiguration)
 	{
+		mConfig = pConfiguration;
 		UnityEngine.Debug.Log("Check for new VersionCode...");
 	#if UNITY_EDITOR_OSX
 		mPath = Application.dataPath + "/Editor/";
@@ -34,23 +36,19 @@ public class UpdateVersionCode :  IBuildStepProvider{
 		if(mIsDone)
 			return;
 
-		string newVersionCode = "";
 		if(mOutput.Length > 0)
 		{
-			newVersionCode = Regex.Replace(mOutput, "[^0-9]", "");
-			if(newVersionCode.Length > 0) {
-				UBSProcess ubs = UBSProcess.LoadUBSProcess();
-				BuildCollection buildColl = ubs.BuildCollection;
-				if(buildColl.versionCode.Length <= newVersionCode.Length)
-					buildColl.versionCode = newVersionCode;
-				else
-				{
-					string currentVersionCode = buildColl.versionCode.Substring(buildColl.versionCode.Length - newVersionCode.Length, newVersionCode.Length);
-					buildColl.versionCode = currentVersionCode + newVersionCode;
-					buildColl.SaveVersionCode();
-				}
-				UnityEngine.Debug.Log("Changed Version to: " + buildColl.versionCode);
-			}
+			mOutput = Regex.Replace(mOutput, "[^0-9]", "");
+			int rev = 0;
+			if(int.TryParse(mOutput, out rev))
+				mConfig.GetCurrentBuildCollection().version.revision = rev;
+
+			mConfig.GetCurrentBuildCollection().SaveVersion();
+			BuildVersion bv = mConfig.GetCurrentBuildCollection().version;
+
+			string newVersionCode = string.Format("{0}{1}{2}{3}", bv.major, bv.minor, bv.build, bv.revision);
+			mConfig.GetCurrentBuildCollection().versionCode = newVersionCode;
+			mConfig.GetCurrentBuildCollection().SaveVersionCode();
 		}
 		mIsDone = true;
 	}
