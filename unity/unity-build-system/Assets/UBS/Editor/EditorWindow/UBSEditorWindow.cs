@@ -41,7 +41,10 @@ public class UBSEditorWindow : EditorWindow {
 		}
 		GUILayout.EndHorizontal();
 	}
-
+	void OnEnable()
+	{
+		Initialize();
+	}
 	void OnGUI()
 	{
 		Initialize();
@@ -148,12 +151,40 @@ public class UBSEditorWindow : EditorWindow {
 	void RenderBuildVersion()
 	{
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Build version:", UBS.Styles.mediumHint);
-		// TODO make this more pretty
-		GUILayout.Label("Versionname:");
-		mData.versionName = GUILayout.TextField(mData.versionName);
-		GUILayout.Label("Versioncode:");
-		mData.versionCode = GUILayout.TextField(mData.versionCode);
+		GUILayout.FlexibleSpace();
+		GUILayout.Label("Build version:");
+
+		int v;
+
+		v = EditorGUILayout.IntField( mData.version.major, GUILayout.Width(20));
+		if(v != mData.version.major)
+		{
+			mData.version.major = v;
+			mData.SaveVersion();
+		}
+
+		v = EditorGUILayout.IntField( mData.version.minor, GUILayout.Width(20));
+		if(v != mData.version.minor)
+		{
+			mData.version.minor = v;
+			mData.SaveVersion();
+		}
+
+		v = EditorGUILayout.IntField( mData.version.build, GUILayout.Width(20));
+		if(v != mData.version.build)
+		{
+			mData.version.build = v;
+			mData.SaveVersion();
+		}
+
+		GUILayout.Label("Revision:");
+		v = EditorGUILayout.IntField( mData.version.revision, GUILayout.Width(80));
+		if(v != mData.version.revision)
+		{
+			mData.version.revision = v;
+			mData.SaveVersion();
+		}
+
 		GUILayout.EndHorizontal();
 	}
 	#endregion
@@ -161,9 +192,9 @@ public class UBSEditorWindow : EditorWindow {
 
 	#region data handling
 	
-	[System.NonSerialized]
+	[SerializeField]
 	BuildCollection mData;
-	
+
 	[System.NonSerialized]
 	bool mInitialized = false;
 	

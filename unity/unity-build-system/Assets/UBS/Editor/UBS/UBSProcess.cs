@@ -11,6 +11,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
 
 namespace UBS
 {
@@ -226,7 +227,7 @@ namespace UBS
 		void DoSetup()
 		{
 			mCurrentBuildConfiguration = new BuildConfiguration();
-
+			CheckOutputPath(CurrentProcess);
 			EditorUserBuildSettings.SwitchActiveBuildTarget(CurrentProcess.mPlatform);
 			
 			var scenes = new EditorBuildSettingsScene[CurrentProcess.mScenes.Count];
@@ -345,7 +346,38 @@ namespace UBS
 			}
 		}
 
-
+		void CheckOutputPath(BuildProcess pProcess)
+		{
+			string error = "";
+			
+			
+			if(pProcess.mOutputPath.Length == 0) {
+				error = "Please provide an output path.";
+				Cancel(error);
+				return;
+			}
+			
+			try
+			{
+				DirectoryInfo dir;
+				if(pProcess.mPlatform == BuildTarget.Android)
+					dir = new DirectoryInfo(Path.GetDirectoryName(pProcess.mOutputPath));
+				else
+					dir = new DirectoryInfo(pProcess.mOutputPath);
+				
+				if(!dir.Exists)
+					error = "The given output path is invalid.";
+			}
+			catch (Exception e)
+			{
+				error = e.ToString();
+			}
+			
+			if(error.Length > 0)
+			{
+				Cancel(error);
+			}
+		}
 	}
 
 	public enum UBSBuildBehavior {

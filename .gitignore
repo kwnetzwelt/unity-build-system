@@ -7,3 +7,6 @@ unity/unity-build-system/Assembly-CSharp.csproj
 unity/unity-build-system/unity-build-system-csharp.sln
 unity/unity-build-system/unity-build-system.sln
 unity/unity-build-system/unity-build-system.userprefs
+unity/unity-build-system/Assets/Resources.meta
+unity/unity-build-system/Assets/Resources/buildVersion.txt
+unity/unity-build-system/Assets/Resources/buildVersion.txt.meta

@@ -54,6 +54,25 @@ namespace UBS
 			private set { mProjectDirectory = value; }
 		}
 
+		public BuildProcess GetCurrentBuildProcess()
+		{
+			
+			UBSProcess ubs = UBSProcess.LoadUBSProcess();
+			BuildProcess process = ubs.GetCurrentProcess();
+			return process;
+		}
+
+		public BuildCollection GetCurrentBuildCollection()
+		{
+			UBSProcess ubs = UBSProcess.LoadUBSProcess();
+			return ubs.BuildCollection;
+		}
+
+		public void Cancel(string pMessage)
+		{
+			UBSProcess ubs = UBSProcess.LoadUBSProcess();
+			ubs.Cancel(pMessage);
+		}
 	}
 }
 

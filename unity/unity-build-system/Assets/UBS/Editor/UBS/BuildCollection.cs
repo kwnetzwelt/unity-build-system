@@ -9,28 +9,22 @@ namespace UBS
 	{
 		public BuildCollection ()
 		{
+			version = BuildVersion.Load();
+
 		}
 
 		public List<BuildProcess> mProcesses = new List<BuildProcess>();
-		
-		string mVersionName = "1.0.0";
-		string mVersionCode = "1";
-		public string versionName 
+
+		public void SaveVersion()
 		{
-			set{ mVersionName = value; UnityEditor.PlayerSettings.bundleVersion = mVersionName; }
-			get{ return mVersionName; }
+			version.Save();
+			UnityEditor.PlayerSettings.Android.bundleVersionCode = version.revision;
+			UnityEditor.PlayerSettings.bundleVersion = version.ToString();
+			UnityEditor.PlayerSettings.Metro.packageVersion = version;
 		}
-		public string versionCode
-		{
-			set 
-			{
-					mVersionCode = value;
-					int n = 0;
-					if(Int32.TryParse(mVersionCode, out n))
-						UnityEditor.PlayerSettings.Android.bundleVersionCode = n;
-			}
-			get { return mVersionCode; }
-		}
+
+		public BuildVersion version = null;
+		public string versionCode = "1";
 
 	}
 }

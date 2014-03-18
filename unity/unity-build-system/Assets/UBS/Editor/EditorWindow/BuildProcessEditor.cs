@@ -138,7 +138,8 @@ namespace UBS
 				}
 			}
 			selectedOptionsString = sb.ToString();
-			selectedOptionsString = selectedOptionsString.Substring(0,selectedOptionsString.Length -2);
+			if(selectedOptionsString.Length > 2)
+				selectedOptionsString = selectedOptionsString.Substring(0,selectedOptionsString.Length -2);
 		}
 
 		public void OnGUI(BuildProcess pProcess, BuildCollection pCollection)
@@ -213,12 +214,16 @@ namespace UBS
 			ReorderableListGUI.Title("Included Scenes");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
 
-			//TODO - improve layout
+			GUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+
 			if(GUILayout.Button("Copy scenes from settings"))
 				CopyScenesFromSettings();
 
 			if(GUILayout.Button("Clear scenes"))
 				mEditedBuildProcess.mSceneAssets.Clear();
+
+			GUILayout.EndHorizontal();
 
 			Styles.HorizontalSeparator();
 
