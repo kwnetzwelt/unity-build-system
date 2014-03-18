@@ -26,20 +26,20 @@ namespace UBS
 		[NonSerialized]
 		bool mEmpty = false;
 
-		public static void Init(BuildCollection pData)
+		public static void Init(BuildCollection pData, bool pBuildAndRun = false)
 		{
 			var window = EditorWindow.GetWindow<UBSBuildWindow>(true,"Build",true);
 
 			window.position = new Rect(50,50, 300,300);
 			window.minSize = new Vector2(310,260);
 			window.maxSize = new Vector2(310,260);
-			window.Run(pData);
+			window.Run(pData, pBuildAndRun);
 		}
 
 
-		public void Run(BuildCollection pCollection)
+		public void Run(BuildCollection pCollection, bool pBuildAndRun)
 		{
-			UBSProcess.Create(pCollection);
+			UBSProcess.Create(pCollection, pBuildAndRun);
 		}
 
 		void Initialize()

@@ -21,6 +21,8 @@ public class UBSAssetInspector : Editor
 	public override void OnInspectorGUI()
 	{
 		var data = target as BuildCollection;
+		
+		int selectedCount = 0;
 
 		GUILayout.Label("Build Processes", "BoldLabel");
 
@@ -44,6 +46,7 @@ public class UBSAssetInspector : Editor
 						e.mSelected = sel;
 						EditorUtility.SetDirty(data);
 					}
+					selectedCount += e.mSelected? 1 : 0;
 				}
 				GUILayout.EndHorizontal();
 				odd = !odd;
@@ -62,6 +65,16 @@ public class UBSAssetInspector : Editor
 			{
 				UBSBuildWindow.Init( data );
 			}
+			GUILayout.Space(5);
+
+
+			GUI.enabled = selectedCount == 1;
+			if(GUILayout.Button("Build and run"))
+			{
+				UBSBuildWindow.Init( data, true);
+			}
+			GUI.enabled = true;
+
 		}
 		GUILayout.EndHorizontal();
 	}

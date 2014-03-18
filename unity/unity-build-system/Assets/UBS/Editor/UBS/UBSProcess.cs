@@ -41,6 +41,8 @@ namespace UBS
 
 		}
 
+		[SerializeField]
+		bool mBuildAndRun;
 
 		[SerializeField]
 		BuildCollection mCollection;
@@ -139,9 +141,10 @@ namespace UBS
 		}
 
 
-		public static void Create(BuildCollection pCollection)
+		public static void Create(BuildCollection pCollection, bool pBuildAndRun)
 		{
 			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
+			p.mBuildAndRun = pBuildAndRun;
 			p.mCollection = pCollection;
 			p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
 			p.mCurrentState = UBSState.invalid;
@@ -203,7 +206,6 @@ namespace UBS
 		#region build process state handling
 		void OnDone()
 		{
-
 
 		}
 		void NextBuild()
@@ -279,12 +281,16 @@ namespace UBS
 				if(scn.enabled)
 					scenes.Add(scn.path);
 			}
+			BuildOptions bo = CurrentProcess.mBuildOptions;
+			if(mBuildAndRun)
+				bo = bo | BuildOptions.AutoRunPlayer;
 
 			BuildPipeline.BuildPlayer(
 				scenes.ToArray(),
 				CurrentProcess.mOutputPath,
 				CurrentProcess.mPlatform,
-				CurrentProcess.mBuildOptions);
+				bo );
+
 
 			OnBuildDone ();
 		}
