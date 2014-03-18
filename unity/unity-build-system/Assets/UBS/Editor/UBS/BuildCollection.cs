@@ -26,6 +26,10 @@ namespace UBS
 		public BuildVersion version = null;
 		public string versionCode = "1";
 
+		public void SaveVersionCode()
+		{
+			UnityEditor.PlayerSettings.Android.bundleVersionCode = versionCode;
+		}
 	}
 }
 

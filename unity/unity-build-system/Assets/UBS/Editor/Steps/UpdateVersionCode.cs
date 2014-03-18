@@ -47,6 +47,7 @@ public class UpdateVersionCode :  IBuildStepProvider{
 				{
 					string currentVersionCode = buildColl.versionCode.Substring(buildColl.versionCode.Length - newVersionCode.Length, newVersionCode.Length);
 					buildColl.versionCode = currentVersionCode + newVersionCode;
+					buildColl.SaveVersionCode();
 				}
 				UnityEngine.Debug.Log("Changed Version to: " + buildColl.versionCode);
 			}
