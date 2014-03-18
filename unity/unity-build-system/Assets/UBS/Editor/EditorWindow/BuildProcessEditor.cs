@@ -5,6 +5,7 @@ using Rotorz.ReorderableList;
 using System.Collections.Generic;
 using UnityEditor.Graphs;
 using System.Linq;
+using System.Text;
 
 namespace UBS
 {
@@ -73,7 +74,7 @@ namespace UBS
 		static List<System.Type> mBuildStepProviders;
 		BuildStepProviderEntry[] mSelectableBuildStepProviders;
 
-
+		bool mShowBuildOptions;
 		BuildProcess mEditedBuildProcess;
 		BuildCollection mCollection;
 
@@ -113,6 +114,32 @@ namespace UBS
 
 			mEditedBuildProcess = null;
 		}
+		BuildOptions[] mBuildOptions;
+		string selectedOptionsString;
+		void OnEnable()
+		{
+			var names = System.Enum.GetNames(typeof(BuildOptions));
+			mBuildOptions = new BuildOptions[names.Length];
+			for(int i = 0;i<names.Length;i++)
+			{
+				mBuildOptions[i] = (BuildOptions)System.Enum.Parse(typeof(BuildOptions), names[i]);
+			}
+			UpdateSelectedOptions();
+		}
+
+		void UpdateSelectedOptions()
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach(var buildOption in mBuildOptions)
+			{
+				if((mEditedBuildProcess.mBuildOptions & buildOption) != 0)
+				{
+					sb.Append( buildOption.ToString() + ", " );
+				}
+			}
+			selectedOptionsString = sb.ToString();
+			selectedOptionsString = selectedOptionsString.Substring(0,selectedOptionsString.Length -2);
+		}
 
 		public void OnGUI(BuildProcess pProcess, BuildCollection pCollection)
 		{
@@ -129,6 +156,7 @@ namespace UBS
 				mCollection = pCollection;
 
 				LoadScenesFromStringList();
+				OnEnable();
 			}
 
 			GUILayout.BeginVertical();
@@ -142,7 +170,44 @@ namespace UBS
 
 
 			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup( "Platform", mEditedBuildProcess.mPlatform );
-			mEditedBuildProcess.mBuildOptions = (BuildOptions)EditorGUILayout.EnumMaskField( "Build Options", mEditedBuildProcess.mBuildOptions );
+
+			GUILayout.Space(5);
+			mShowBuildOptions = EditorGUILayout.Foldout( mShowBuildOptions, "Build Options");
+			GUILayout.BeginHorizontal();
+			GUILayout.Space(25);
+
+			if(mShowBuildOptions)
+			{
+				GUILayout.BeginVertical();
+
+				foreach(var buildOption in mBuildOptions)
+				{
+					bool selVal = (mEditedBuildProcess.mBuildOptions & buildOption) != 0;
+					{
+						bool resVal = EditorGUILayout.ToggleLeft( buildOption.ToString(), selVal);
+						if(resVal != selVal)
+						{
+							if(resVal)
+								mEditedBuildProcess.mBuildOptions = mEditedBuildProcess.mBuildOptions | buildOption;
+							else
+								mEditedBuildProcess.mBuildOptions = mEditedBuildProcess.mBuildOptions & ~buildOption;
+							UpdateSelectedOptions();
+						}
+					}
+
+				}
+
+				
+				GUILayout.EndVertical();
+			}else
+			{
+				GUILayout.Label( selectedOptionsString );
+			}
+
+
+			GUILayout.EndHorizontal();
+			GUILayout.Space(5);
+
 			DrawOutputPathSelector();
 
 			ReorderableListGUI.Title("Included Scenes");
