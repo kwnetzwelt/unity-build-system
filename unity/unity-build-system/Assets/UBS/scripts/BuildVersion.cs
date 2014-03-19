@@ -25,7 +25,7 @@ namespace UBS
 				return LoadEditor();
 	#endif
 
-			var res = Resources.LoadAssetAtPath<TextAsset>("buildVersion");
+			var res = Resources.Load("buildVersion") as TextAsset;
 			return Serializer.Load<BuildVersion>(res.text);
 		}
 

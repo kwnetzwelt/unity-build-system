@@ -28,7 +28,7 @@ namespace UBS
 
 		public void SaveVersionCode()
 		{
-			UnityEditor.PlayerSettings.Android.bundleVersionCode = versionCode;
+			UnityEditor.PlayerSettings.Android.bundleVersionCode = int.Parse(versionCode);
 		}
 	}
 }
