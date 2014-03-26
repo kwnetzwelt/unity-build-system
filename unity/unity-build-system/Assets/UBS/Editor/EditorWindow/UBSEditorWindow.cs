@@ -7,7 +7,7 @@ public class UBSEditorWindow : EditorWindow {
 	#region window creation
 	const int kMinWidth = 600;
 	const int kMinHeight = 400;
-	const int kListWidth = 200;
+	const int kListWidth = 250;
 
 
 
@@ -59,9 +59,9 @@ public class UBSEditorWindow : EditorWindow {
 		//
 		// selectable Build Processes
 		//
-
-		mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1],"GameViewBackground",GUILayout.MaxWidth(kListWidth),GUILayout.MinWidth(kListWidth));
+		GUILayout.BeginVertical("GameViewBackground",GUILayout.MaxWidth(kListWidth));
 		SearchField();
+		mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1], GUILayout.ExpandWidth(true));
 		bool odd = true;
 		if(mData != null)
 		{
@@ -81,7 +81,7 @@ public class UBSEditorWindow : EditorWindow {
 			}
 		}
 		GUILayout.EndScrollView();
-
+		GUILayout.EndVertical();
 		GUILayout.BeginVertical(GUILayout.Width(32));
 		{
 			if(GUILayout.Button(new GUIContent("+","Add"),UBS.Styles.toolButton))

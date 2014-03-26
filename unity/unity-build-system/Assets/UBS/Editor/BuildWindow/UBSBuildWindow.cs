@@ -156,10 +156,10 @@ namespace UBS
 			GUI.EndGroup();
 
 			fTop += kHeight;
-			GUILayout.BeginArea(new Rect(fLeft,fTop, 300, kHeight));
+			GUILayout.BeginArea(new Rect(fLeft,fTop, 300, kHeight * 3));
 			if (UBSProcess.BuildBehavior == UBSBuildBehavior.manual && mProcess.CurrentState == UBSState.building) 
 			{
-				GUILayout.BeginVertical("Action");
+				GUILayout.BeginVertical("Box");
 				GUILayout.Label ("Buildpipeline not available in free Unity");
 				if (GUILayout.Button(string.Format ("Build {0} manually", mProcess.CurrentProcessName)))
 				{

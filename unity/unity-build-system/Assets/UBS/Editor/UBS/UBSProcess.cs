@@ -194,7 +194,7 @@ namespace UBS
 
 		public void Cancel()
 		{
-			mCurrentState = UBSState.invalid;
+			mCurrentState = UBSState.aborted;
 			mPreStepWalker.Clear();
 			mPostStepWalker.Clear();
 			Save();
@@ -225,7 +225,9 @@ namespace UBS
 		void DoSetup()
 		{
 			mCurrentBuildConfiguration = new BuildConfiguration();
-			CheckOutputPath(CurrentProcess);
+			if(!CheckOutputPath(CurrentProcess))
+				return;
+
 			EditorUserBuildSettings.SwitchActiveBuildTarget(CurrentProcess.mPlatform);
 			
 			var scenes = new EditorBuildSettingsScene[CurrentProcess.mScenes.Count];
@@ -344,7 +346,7 @@ namespace UBS
 			}
 		}
 
-		void CheckOutputPath(BuildProcess pProcess)
+		bool CheckOutputPath(BuildProcess pProcess)
 		{
 			string error = "";
 			
@@ -352,7 +354,7 @@ namespace UBS
 			if(pProcess.mOutputPath.Length == 0) {
 				error = "Please provide an output path.";
 				Cancel(error);
-				return;
+				return false;
 			}
 			
 			try
@@ -374,7 +376,10 @@ namespace UBS
 			if(error.Length > 0)
 			{
 				Cancel(error);
+				return false;
 			}
+			return true;
+
 		}
 	}
 
@@ -390,7 +395,8 @@ namespace UBS
 		preSteps,
 		building,
 		postSteps,
-		done
+		done,
+		aborted
 	}
 
 
