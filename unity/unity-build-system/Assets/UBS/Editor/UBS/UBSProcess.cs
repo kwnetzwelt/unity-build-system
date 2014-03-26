@@ -456,6 +456,7 @@ namespace UBS
 			mSteps[mIndex].InferType();
 			
 			mCurrentStep = System.Activator.CreateInstance( mSteps[mIndex].mType ) as IBuildStepProvider;
+			mConfiguration.SetParams( mSteps[mIndex].mParams );
 			mCurrentStep.BuildStepStart(mConfiguration);
 			
 		}

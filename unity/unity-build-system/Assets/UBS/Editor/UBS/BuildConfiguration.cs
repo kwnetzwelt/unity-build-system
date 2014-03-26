@@ -26,6 +26,20 @@ namespace UBS
 			ProjectDirectory = di.Parent.FullName;
 		}
 
+		/// <summary>
+		/// Params can be set in the Build Collection editor for each build step. Your build step can read the params from the collection. 
+		/// </summary>
+		/// <value>The parameters.</value>
+		public string Params {
+			get;
+			private set;
+		}
+
+		internal void SetParams(string pParams)
+		{
+			Params = pParams;
+		}
+
 		[SerializeField]
 		string mResourcesDirectory;
 

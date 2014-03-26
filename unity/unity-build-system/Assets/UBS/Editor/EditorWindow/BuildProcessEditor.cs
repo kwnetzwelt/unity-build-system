@@ -286,16 +286,21 @@ namespace UBS
 				selected = filtered.FindIndex( (obj) => {return obj.mType == pStep.mType;}) +1;
 			}
 			GUIContent[] displayedProviders = GetBuildStepProvidersFiltered();
+			Rect r1 = new Rect(pRect.x, pRect.y, pRect.width - 200, pRect.height);
+			Rect r2 = new Rect(r1.x + r1.width, pRect.y, 60, pRect.height);
+			Rect r3 = new Rect(r2.x + r2.width, pRect.y, 140, pRect.height);
 
-			int idx = EditorGUI.Popup(pRect, new GUIContent("Class"), selected, displayedProviders);
+			int idx = EditorGUI.Popup(r1, new GUIContent("Class"), selected, displayedProviders);
 
-
+			//r.x += r.width;
+			GUI.Label(r2, "Parameters", EditorStyles.miniLabel);
+			
+			//r.x += r.width;
+			pStep.mParams = EditorGUI.TextField(r3, pStep.mParams );
 
 			if(idx != selected)
 			{
 				Undo.RecordObject(mCollection, "Set Build Step Class Reference");
-
-
 
 				if(idx == 0)
 					pStep.SetType(null);

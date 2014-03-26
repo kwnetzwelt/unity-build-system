@@ -16,8 +16,9 @@ namespace UBS
 		{
 			mType = pOther.mType;
 			mTypeName = pOther.mTypeName;
+			mParams = pOther.mParams;
 		}
-
+		public string mParams = "";
 		public string mTypeName = "";
 
 		public System.Type mType;
