@@ -35,7 +35,11 @@ namespace UBS
 			switch( pTarget )
 			{
 			case BuildTarget.Android: return BuildTargetGroup.Android;
+#if UNITY_4_6
+			case BuildTarget.BlackBerry: return BuildTargetGroup.BlackBerry;
+#else
 			case BuildTarget.BB10: return BuildTargetGroup.BB10;
+#endif
 			case BuildTarget.FlashPlayer: return BuildTargetGroup.FlashPlayer;
 			case BuildTarget.iPhone: return BuildTargetGroup.iPhone;
 			case BuildTarget.MetroPlayer: return BuildTargetGroup.Metro;
@@ -56,8 +60,10 @@ namespace UBS
 			case BuildTarget.WebPlayer:
 			case BuildTarget.WebPlayerStreamed:
 				return BuildTargetGroup.WebPlayer;
+#if !UNITY_4_6
 			case BuildTarget.Wii:
 				return BuildTargetGroup.Wii;
+#endif
 			case BuildTarget.WP8Player:
 				return BuildTargetGroup.WP8;
 			case BuildTarget.XBOX360:

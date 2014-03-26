@@ -396,10 +396,13 @@ namespace UBS
 				
 			case BuildTarget.MetroPlayer:
 				return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
-				
+#if UNITY_4_6
+			case BuildTarget.BlackBerry:
+#else
 			case BuildTarget.BB10:
+#endif
 				return EditorUtility.SaveFolderPanel(kTitle, path,"BlackBerryDeployment");
-				
+			
 			case BuildTarget.NaCl:
 				return EditorUtility.SaveFolderPanel(kTitle, path,"NativeClientDeployment");
 				
