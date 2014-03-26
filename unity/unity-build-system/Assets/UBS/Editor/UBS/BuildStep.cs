@@ -7,6 +7,16 @@ namespace UBS
 	[Serializable]
 	public class BuildStep {
 
+		public BuildStep()
+		{
+
+		}
+
+		public BuildStep(BuildStep pOther)
+		{
+			mType = pOther.mType;
+			mTypeName = pOther.mTypeName;
+		}
 
 		public string mTypeName = "";
 

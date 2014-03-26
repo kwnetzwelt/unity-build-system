@@ -84,18 +84,25 @@ public class UBSEditorWindow : EditorWindow {
 
 		GUILayout.BeginVertical(GUILayout.Width(32));
 		{
-			if(GUILayout.Button("+",UBS.Styles.toolButton))
+			if(GUILayout.Button(new GUIContent("+","Add"),UBS.Styles.toolButton))
 			{
 				var el = new BuildProcess();
 				Undo.RecordObject(mData, "Add Build Process");
 				mData.mProcesses.Add(el);
 			}
 			GUI.enabled = mSelectedBuildProcess != null;
-			if(GUILayout.Button("-",UBS.Styles.toolButton))
+			if(GUILayout.Button(new GUIContent("-","Remove"),UBS.Styles.toolButton))
 			{
 				Undo.RecordObject(mData, "Add Build Process");
 				mData.mProcesses.Remove(mSelectedBuildProcess);
 			}
+			if(GUILayout.Button(new GUIContent("#","Duplicate"),UBS.Styles.toolButton))
+			{
+				Undo.RecordObject(mData, "Duplicate Build Process");
+				BuildProcess bp = new BuildProcess(mSelectedBuildProcess);
+				mData.mProcesses.Add(bp);
+			}
+
 			GUI.enabled = true;
 		}
 		GUILayout.EndVertical();

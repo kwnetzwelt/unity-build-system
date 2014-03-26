@@ -7,6 +7,33 @@ using System;
 namespace UBS {
 	[Serializable]
 	public class BuildProcess {
+
+		public BuildProcess()
+		{
+
+		}
+		public BuildProcess(BuildProcess pOther)
+		{
+			foreach(var bs in pOther.mPreBuildSteps)
+			{
+				mPreBuildSteps.Add( new BuildStep(bs) );
+			}
+
+			
+			foreach(var bs in pOther.mPostBuildSteps)
+			{
+				mPostBuildSteps.Add( new BuildStep(bs) );
+			}
+
+			mName = pOther.mName;
+			mOutputPath = pOther.mOutputPath;
+			mPlatform = pOther.mPlatform;
+			mBuildOptions = pOther.mBuildOptions;
+			mSelected = false;
+			mScenes = new List<string>( pOther.mScenes.ToArray() );
+			mSceneAssets = new List<UnityEngine.Object>( pOther.mSceneAssets.ToArray() );
+		}
+
 		#region data
 		public List<UBS.BuildStep> mPreBuildSteps = new List<BuildStep>();
 
