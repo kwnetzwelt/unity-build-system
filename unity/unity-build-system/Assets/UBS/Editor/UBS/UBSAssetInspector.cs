@@ -49,6 +49,32 @@ public class UBSAssetInspector : Editor
 					selectedCount += e.mSelected? 1 : 0;
 				}
 				GUILayout.EndHorizontal();
+				if(Event.current.type == EventType.MouseDown && Event.current.button == 1)
+				{
+					Rect r = GUILayoutUtility.GetLastRect();
+					if(r.Contains(Event.current.mousePosition))
+					{
+						GenericMenu menu = new GenericMenu();
+						menu.AddItem(new GUIContent("Open target folder"), false, () => {
+
+							DirectoryInfo di = new DirectoryInfo( Helpers.GetAbsolutePathRelativeToProject( e.mOutputPath ) );
+
+							string path;
+							if((di.Attributes & FileAttributes.Directory) != 0)
+								path = di.FullName;
+							else
+								path = di.Parent.FullName;
+
+							OpenInFileBrowser( path );
+						});
+						menu.AddSeparator("");
+						menu.AddItem(new GUIContent("Build and run"), false, () => { UBSBuildWindow.Init( data, e, true); } );
+						menu.AddItem(new GUIContent("Build"), false, () => { UBSBuildWindow.Init( data, e, false); } );
+
+						menu.ShowAsContext();
+					}
+
+				}
 				odd = !odd;
 			}
 		}
@@ -103,5 +129,86 @@ public class UBSAssetInspector : Editor
 		AssetDatabase.SaveAssets();
 		Selection.activeObject = asset;
 	}
+
+
+
+	
+	#region open folder
+	#if UNITY_EDITOR
+
+	//
+	// source: http://answers.unity3d.com/questions/43422/how-to-implement-show-in-explorer.html
+	//
+
+	static void OpenInMacFileBrowser(string path)
+	{
+		bool openInsidesOfFolder = false;
+		
+		// try mac
+		string macPath = path.Replace("\\", "/"); // mac finder doesn't like backward slashes
+		
+		if (Directory.Exists(macPath)) // if path requested is a folder, automatically open insides of that folder
+		{
+			openInsidesOfFolder = true;
+		}
+		
+		//Debug.Log("macPath: " + macPath);
+		//Debug.Log("openInsidesOfFolder: " + openInsidesOfFolder);
+		
+		if (!macPath.StartsWith("\""))
+		{
+			macPath = "\"" + macPath;
+		}
+		if (!macPath.EndsWith("\""))
+		{
+			macPath = macPath + "\"";
+		}
+		string arguments = (openInsidesOfFolder ? "" : "-R ") + macPath;
+		//Debug.Log("arguments: " + arguments);
+		try
+		{
+			System.Diagnostics.Process.Start("open", arguments);
+		}
+		catch(System.ComponentModel.Win32Exception e)
+		{
+			// tried to open mac finder in windows
+			// just silently skip error
+			// we currently have no platform define for the current OS we are in, so we resort to this
+			e.HelpLink = ""; // do anything with this variable to silence warning about not using it
+		}
+	}
+	
+	static void OpenInWinFileBrowser(string path)
+	{
+		bool openInsidesOfFolder = false;
+		
+		// try windows
+		string winPath = path.Replace("/", "\\"); // windows explorer doesn't like forward slashes
+		
+		if (Directory.Exists(winPath)) // if path requested is a folder, automatically open insides of that folder
+		{
+			openInsidesOfFolder = true;
+		}
+		try
+		{
+			System.Diagnostics.Process.Start("explorer.exe", (openInsidesOfFolder ? "/root," : "/select,") + winPath);
+		}
+		catch(System.ComponentModel.Win32Exception e)
+		{
+			// tried to open win explorer in mac
+			// just silently skip error
+			// we currently have no platform define for the current OS we are in, so we resort to this
+			e.HelpLink = ""; // do anything with this variable to silence warning about not using it
+		}
+	}
+	
+	public static void OpenInFileBrowser(string path)
+	{
+		OpenInWinFileBrowser(path);
+		OpenInMacFileBrowser(path);
+	}
+	#endif
+	#endregion
+
 }
 

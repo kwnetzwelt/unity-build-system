@@ -25,7 +25,14 @@ namespace UBS
 
 		[NonSerialized]
 		bool mEmpty = false;
-
+		public static void Init(BuildCollection pData, BuildProcess pProcess, bool pBuildAndRun = false)
+		{
+			foreach(var p in pData.mProcesses)
+			{
+				p.mSelected = (p == pProcess);
+			}
+			Init(pData, pBuildAndRun);
+		}
 		public static void Init(BuildCollection pData, bool pBuildAndRun = false)
 		{
 			var window = EditorWindow.GetWindow<UBSBuildWindow>(true,"Build",true);

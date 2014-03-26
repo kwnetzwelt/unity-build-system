@@ -187,11 +187,9 @@ namespace UBS
 		{
 			if(pMessage.Length > 0)
 			{
-				if(EditorUtility.DisplayDialog("UBS: Error occured!", pMessage, "Ok - my fault."))
-					Cancel();
+				EditorUtility.DisplayDialog("UBS: Error occured!", pMessage, "Ok - my fault.");
 			}
-			else 
-				Cancel();
+			Cancel();
 		}
 
 		public void Cancel()
