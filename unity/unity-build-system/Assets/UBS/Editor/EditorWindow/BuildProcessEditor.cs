@@ -83,7 +83,7 @@ namespace UBS
 			//
 			// create list of available Build SteP Providers
 			//
-			mBuildStepProviders = Helpers.FindClassesImplementingInterface(typeof(IBuildStepProvider));
+			mBuildStepProviders = UBS.Helpers.FindClassesImplementingInterface(typeof(IBuildStepProvider));
 #if UBS_DEBUG
 			Debug.Log("Found " + mBuildStepProviders.Count + " BuildStepProviders");
 #endif
@@ -380,7 +380,7 @@ namespace UBS
 				EditorGUILayout.LabelField("Output Path", mEditedBuildProcess.mOutputPath);
 				if(GUILayout.Button("...", GUILayout.Width(40)))
 				{
-					mEditedBuildProcess.mOutputPath = Helpers.GetProjectRelativePath(OpenPlatformSpecificOutputSelector());
+					mEditedBuildProcess.mOutputPath = UBS.Helpers.GetProjectRelativePath(OpenPlatformSpecificOutputSelector());
 				}
 			}
 			GUILayout.EndHorizontal();
@@ -388,7 +388,7 @@ namespace UBS
 		string OpenPlatformSpecificOutputSelector()
 		{
 			const string kTitle = "Select Output Path";
-			string path = Helpers.GetAbsolutePathRelativeToProject (mEditedBuildProcess.mOutputPath);
+			string path = UBS.Helpers.GetAbsolutePathRelativeToProject (mEditedBuildProcess.mOutputPath);
 
 			switch(mEditedBuildProcess.mPlatform)
 			{

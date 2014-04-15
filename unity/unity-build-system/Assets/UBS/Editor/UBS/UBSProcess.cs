@@ -309,7 +309,7 @@ namespace UBS
 			if (BuildBehavior == UBSBuildBehavior.auto)
 				return;
 
-			buildPath = Helpers.GetProjectRelativePath (buildPath);
+			buildPath = UBS.Helpers.GetProjectRelativePath (buildPath);
 			UBSProcess p = UBSProcess.LoadUBSProcess ();
 			if (p.mCurrentState == UBSState.building && target == p.CurrentProcess.mPlatform)
 			{

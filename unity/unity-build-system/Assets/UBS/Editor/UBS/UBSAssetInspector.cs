@@ -57,7 +57,7 @@ public class UBSAssetInspector : Editor
 						GenericMenu menu = new GenericMenu();
 						menu.AddItem(new GUIContent("Open target folder"), false, () => {
 
-							DirectoryInfo di = new DirectoryInfo( Helpers.GetAbsolutePathRelativeToProject( e.mOutputPath ) );
+							DirectoryInfo di = new DirectoryInfo( UBS.Helpers.GetAbsolutePathRelativeToProject( e.mOutputPath ) );
 
 							string path;
 							if((di.Attributes & FileAttributes.Directory) != 0)
