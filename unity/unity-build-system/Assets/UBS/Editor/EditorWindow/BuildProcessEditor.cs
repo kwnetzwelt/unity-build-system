@@ -401,7 +401,7 @@ namespace UBS
 				
 			case BuildTarget.MetroPlayer:
 				return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
-#if UNITY_4_6
+#if UNITY_4_5
 			case BuildTarget.BlackBerry:
 #else
 			case BuildTarget.BB10:
@@ -419,14 +419,16 @@ namespace UBS
 			case BuildTarget.StandaloneOSXIntel64:
 			case BuildTarget.StandaloneOSXIntel:
 				
+				return EditorUtility.SaveFolderPanel(kTitle, path, "StandaloneDeployment");
+
 			case BuildTarget.StandaloneLinux:
 			case BuildTarget.StandaloneLinux64:
 			case BuildTarget.StandaloneLinuxUniversal:
 				
 			case BuildTarget.StandaloneWindows:
 			case BuildTarget.StandaloneWindows64:
-				return EditorUtility.SaveFolderPanel(kTitle, path, "StandaloneDeployment");
 				
+				return EditorUtility.SaveFilePanel(kTitle, path, "StandaloneDeployment", "exe");
 			}
 			return "";
 		}
