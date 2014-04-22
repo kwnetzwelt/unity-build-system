@@ -55,9 +55,11 @@ public class UBSAssetInspector : Editor
 					if(r.Contains(Event.current.mousePosition))
 					{
 						GenericMenu menu = new GenericMenu();
+						menu.AddItem(new GUIContent(e.mName),false, null);
+						menu.AddSeparator("");
 						menu.AddItem(new GUIContent("Open target folder"), false, () => {
 
-							DirectoryInfo di = new DirectoryInfo( Helpers.GetAbsolutePathRelativeToProject( e.mOutputPath ) );
+							DirectoryInfo di = new DirectoryInfo( UBS.Helpers.GetAbsolutePathRelativeToProject( e.mOutputPath ) );
 
 							string path;
 							if((di.Attributes & FileAttributes.Directory) != 0)
@@ -68,8 +70,8 @@ public class UBSAssetInspector : Editor
 							OpenInFileBrowser( path );
 						});
 						menu.AddSeparator("");
-						menu.AddItem(new GUIContent("Build and run"), false, () => { UBSBuildWindow.Init( data, e, true); } );
-						menu.AddItem(new GUIContent("Build"), false, () => { UBSBuildWindow.Init( data, e, false); } );
+						menu.AddItem(new GUIContent("Build and run"), false, BuildAndRun, e );
+						menu.AddItem(new GUIContent("Build"), false, Build, e );
 
 						menu.ShowAsContext();
 					}
@@ -103,6 +105,17 @@ public class UBSAssetInspector : Editor
 
 		}
 		GUILayout.EndHorizontal();
+	}
+
+	void Build(object pProcess)
+	{
+		var data = target as BuildCollection;
+		UBSBuildWindow.Init( data, pProcess as BuildProcess, false);
+	}
+	void BuildAndRun(object pProcess)
+	{
+		var data = target as BuildCollection;
+		UBSBuildWindow.Init( data, pProcess as BuildProcess, true);
 	}
 
 	[MenuItem("Assets/Create/UBS Build Collection")]
