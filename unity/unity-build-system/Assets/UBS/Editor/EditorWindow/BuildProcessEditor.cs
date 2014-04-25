@@ -418,8 +418,28 @@ namespace UBS
 			case BuildTarget.StandaloneOSXUniversal:
 			case BuildTarget.StandaloneOSXIntel64:
 			case BuildTarget.StandaloneOSXIntel:
-				
-				return EditorUtility.SaveFolderPanel(kTitle, path, "StandaloneDeployment");
+
+				//
+				// special handle .app folders for OSX
+				//
+				string suffix = "/" + PlayerSettings.productName + ".app";
+
+				if(path.EndsWith(suffix))
+					path = path.Substring(0,path.Length - 4);
+				System.IO.DirectoryInfo fi = new System.IO.DirectoryInfo(path);
+				Debug.Log(fi.Parent.ToString());
+
+				string outString = EditorUtility.SaveFolderPanel(kTitle, fi.Parent.ToString(), "");
+
+				if(!string.IsNullOrEmpty( outString ))
+				{
+					if(!outString.EndsWith(suffix))
+					{
+						outString = outString + suffix;
+					}
+				}
+
+				return outString;
 
 			case BuildTarget.StandaloneLinux:
 			case BuildTarget.StandaloneLinux64:
