@@ -377,7 +377,7 @@ namespace UBS
 		{
 			GUILayout.BeginHorizontal();
 			{
-				EditorGUILayout.LabelField("Output Path", mEditedBuildProcess.mOutputPath);
+				mEditedBuildProcess.mOutputPath = EditorGUILayout.TextField("Output Path", mEditedBuildProcess.mOutputPath);
 				if(GUILayout.Button("...", GUILayout.Width(40)))
 				{
 					mEditedBuildProcess.mOutputPath = UBS.Helpers.GetProjectRelativePath(OpenPlatformSpecificOutputSelector());
