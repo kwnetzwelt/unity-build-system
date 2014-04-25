@@ -170,15 +170,22 @@ namespace UBS
 			
 			UBSProcess process = LoadUBSProcess();
 			
-			
-			while(true)
+			try
 			{
-				process.MoveNext();
-				Debug.Log("Wait..");
-				if(process.CurrentState == UBSState.done)
+				while(true)
 				{
-					return;
+					process.MoveNext();
+					Debug.Log("Wait..");
+					if(process.CurrentState == UBSState.done)
+					{
+						return;
+					}
 				}
+			}catch(Exception pException)
+			{
+				Debug.LogError("Build failed due to exception: ");
+				Debug.LogException(pException);
+				EditorApplication.Exit(1);
 			}
 		}
 
