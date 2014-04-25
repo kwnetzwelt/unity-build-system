@@ -141,6 +141,48 @@ namespace UBS
 			EditorPrefs.GetString(kProcessPathKey, kProcessPath);
 		}
 
+		#region command line options
+
+		public static void BuildFromCommandLine()
+		{
+			string[] arguments = System.Environment.GetCommandLineArgs();
+			string argument = "-collection=";
+			string collectionPath = "";
+			foreach(var s in arguments)
+			{
+				if(s.StartsWith("-collection="))
+					collectionPath = s.Substring(argument.Length);
+				
+			}
+			if(collectionPath == null)
+			{
+				Debug.LogError("NO BUILD COLLECTION SET");
+				return;
+			}
+
+			Debug.Log("Loading Build Collection: " + collectionPath);
+
+			// Load Build Collection
+			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
+			// Run Create Command
+			Create(collection, false);
+			
+			
+			UBSProcess process = LoadUBSProcess();
+			
+			
+			while(true)
+			{
+				process.MoveNext();
+				Debug.Log("Wait..");
+				if(process.CurrentState == UBSState.done)
+				{
+					return;
+				}
+			}
+		}
+
+#endregion
 
 		public static void Create(BuildCollection pCollection, bool pBuildAndRun)
 		{
@@ -366,7 +408,8 @@ namespace UBS
 					dir = new DirectoryInfo(Path.GetDirectoryName(UBS.Helpers.GetAbsolutePathRelativeToProject( pProcess.mOutputPath )));
 				else
 					dir = new DirectoryInfo(pProcess.mOutputPath);
-				
+				dir.Create();
+
 				if(!dir.Exists)
 					error = "The given output path is invalid.";
 			}
