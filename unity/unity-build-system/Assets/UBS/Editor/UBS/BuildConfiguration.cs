@@ -87,6 +87,19 @@ namespace UBS
 			UBSProcess ubs = UBSProcess.LoadUBSProcess();
 			ubs.Cancel(pMessage);
 		}
+
+		/// <summary>
+		/// Returns an instance of a class you define, which has the start up parameters set in its properties. 
+		/// The class should derive from ProgramOptions and have atleast on OptionAttribute on one of its properties. 
+		/// </summary>
+		/// <returns>The program options.</returns>
+		/// <typeparam name="T">The 1st type parameter.</typeparam>
+		public static T GetProgramOptions<T>() where T : ProgramOptions
+		{
+			string[] arguments = System.Environment.GetCommandLineArgs();
+			ProgramOptions po = ProgramOptions.CreateInstance<T>(arguments);
+			return po as T;
+		}
 	}
 }
 
