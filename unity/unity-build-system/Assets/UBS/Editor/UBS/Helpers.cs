@@ -7,7 +7,20 @@ namespace UBS
 {
 	public class Helpers
 	{
-
+		public static Process ShellProcess(string pFilename, string pArgs)
+		{
+			Process p = new Process();
+			p.StartInfo.Arguments = pArgs;
+			p.StartInfo.CreateNoWindow = true;
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardInput = true;
+			p.StartInfo.RedirectStandardError = true;
+			p.StartInfo.FileName = pFilename;
+			p.Start();
+			UnityEngine.Debug.Log("Executed shell: " + pFilename);
+			return p;
+		}
 
 		public static List<System.Type> FindClassesImplementingInterface( System.Type pInterface)
 		{
