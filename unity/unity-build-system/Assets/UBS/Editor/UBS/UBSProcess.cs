@@ -300,6 +300,10 @@ namespace UBS
 		void DoPreSteps()
 		{
 			mPreStepWalker.MoveNext();
+
+			if(mCurrentState == UBSState.aborted)
+				return;
+
 			if(mPreStepWalker.IsDone())
 			{
 				mCurrentState = UBSState.building;
