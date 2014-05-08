@@ -381,6 +381,9 @@ namespace UBS
 		void DoPostSteps()
 		{
 			mPostStepWalker.MoveNext();
+			
+			if(mCurrentState == UBSState.aborted)
+				return;
 
 			if(mPostStepWalker.IsDone())
 			{
