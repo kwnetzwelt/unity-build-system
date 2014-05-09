@@ -11,21 +11,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3437d7e12a8040d1ac947bd9848d962, type: 3}
   m_Name: UBSProcess
   m_EditorClassIdentifier: 
-  mCollection: {fileID: 11400000, guid: bdb358dc8edd049d88a59134a9f5c3d9, type: 2}
+  mCurrentBuildConfiguration:
+    mResourcesDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets\Resources
+    mAssetsDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets
+    mProjectDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system
+  mBuildAndRun: 0
+  mCollection: {fileID: 11400000, guid: d6929bd36d4ceaa48a05fb35d7c20688, type: 2}
   mSelectedProcesses:
   - mPreBuildSteps:
-    - mTypeName: UpdateVersionCode
-    - mTypeName: MyCustomStep
+    - mParams: 
+      mTypeName: IncreaseVersionNumber
     mPostBuildSteps: []
     mName: Build Step
-    mOutputPath: /Users/marcel/Desktop/builds/android.apk
-    mPlatform: 13
+    mOutputPath: ../build/unity-build-system.app
+    mPlatform: 2
     mBuildOptions: 0
     mSelected: 1
     mScenes:
     - Assets/UBS/Demo/scene1.unity
     mSceneAssets:
     - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
-  mCurrentBuildProcessIndex: 1
+  mCurrentBuildProcessIndex: 0
   mCurrent: 0
-  mCurrentState: 5
+  mCurrentState: 3
+  mPreStepWalker:
+    mIndex: 1
+    mSteps:
+    - mParams: 
+      mTypeName: IncreaseVersionNumber
+    mConfiguration:
+      mResourcesDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets\Resources
+      mAssetsDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets
+      mProjectDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system
+  mPostStepWalker:
+    mIndex: 0
+    mSteps: []
+    mConfiguration:
+      mResourcesDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets\Resources
+      mAssetsDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets
+      mProjectDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system

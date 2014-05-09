@@ -21,6 +21,7 @@ namespace UBS
 			UnityEditor.PlayerSettings.Android.bundleVersionCode = version.revision;
 			UnityEditor.PlayerSettings.bundleVersion = version.ToString();
 			UnityEditor.PlayerSettings.Metro.packageVersion = version;
+
 		}
 
 		public BuildVersion version = null;
