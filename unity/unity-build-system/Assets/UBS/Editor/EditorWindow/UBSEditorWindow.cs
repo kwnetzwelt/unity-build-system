@@ -163,24 +163,31 @@ public class UBSEditorWindow : EditorWindow {
 
 		int v;
 
-		v = EditorGUILayout.IntField( mData.version.major, GUILayout.Width(20));
+		v = EditorGUILayout.IntField( mData.version.major, GUILayout.Width(50));
 		if(v != mData.version.major)
 		{
 			mData.version.major = v;
 			mData.SaveVersion();
 		}
 
-		v = EditorGUILayout.IntField( mData.version.minor, GUILayout.Width(20));
+		v = EditorGUILayout.IntField( mData.version.minor, GUILayout.Width(50));
 		if(v != mData.version.minor)
 		{
 			mData.version.minor = v;
 			mData.SaveVersion();
 		}
 
-		v = EditorGUILayout.IntField( mData.version.build, GUILayout.Width(20));
+		v = EditorGUILayout.IntField( mData.version.build, GUILayout.Width(50));
 		if(v != mData.version.build)
 		{
 			mData.version.build = v;
+			mData.SaveVersion();
+		}
+
+		BuildVersion.BuildType type = (BuildVersion.BuildType)EditorGUILayout.EnumPopup( mData.version.type, GUILayout.Width(50));
+		if(type != mData.version.type)
+		{
+			mData.version.type = type;
 			mData.SaveVersion();
 		}
 

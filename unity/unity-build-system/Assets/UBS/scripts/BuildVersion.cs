@@ -2,16 +2,26 @@ using System;
 using UnityEngine;
 using System.IO;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace UBS
 {
 	public class BuildVersion
 	{
+		public enum BuildType
+		{
+			beta,
+			final
+		}
 		const string kFileName = "Assets/Resources/buildVersion.txt";
 		public int major = 1;
 		public int minor = 0;
 		public int build = 0;
 		public int revision = 0;
-		
+		public BuildType type = BuildType.beta;
+
 		public void Increase()
 		{
 			build++;
@@ -50,6 +60,9 @@ namespace UBS
 				fi.Directory.Create();
 			}
 			File.WriteAllText( kFileName, content);
+			#if UNITY_EDITOR
+			AssetDatabase.ImportAsset(kFileName);
+			#endif
 		}
 
 		#endif
@@ -68,6 +81,10 @@ namespace UBS
 		public override string ToString ()
 		{
 			return ((System.Version)this).ToString();
+		}
+		public string ToLabelString()
+		{
+			return String.Format("{0}.{1}.{2}{3}{4}", major, minor, build, (type == BuildType.beta)? "b" : "f", revision);
 		}
 	}
 }
