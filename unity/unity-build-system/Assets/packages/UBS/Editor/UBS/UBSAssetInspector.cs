@@ -89,12 +89,13 @@ public class UBSAssetInspector : Editor
 				UBSEditorWindow.Init(data);
 			}
 			GUILayout.Space(5);
+			GUI.enabled = selectedCount >= 1;
+
 			if(GUILayout.Button("Run selected builds"))
 			{
 				UBSBuildWindow.Init( data );
 			}
 			GUILayout.Space(5);
-
 
 			GUI.enabled = selectedCount == 1;
 			if(GUILayout.Button("Build and run"))
