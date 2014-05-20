@@ -340,12 +340,14 @@ namespace UBS
 			if(mBuildAndRun)
 				bo = bo | BuildOptions.AutoRunPlayer;
 
-			BuildPipeline.BuildPlayer(
-				scenes.ToArray(),
-				CurrentProcess.mOutputPath,
-				CurrentProcess.mPlatform,
-				bo );
-
+			if(!CurrentProcess.mPretend)
+			{
+				BuildPipeline.BuildPlayer(
+					scenes.ToArray(),
+					CurrentProcess.mOutputPath,
+					CurrentProcess.mPlatform,
+					bo );
+			}
 
 			OnBuildDone ();
 		}

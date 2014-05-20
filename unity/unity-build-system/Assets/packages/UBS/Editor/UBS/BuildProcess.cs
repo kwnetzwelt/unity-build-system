@@ -43,7 +43,13 @@ namespace UBS {
 
 		public string mOutputPath = "";
 
+		/// <summary>
+		/// If pretend mode is on, the process will not actually trigger a build. It will do everything else though. 
+		/// </summary>
+		public bool mPretend = false;
+
 		public BuildTarget mPlatform;
+
 		public BuildOptions mBuildOptions;
 
 

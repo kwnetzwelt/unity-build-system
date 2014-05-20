@@ -172,6 +172,8 @@ namespace UBS
 
 			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup( "Platform", mEditedBuildProcess.mPlatform );
 
+			mEditedBuildProcess.mPretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build","Will not trigger a unity build, but run everything else. "), mEditedBuildProcess.mPretend);
+
 			GUILayout.Space(5);
 			mShowBuildOptions = EditorGUILayout.Foldout( mShowBuildOptions, "Build Options");
 			GUILayout.BeginHorizontal();
