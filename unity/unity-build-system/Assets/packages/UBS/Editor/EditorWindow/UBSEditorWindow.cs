@@ -102,7 +102,19 @@ public class UBSEditorWindow : EditorWindow {
 				BuildProcess bp = new BuildProcess(mSelectedBuildProcess);
 				mData.mProcesses.Add(bp);
 			}
-
+			if(GUILayout.Button(Styles.upTexture,UBS.Styles.toolButton))
+			{
+				if(mSelectedBuildProcess != null)
+				{
+					int idx = mData.mProcesses.IndexOf( mSelectedBuildProcess );
+					if(idx > 0)
+					{
+						Undo.RecordObject(mData, "Sort Build Processes");
+						mData.mProcesses.Remove(mSelectedBuildProcess);
+						mData.mProcesses.Insert(idx-1,mSelectedBuildProcess);
+					}
+				}
+			}
 			GUI.enabled = true;
 		}
 		GUILayout.EndVertical();
