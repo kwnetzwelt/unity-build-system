@@ -39,7 +39,7 @@ namespace UBS {
 
 		public List<UBS.BuildStep> mPostBuildSteps = new List<BuildStep>();
 
-		public string mName = "Build Step";
+		public string mName = "Build Process";
 
 		public string mOutputPath = "";
 
