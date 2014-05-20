@@ -74,10 +74,6 @@ namespace UBS
 			case BuildTarget.WebPlayer:
 			case BuildTarget.WebPlayerStreamed:
 				return BuildTargetGroup.WebPlayer;
-#if !UNITY_4_5
-			case BuildTarget.Wii:
-				return BuildTargetGroup.Wii;
-#endif
 			case BuildTarget.WP8Player:
 				return BuildTargetGroup.WP8;
 			case BuildTarget.XBOX360:

@@ -30,7 +30,7 @@ namespace UBS
 
 		public static BuildVersion Load()
 		{
-	#if UNITY_EDITOR
+	#if UNITY_EDITOR && !UNITY_WEBPLAYER
 			if(!Application.isPlaying)
 				return LoadEditor();
 	#endif
@@ -39,7 +39,7 @@ namespace UBS
 			return Serializer.Load<BuildVersion>(res.text);
 		}
 
-		#if UNITY_EDITOR
+		#if UNITY_EDITOR && !UNITY_WEBPLAYER
 		static BuildVersion LoadEditor()
 		{
 			string content = null;
@@ -64,7 +64,11 @@ namespace UBS
 			AssetDatabase.ImportAsset(kFileName);
 			#endif
 		}
-
+		#else
+		public void Save()
+		{
+			throw new NotImplementedException("There is no implementation for saving files on webplayer. ");
+		}
 		#endif
 
 		#if !UNITY_EDITOR
