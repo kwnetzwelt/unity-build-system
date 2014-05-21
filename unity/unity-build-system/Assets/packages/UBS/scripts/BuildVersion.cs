@@ -71,13 +71,6 @@ namespace UBS
 		}
 		#endif
 
-		#if !UNITY_EDITOR
-		public void Save()
-		{
-			
-		}
-		#endif
-
 		public static implicit operator System.Version(BuildVersion pVersion)
 		{
 			return new System.Version(pVersion.major, pVersion.minor, pVersion.build, pVersion.revision);
