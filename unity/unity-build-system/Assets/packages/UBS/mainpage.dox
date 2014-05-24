@@ -19,7 +19,7 @@ Some quick links:
 
 \section why Why use it?
 
-If you have to deploy your android game to multiple stores or for multiple platform variations (Ouya, Phone, Tablet) Unity quickly runs out of options. To ease and automate the configuration needed for each platform, this build system was created. 
+If you have to deploy your game to multiple stores or to multiple platform variations (Ouya, Phone, Tablet) Unity quickly runs out of options. To ease and automate the configuration needed for each platform, this build system was created. 
 
 There are several great features, which I will explain. 
 
