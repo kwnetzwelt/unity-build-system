@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace UBS
 {
-	public class UBSBuildWindow : EditorWindow
+	public class UBSBuildWindow : UBSWindowBase
 	{
 		const float kHeight = 25;
 
@@ -94,9 +94,9 @@ namespace UBS
 		{
 			EditorApplication.update -= OnUpdate;
 		}
-		void OnGUI()
+		protected override void OnGUI()
 		{
-
+			base.OnGUI ();
 
 			if(!mInit)
 			{

@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 using UBS;
 
-public class UBSEditorWindow : EditorWindow {
+public class UBSEditorWindow : UBSWindowBase {
 	#region window creation
 	const int kMinWidth = 600;
 	const int kMinHeight = 400;
@@ -45,8 +45,10 @@ public class UBSEditorWindow : EditorWindow {
 	{
 		Initialize();
 	}
-	void OnGUI()
+	protected override void OnGUI()
 	{
+		base.OnGUI ();
+
 		Initialize();
 		if(!mInitialized)
 			return;
@@ -122,7 +124,7 @@ public class UBSEditorWindow : EditorWindow {
 		//
 		// selected Build Process
 		//
-		mScrollPositions[2] = GUILayout.BeginScrollView(mScrollPositions[2]);
+		mScrollPositions[2] = GUILayout.BeginScrollView(mScrollPositions[2],UBS.Styles.buildProcessEditorBackground);
 
 		mEditor.OnGUI(mSelectedBuildProcess, mData);
 

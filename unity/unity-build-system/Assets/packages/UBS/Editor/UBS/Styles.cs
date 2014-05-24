@@ -79,6 +79,23 @@ namespace UBS
 			}
 		}
 
+		static GUIStyle mBuildProcessEditorBackground;
+		public static GUIStyle buildProcessEditorBackground
+		{
+			get
+			{
+				if(mBuildProcessEditorBackground == null)
+				{
+					mBuildProcessEditorBackground = new GUIStyle();
+					if(EditorGUIUtility.isProSkin)
+						mBuildProcessEditorBackground.normal.background = GetTexture(0x444444aa);
+					else
+						mBuildProcessEditorBackground.normal.background = GetTexture(0xeeeeeeaa);
+				}
+				return mBuildProcessEditorBackground;
+			}
+		}
+
 		static GUIStyle mNormalValue;
 		public static GUIStyle normalValue
 		{
