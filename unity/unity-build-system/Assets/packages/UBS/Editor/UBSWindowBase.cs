@@ -13,7 +13,7 @@ namespace UBS
 			{
 				if(mBigLogo == null)
 				{
-					mBigLogo = (Texture2D) AssetDatabase.LoadAssetAtPath("Assets/packages/UBS/Editor/ubs_logo_256.png", typeof(Texture2D));
+					mBigLogo = (Texture2D) AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "ubs_logo_256.png", typeof(Texture2D));
 				}
 				return mBigLogo;
 			}

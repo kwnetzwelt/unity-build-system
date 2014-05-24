@@ -288,17 +288,30 @@ namespace UBS
 				selected = filtered.FindIndex( (obj) => {return obj.mType == pStep.mType;}) +1;
 			}
 			GUIContent[] displayedProviders = GetBuildStepProvidersFiltered();
-			Rect r1 = new Rect(pRect.x, pRect.y+1, 140, pRect.height);
-			Rect r2 = new Rect(r1.x + r1.width, pRect.y, 60, pRect.height);
-			Rect r3 = new Rect(r2.x + r2.width, pRect.y, pRect.width - 200, pRect.height);
+			Rect r1 = new Rect(pRect.x, pRect.y+1, 140, pRect.height); // drop down list
+			Rect r2 = new Rect(r1.x + r1.width, pRect.y, 20, pRect.height); // gears
+			Rect r3 = new Rect(r2.x + r2.width, pRect.y, 60, pRect.height); // parameters label
+			Rect r4 = new Rect(r3.x + r3.width, pRect.y, pRect.width - 220, pRect.height); // parameters input
 
 			int idx = EditorGUI.Popup(r1, selected, displayedProviders);
-
+			if (!EditorGUIUtility.isProSkin)
+				GUI.color = Color.black;
+			if ( idx > 0 && GUI.Button(r2, Styles.gear, EditorStyles.miniLabel)) {
+				if(idx > 0)
+				{
+					EditorUtility.DisplayDialog(
+						"Build Step Help",
+						displayedProviders[idx].text + "\n\n" + displayedProviders[idx].tooltip ,
+						"Close"
+						);
+				}
+			}
+			GUI.color = Color.white;
 			//r.x += r.width;
-			GUI.Label(r2, "Parameters", EditorStyles.miniLabel);
+			GUI.Label(r3, "Parameters", EditorStyles.miniLabel);
 			
 			//r.x += r.width;
-			pStep.mParams = EditorGUI.TextField(r3, pStep.mParams );
+			pStep.mParams = EditorGUI.TextField(r4, pStep.mParams );
 
 			if(idx != selected)
 			{
