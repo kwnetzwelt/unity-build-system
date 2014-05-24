@@ -22,9 +22,12 @@ namespace UBS
 		public int revision = 0;
 		public BuildType type = BuildType.beta;
 
+		/// <summary>
+		/// Increases the build revision. 
+		/// </summary>
 		public void Increase()
 		{
-			build++;
+			revision++;
 		}
 
 

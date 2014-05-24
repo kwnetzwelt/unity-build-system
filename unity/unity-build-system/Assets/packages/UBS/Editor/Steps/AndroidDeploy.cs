@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace UBS
 {
+	[UBS.BuildStepDescription("Your build apk will be deployed to an attached Android device. This scripts includes obb deployment. Include a paramter run to instantly run the apk. ")]
 	[UBS.BuildStepPlatformFilter( UnityEditor.BuildTarget.Android )]
 	public class AndroidDeploy : IBuildStepProvider
 	{
