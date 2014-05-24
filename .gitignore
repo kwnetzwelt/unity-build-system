@@ -10,3 +10,5 @@ unity/unity-build-system/unity-build-system.userprefs
 unity/unity-build-system/Assets/Resources.meta
 unity/unity-build-system/Assets/Resources/buildVersion.txt
 unity/unity-build-system/Assets/Resources/buildVersion.txt.meta
+documentation/html
+documentation/latex

@@ -416,7 +416,7 @@ namespace UBS
 				
 			case BuildTarget.MetroPlayer:
 				return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
-#if UNITY_4_5
+#if UNITY_4_5 || UNITY_4_6
 			case BuildTarget.BlackBerry:
 #else
 			case BuildTarget.BB10:

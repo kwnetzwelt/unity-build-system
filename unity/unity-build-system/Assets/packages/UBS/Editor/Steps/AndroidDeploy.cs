@@ -29,7 +29,6 @@ namespace UBS
 
 			DirectoryInfo di = new DirectoryInfo(scriptPath);
 			scriptPath = di.FullName;
-			scriptPath = scriptPath;
 
 			string versionCode = UnityEditor.PlayerSettings.Android.bundleVersionCode.ToString();
 			string packageName = UnityEditor.PlayerSettings.bundleIdentifier;

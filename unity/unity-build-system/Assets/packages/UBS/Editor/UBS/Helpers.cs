@@ -49,7 +49,7 @@ namespace UBS
 			switch( pTarget )
 			{
 			case BuildTarget.Android: return BuildTargetGroup.Android;
-#if UNITY_4_5
+#if UNITY_4_5 || UNITY_4_6
 			case BuildTarget.BlackBerry: return BuildTargetGroup.BlackBerry;
 #else
 			case BuildTarget.BB10: return BuildTargetGroup.BB10;
