@@ -98,13 +98,13 @@ public class UBSEditorWindow : UBSWindowBase {
 				Undo.RecordObject(mData, "Add Build Process");
 				mData.mProcesses.Remove(mSelectedBuildProcess);
 			}
-			if(GUILayout.Button(new GUIContent("#","Duplicate"),UBS.Styles.toolButton))
+			if(GUILayout.Button(new GUIContent(('\u274f').ToString(),"Duplicate"),UBS.Styles.toolButton))
 			{
 				Undo.RecordObject(mData, "Duplicate Build Process");
 				BuildProcess bp = new BuildProcess(mSelectedBuildProcess);
 				mData.mProcesses.Add(bp);
 			}
-			if(GUILayout.Button(Styles.upTexture,UBS.Styles.toolButton))
+			if(GUILayout.Button(new GUIContent(('\u21e1').ToString(),"Move Up"),UBS.Styles.toolButton))
 			{
 				if(mSelectedBuildProcess != null)
 				{
@@ -114,6 +114,19 @@ public class UBSEditorWindow : UBSWindowBase {
 						Undo.RecordObject(mData, "Sort Build Processes");
 						mData.mProcesses.Remove(mSelectedBuildProcess);
 						mData.mProcesses.Insert(idx-1,mSelectedBuildProcess);
+					}
+				}
+			}
+			if(GUILayout.Button(new GUIContent(('\u21e3').ToString(), "Move Down"),UBS.Styles.toolButton))
+			{
+				if(mSelectedBuildProcess != null)
+				{
+					int idx = mData.mProcesses.IndexOf( mSelectedBuildProcess );
+					if(idx < mData.mProcesses.Count-1)
+					{
+						Undo.RecordObject(mData, "Sort Build Processes");
+						mData.mProcesses.Remove(mSelectedBuildProcess);
+						mData.mProcesses.Insert(idx+1,mSelectedBuildProcess);
 					}
 				}
 			}

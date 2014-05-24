@@ -180,7 +180,7 @@ namespace UBS
 					mToolButton.fontStyle = FontStyle.Bold;
 					mToolButton.fixedHeight = 28;
 					mToolButton.padding = new RectOffset( 5, 5, 5, 5);
-					mToolButton.contentOffset = new Vector2(-1,-3);
+					mToolButton.contentOffset = new Vector2(-1,0);
 					mToolButton.clipping = TextClipping.Overflow;
 
 				}
