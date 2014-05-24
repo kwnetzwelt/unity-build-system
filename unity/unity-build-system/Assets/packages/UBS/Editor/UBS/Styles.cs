@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace UBS
 {
-	public static class Styles
+	internal static class Styles
 	{
 		public const string kImagePath ="Assets/UEDS/Editor/images/";
 

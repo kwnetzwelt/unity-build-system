@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace UBS
 {
-	public class Helpers
+	internal class Helpers
 	{
 		public static Process ShellProcess(string pFilename, string pArgs)
 		{
