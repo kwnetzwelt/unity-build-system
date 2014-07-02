@@ -45,9 +45,8 @@ def call(data):
 	return output
 
 def getObbPath():
-	if int(versions[0]) <= 4:
-		if int(versions[1]) <= 2:
-			return "/sdcard/Android/obb/"
+	if (int(versions[1]) <= 2 and int(versions[0]) == 4) or int(versions[0]) < 4:
+		return "/sdcard/Android/obb"
 	return "/mnt/shell/emulated/obb"
 
 def uninstall(package,clean):
