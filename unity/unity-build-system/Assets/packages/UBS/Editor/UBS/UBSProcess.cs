@@ -521,11 +521,18 @@ namespace UBS
 				return;
 
 			mSteps[mIndex].InferType();
-			
-			mCurrentStep = System.Activator.CreateInstance( mSteps[mIndex].mType ) as IBuildStepProvider;
-			mConfiguration.SetParams( mSteps[mIndex].mParams );
-			mCurrentStep.BuildStepStart(mConfiguration);
-			
+
+			if (mSteps [mIndex].mType != null) 
+			{
+				mCurrentStep = System.Activator.CreateInstance( mSteps[mIndex].mType ) as IBuildStepProvider;
+				mConfiguration.SetParams( mSteps[mIndex].mParams );
+			} 
+			else 
+			{
+				mCurrentStep = new EmptyBuildStep();
+			}			
+
+			mCurrentStep.BuildStepStart(mConfiguration);			
 		}
 
 		public bool IsDone()
