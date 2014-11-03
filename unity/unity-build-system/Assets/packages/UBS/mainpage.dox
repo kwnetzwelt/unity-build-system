@@ -65,7 +65,7 @@ To get started, you should get the latest version of this software here <https:/
 \subsection gestarted2 Import the build system into your project
 
 
-The Build System is a Unity project. To use it in your already existing project, you can simply copy the `packages` folder. Or if you already have a `packages` folder, copy the `UBS` folder within that folder into your existing project. 
+The Build System is a Unity project. To use it in your already existing project, you can simply copy the `packages` folder in `unity/unity-build-system/Assets`. Or if you already have a `packages` folder, copy the `UBS` folder within the UBS' `packages` into yours. 
 
 _Make sure the Build System resides in the same structure!_ 
 
