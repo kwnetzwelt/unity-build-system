@@ -92,7 +92,7 @@ A build process is your actual build target. You create one in the Editor Window
 3. choose the output path
 4. select scenes which should be included
 
-Observe that the output path must point to the executable file you want to build. The path must be relative to the project directory, absolute paths are not supported.
+Observe that, depending on the target platform, the output path must either point to the executable file you want to build, or a folder you want to deploy to. The path must be relative to the project directory, absolute paths are not supported.
 
 ![Newly created build collection](../screenshots/build_process_created.jpg)
 
