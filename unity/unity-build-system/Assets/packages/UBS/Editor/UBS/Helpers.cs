@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using System.Diagnostics;
+using System.IO ;
 
 namespace UBS
 {
@@ -94,7 +95,11 @@ namespace UBS
 		{
 			// Otherwise, the Uri will retain the Assets-relative fix
 			Uri projectUri = new Uri(new Uri(UnityEngine.Application.dataPath + "/../").ToString());
-			return new Uri (projectUri + relativePath).AbsolutePath;
+            
+            // Use GetFullPath to resolve ../../ backreferences.
+            // Hint from http://softwareblog.alcedo.com/post/2010/02/24/Resolving-relative-paths-in-C.aspx
+            //
+            return Path.GetFullPath(new Uri(projectUri + relativePath).AbsolutePath) ;
 		}
 
 	}
