@@ -12,17 +12,48 @@ MonoBehaviour:
   m_Name: Collection
   m_EditorClassIdentifier: 
   mProcesses:
-  - mPreBuildSteps:
+  - mPreBuildSteps: []
+    mPostBuildSteps:
     - mParams: 
-      mTypeName: IncreaseVersionNumber
-    mPostBuildSteps: []
+      mTypeName: UBS.RenameOutput
     mName: Build Step
     mOutputPath: ../build/unity-build-system.app
-    mPlatform: 2
+    mPretend: 0
+    mPlatform: 13
     mBuildOptions: 0
     mSelected: 1
     mScenes:
-    - Assets/UBS/Demo/scene1.unity
+    - 
     mSceneAssets:
-    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
+    - {fileID: 0}
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: Build Process
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 5
+    mBuildOptions: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: Build Process
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 9
+    mBuildOptions: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: Build Process
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 0
+    mBuildOptions: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
   versionCode: 1

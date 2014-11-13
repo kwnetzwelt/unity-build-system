@@ -18,52 +18,54 @@ namespace UBS
 
 			GUILayout.Label("Build Processes", "BoldLabel");
 
-			GUILayout.BeginVertical("HelpBox",GUILayout.MinHeight(40));
+			GUILayout.BeginVertical("HelpBox", GUILayout.MinHeight(40));
 
 			{
-				if(data.mProcesses.Count == 0)
+				if (data.mProcesses.Count == 0) 
 					GUILayout.Label("None", UBS.Styles.bigHint);
 				bool odd = false;
-				foreach(var e in data.mProcesses)
+				foreach (var e in data.mProcesses)
 				{
-					if(e == null)
+					if (e == null)
 						break;
-					GUILayout.BeginHorizontal(odd? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
+					GUILayout.BeginHorizontal(odd ? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
 					{
-						GUILayout.Label( e.mName, UBS.Styles.selectableListEntryText );
+						Texture2D platformIcon = GetPlatformIcon(e.mPlatform);
+						GUILayout.Box(platformIcon, UBS.Styles.icon);
+						GUILayout.Label(e.mName, odd ? UBS.Styles.selectableListEntryTextOdd : UBS.Styles.selectableListEntryText);
 						GUILayout.FlexibleSpace();
-						var sel = GUILayout.Toggle( e.mSelected , "");
-						if(sel != e.mSelected)
+						var sel = GUILayout.Toggle(e.mSelected, "");
+						if (sel != e.mSelected)
 						{
 							e.mSelected = sel;
 							EditorUtility.SetDirty(data);
 						}
-						selectedCount += e.mSelected? 1 : 0;
+						selectedCount += e.mSelected ? 1 : 0;
 					}
 					GUILayout.EndHorizontal();
-					if(Event.current.type == EventType.MouseDown && Event.current.button == 1)
+					if (Event.current.type == EventType.MouseDown && Event.current.button == 1)
 					{
 						Rect r = GUILayoutUtility.GetLastRect();
-						if(r.Contains(Event.current.mousePosition))
+						if (r.Contains(Event.current.mousePosition))
 						{
 							GenericMenu menu = new GenericMenu();
-							menu.AddItem(new GUIContent(e.mName),false, null);
+							menu.AddItem(new GUIContent(e.mName), false, null);
 							menu.AddSeparator("");
 							menu.AddItem(new GUIContent("Open target folder"), false, () => {
 
-								DirectoryInfo di = new DirectoryInfo( UBS.Helpers.GetAbsolutePathRelativeToProject( e.mOutputPath ) );
+								DirectoryInfo di = new DirectoryInfo(UBS.Helpers.GetAbsolutePathRelativeToProject(e.mOutputPath));
 
 								string path;
-								if((di.Attributes & FileAttributes.Directory) != 0)
+								if ((di.Attributes & FileAttributes.Directory) != 0)
 									path = di.FullName;
 								else
 									path = di.Parent.FullName;
 
-								OpenInFileBrowser( path );
+								OpenInFileBrowser(path);
 							});
 							menu.AddSeparator("");
-							menu.AddItem(new GUIContent("Build and run"), false, BuildAndRun, e );
-							menu.AddItem(new GUIContent("Build"), false, Build, e );
+							menu.AddItem(new GUIContent("Build and run"), false, BuildAndRun, e);
+							menu.AddItem(new GUIContent("Build"), false, Build, e);
 
 							menu.ShowAsContext();
 						}
@@ -76,43 +78,60 @@ namespace UBS
 
 			GUILayout.BeginHorizontal();
 			{
-				if(GUILayout.Button("Edit"))
+				if (GUILayout.Button("Edit"))
 				{
 					UBSEditorWindow.Init(data);
 				}
 				GUILayout.Space(5);
 				GUI.enabled = selectedCount >= 1;
 
-				if(GUILayout.Button("Run selected builds"))
+				if (GUILayout.Button("Run selected builds"))
 				{
-					UBSBuildWindow.Init( data );
+					UBSBuildWindow.Init(data);
 				}
 				GUILayout.Space(5);
 
 				GUI.enabled = selectedCount == 1;
-				if(GUILayout.Button("Build and run"))
+				if (GUILayout.Button("Build and run"))
 				{
-					UBSBuildWindow.Init( data, true);
+					UBSBuildWindow.Init(data, true);
 				}
 				GUI.enabled = true;
 
-				if(GUILayout.Button("?", GUILayout.Width(32)))
+				if (GUILayout.Button("?", GUILayout.Width(32)))
 				{
 					EditorUtility.OpenWithDefaultApp("http://kwnetzwelt.net/unity-build-system");
 				}
 			}
-			GUILayout.EndHorizontal();
+			GUILayout.EndHorizontal(); 
+		}
+
+		Texture2D GetPlatformIcon(BuildTarget mPlatform)
+		{
+			switch (mPlatform)
+			{
+				case BuildTarget.iPhone:
+					return UBS.Styles.icoIOS;
+				case BuildTarget.Android:
+					return UBS.Styles.icoAndroid;
+				case BuildTarget.StandaloneWindows:
+					return UBS.Styles.icoWindows;
+				case BuildTarget.StandaloneWindows64:
+					return UBS.Styles.icoWindows;
+				default:
+					return new Texture2D(0, 0);
+			}
 		}
 
 		void Build(object pProcess)
 		{
 			var data = target as BuildCollection;
-			UBSBuildWindow.Init( data, pProcess as BuildProcess, false);
+			UBSBuildWindow.Init(data, pProcess as BuildProcess, false);
 		}
 		void BuildAndRun(object pProcess)
 		{
 			var data = target as BuildCollection;
-			UBSBuildWindow.Init( data, pProcess as BuildProcess, true);
+			UBSBuildWindow.Init(data, pProcess as BuildProcess, true);
 		}
 
 		[MenuItem("Assets/Create/UBS Build Collection")]
@@ -122,20 +141,20 @@ namespace UBS
 			asset.hideFlags = HideFlags.None;
 			var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
-			if(String.IsNullOrEmpty( path ))
+			if (String.IsNullOrEmpty(path))
 			{
 				path = "Assets";
 			}
 
-			var di = new FileInfo( path );
-			if((di.Attributes & FileAttributes.Directory) != 0)
+			var di = new FileInfo(path);
+			if ((di.Attributes & FileAttributes.Directory) != 0)
 				path = path + "/New Build Collection.asset";
 			else
-				path = path.Substring(0, path.Length - di.Name.Length -1) + "/New Build Collection.asset";
+				path = path.Substring(0, path.Length - di.Name.Length - 1) + "/New Build Collection.asset";
 
-			path = AssetDatabase.GenerateUniqueAssetPath( path );
+			path = AssetDatabase.GenerateUniqueAssetPath(path);
 
-			AssetDatabase.CreateAsset( asset, path);
+			AssetDatabase.CreateAsset(asset, path);
 			AssetDatabase.SaveAssets();
 			Selection.activeObject = asset;
 		}
@@ -157,8 +176,8 @@ namespace UBS
 			// try mac
 			string macPath = path.Replace("\\", "/"); // mac finder doesn't like backward slashes
 			
-			if (Directory.Exists(macPath)) // if path requested is a folder, automatically open insides of that folder
-			{
+			if (Directory.Exists(macPath))
+			{ // if path requested is a folder, automatically open insides of that folder
 				openInsidesOfFolder = true;
 			}
 			
@@ -178,8 +197,7 @@ namespace UBS
 			try
 			{
 				System.Diagnostics.Process.Start("open", arguments);
-			}
-			catch(System.ComponentModel.Win32Exception e)
+			} catch (System.ComponentModel.Win32Exception e)
 			{
 				// tried to open mac finder in windows
 				// just silently skip error
@@ -195,15 +213,14 @@ namespace UBS
 			// try windows
 			string winPath = path.Replace("/", "\\"); // windows explorer doesn't like forward slashes
 			
-			if (Directory.Exists(winPath)) // if path requested is a folder, automatically open insides of that folder
-			{
+			if (Directory.Exists(winPath))
+			{ // if path requested is a folder, automatically open insides of that folder
 				openInsidesOfFolder = true;
 			}
 			try
 			{
 				System.Diagnostics.Process.Start("explorer.exe", (openInsidesOfFolder ? "/root," : "/select,") + winPath);
-			}
-			catch(System.ComponentModel.Win32Exception e)
+			} catch (System.ComponentModel.Win32Exception e)
 			{
 				// tried to open win explorer in mac
 				// just silently skip error
