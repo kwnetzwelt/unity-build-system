@@ -12,41 +12,52 @@ MonoBehaviour:
   m_Name: UBSProcess
   m_EditorClassIdentifier: 
   mCurrentBuildConfiguration:
-    mResourcesDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets\Resources
-    mAssetsDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets
-    mProjectDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system
+    mResourcesDirectory: /Projects/ubs/unity/unity-build-system/Assets/Resources
+    mAssetsDirectory: /Projects/ubs/unity/unity-build-system/Assets
+    mProjectDirectory: /Projects/ubs/unity/unity-build-system
   mBuildAndRun: 0
   mCollection: {fileID: 11400000, guid: d6929bd36d4ceaa48a05fb35d7c20688, type: 2}
   mSelectedProcesses:
-  - mPreBuildSteps:
+  - mPreBuildSteps: []
+    mPostBuildSteps:
     - mParams: 
-      mTypeName: IncreaseVersionNumber
-    mPostBuildSteps: []
+      mTypeName: UBS.RenameOutput
     mName: Build Step
     mOutputPath: ../build/unity-build-system.app
-    mPlatform: 2
+    mPretend: 0
+    mPlatform: 13
     mBuildOptions: 0
     mSelected: 1
     mScenes:
-    - Assets/UBS/Demo/scene1.unity
+    - 
     mSceneAssets:
-    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
+    - {fileID: 0}
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: Build Process
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 9
+    mBuildOptions: 0
+    mSelected: 1
+    mScenes: []
+    mSceneAssets: []
   mCurrentBuildProcessIndex: 0
   mCurrent: 0
   mCurrentState: 3
   mPreStepWalker:
-    mIndex: 1
-    mSteps:
-    - mParams: 
-      mTypeName: IncreaseVersionNumber
-    mConfiguration:
-      mResourcesDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets\Resources
-      mAssetsDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets
-      mProjectDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system
-  mPostStepWalker:
     mIndex: 0
     mSteps: []
     mConfiguration:
-      mResourcesDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets\Resources
-      mAssetsDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system\Assets
-      mProjectDirectory: C:\Users\kai.wegner\Build\unity-build-system\unity\unity-build-system
+      mResourcesDirectory: /Projects/ubs/unity/unity-build-system/Assets/Resources
+      mAssetsDirectory: /Projects/ubs/unity/unity-build-system/Assets
+      mProjectDirectory: /Projects/ubs/unity/unity-build-system
+  mPostStepWalker:
+    mIndex: 0
+    mSteps:
+    - mParams: 
+      mTypeName: UBS.RenameOutput
+    mConfiguration:
+      mResourcesDirectory: /Projects/ubs/unity/unity-build-system/Assets/Resources
+      mAssetsDirectory: /Projects/ubs/unity/unity-build-system/Assets
+      mProjectDirectory: /Projects/ubs/unity/unity-build-system

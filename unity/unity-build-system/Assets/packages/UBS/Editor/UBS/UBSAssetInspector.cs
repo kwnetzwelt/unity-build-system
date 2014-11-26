@@ -16,23 +16,23 @@ namespace UBS
 			
 			int selectedCount = 0;
 
-			GUILayout.Label("Build Processes", "BoldLabel");
+			GUILayout.Label("Build Processes", Styles.standard);
 
 			GUILayout.BeginVertical("HelpBox", GUILayout.MinHeight(40));
 
 			{
 				if (data.mProcesses.Count == 0) 
-					GUILayout.Label("None", UBS.Styles.bigHint);
+					GUILayout.Label("None", Styles.bigHint);
 				bool odd = false;
 				foreach (var e in data.mProcesses)
 				{
 					if (e == null)
 						break;
-					GUILayout.BeginHorizontal(odd ? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
+					GUILayout.BeginHorizontal(odd ? Styles.selectableListEntryOdd : Styles.selectableListEntry);
 					{
 						Texture2D platformIcon = GetPlatformIcon(e.mPlatform);
-						GUILayout.Box(platformIcon, UBS.Styles.icon);
-						GUILayout.Label(e.mName, odd ? UBS.Styles.selectableListEntryTextOdd : UBS.Styles.selectableListEntryText);
+						GUILayout.Box(platformIcon, Styles.icon);
+						GUILayout.Label(e.mName, odd ? Styles.selectableListEntryTextOdd : Styles.selectableListEntryText);
 						GUILayout.FlexibleSpace();
 						var sel = GUILayout.Toggle(e.mSelected, "");
 						if (sel != e.mSelected)
@@ -53,7 +53,7 @@ namespace UBS
 							menu.AddSeparator("");
 							menu.AddItem(new GUIContent("Open target folder"), false, () => {
 
-								DirectoryInfo di = new DirectoryInfo(UBS.Helpers.GetAbsolutePathRelativeToProject(e.mOutputPath));
+								DirectoryInfo di = new DirectoryInfo(Helpers.GetAbsolutePathRelativeToProject(e.mOutputPath));
 
 								string path;
 								if ((di.Attributes & FileAttributes.Directory) != 0)
@@ -111,13 +111,13 @@ namespace UBS
 			switch (mPlatform)
 			{
 				case BuildTarget.iPhone:
-					return UBS.Styles.icoIOS;
+					return Styles.icoIOS;
 				case BuildTarget.Android:
-					return UBS.Styles.icoAndroid;
+					return Styles.icoAndroid;
 				case BuildTarget.StandaloneWindows:
-					return UBS.Styles.icoWindows;
+					return Styles.icoWindows;
 				case BuildTarget.StandaloneWindows64:
-					return UBS.Styles.icoWindows;
+					return Styles.icoWindows;
 				default:
 					return new Texture2D(0, 0);
 			}

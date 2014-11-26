@@ -7,7 +7,15 @@ namespace UBS
 {
 	internal static class Styles
 	{
-		public const string kImagePath = "Assets/packages/UBS/Editor/images/";
+		public const string imagePath = "Assets/packages/UBS/Editor/images/";
+		public const string fontPath = "Assets/packages/UBS/Editor/font/bebas/";
+
+		static Font fontRegular;
+		static Font fontBook;
+		static Font fontBold;
+		const int fontSizeSmall = 14;
+		const int fontSizeMedium = 20;
+		const int fontSizeLarge = 30;
 
 		static Dictionary<long,Texture2D>mTextures = new Dictionary<long, Texture2D>();
 		
@@ -40,6 +48,48 @@ namespace UBS
 			Color32 c = new Color32(r, g, b, a);
 			return c;
 		}
+
+		static Font GetFontRegular()
+		{
+			if (fontRegular == null)
+			{
+				fontRegular = (Font)AssetDatabase.LoadAssetAtPath(Styles.fontPath + "BebasNeue Regular.ttf", typeof(Font));
+			}
+			return fontRegular;
+		}
+
+		static Font GetFontBook()
+		{
+			if (fontBook == null)
+			{
+				fontBook = (Font)AssetDatabase.LoadAssetAtPath(Styles.fontPath + "BebasNeue Book.ttf", typeof(Font));
+			}
+			return fontBook;
+		}
+
+		static Font GetFontBold()
+		{
+			if (fontBold == null)
+			{
+				fontBold = (Font)AssetDatabase.LoadAssetAtPath(Styles.fontPath + "BebasNeue Bold.ttf", typeof(Font));
+			}
+			return fontBold;
+		}
+
+		static GUIStyle standardStyle;
+		public static GUIStyle standard
+		{
+			get
+			{
+				if (standardStyle == null)
+				{
+					standardStyle = new GUIStyle();
+					standardStyle.font = GetFontBook();
+					standardStyle.fontSize = fontSizeMedium;
+				}
+				return standardStyle;
+			}
+		}
 		
 		static GUIStyle mList;
 		public static GUIStyle list
@@ -51,6 +101,8 @@ namespace UBS
 					mList = new GUIStyle();
 					mList.normal.background = GetTexture(0x424646ff);
 					mList.alignment = TextAnchor.UpperLeft;
+					mList.fontSize = fontSizeMedium;
+					mList.font = GetFontRegular();
 					mList.stretchWidth = true;
 					mList.stretchHeight = true;
 				}
@@ -70,7 +122,7 @@ namespace UBS
 						mBoldKey.normal.textColor = GetColor(0xffffffff);
 					else
 						mBoldKey.normal.textColor = GetColor(0x000000ff);
-					mBoldKey.fontStyle = FontStyle.Bold;
+					mBoldKey.font = GetFontBold();
 					mBoldKey.alignment = TextAnchor.MiddleLeft;
 					
 					
@@ -103,7 +155,7 @@ namespace UBS
 			{
 				if (mGear == null)
 				{
-					mGear = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "gear.png", typeof(Texture2D));
+					mGear = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "gear.png", typeof(Texture2D));
 
 				}
 				return mGear;
@@ -116,7 +168,7 @@ namespace UBS
 			{
 				if (mIcoIOS == null)
 				{
-					mIcoIOS = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "icons/ico_ios.png", typeof(Texture2D));
+					mIcoIOS = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/ico_ios.png", typeof(Texture2D));
 					
 				}
 				return mIcoIOS;
@@ -129,7 +181,7 @@ namespace UBS
 			{
 				if (mIcoAndroid == null)
 				{
-					mIcoAndroid = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "icons/ico_android.png", typeof(Texture2D));
+					mIcoAndroid = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/ico_android.png", typeof(Texture2D));
 					
 				}
 				return mIcoAndroid;
@@ -142,7 +194,7 @@ namespace UBS
 			{
 				if (mIcoWindows == null)
 				{
-					mIcoWindows = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "icons/ico_windows.png", typeof(Texture2D));
+					mIcoWindows = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/ico_windows.png", typeof(Texture2D));
 					
 				}
 				return mIcoWindows;
@@ -176,7 +228,7 @@ namespace UBS
 						mNormalValue.normal.textColor = GetColor(0xffffffff);
 					else
 						mNormalValue.normal.textColor = GetColor(0x000000ff);
-					mNormalValue.fontStyle = FontStyle.Normal;
+					mNormalValue.font = GetFontRegular();
 					mNormalValue.alignment = TextAnchor.MiddleLeft;
 					
 					
@@ -194,9 +246,6 @@ namespace UBS
 				{
 					mSelectableListEntryText = new GUIStyle(list);
 					mSelectableListEntryText.normal.textColor = GetColor(0xb5b5b5ff);
-					mSelectableListEntryText.fontStyle = FontStyle.Bold;
-
-					
 				}
 				return mSelectableListEntryText;
 			}
@@ -211,9 +260,6 @@ namespace UBS
 					mSelectableListEntryTextOdd = new GUIStyle(list);
 					mSelectableListEntryTextOdd.normal.textColor = GetColor(0xb5b5b5ff);
 					mSelectableListEntryTextOdd.normal.background = GetTexture(0x333535ff);
-					mSelectableListEntryTextOdd.fontStyle = FontStyle.Bold;
-					
-					
 				}
 				return mSelectableListEntryTextOdd;
 			}
@@ -229,7 +275,6 @@ namespace UBS
 					mSelectableListEntry = new GUIStyle(list);
 					mSelectableListEntry.stretchHeight = false;
 					mSelectableListEntry.normal.textColor = GetColor(0xb5b5b5ff);
-					mSelectableListEntry.fontStyle = FontStyle.Bold;
 					mSelectableListEntry.padding = new RectOffset(20, 20, 10, 9);
 					mSelectableListEntry.border = new RectOffset(0, 0, 0, 1);
 					
@@ -262,8 +307,8 @@ namespace UBS
 				{
 					mToolButton = new GUIStyle("TE toolbarbutton");
 
-					mToolButton.fontSize = 24;
-					mToolButton.fontStyle = FontStyle.Bold;
+					mToolButton.fontSize = Styles.fontSizeMedium;
+					mToolButton.font = GetFontRegular();
 					mToolButton.fixedHeight = 28;
 					mToolButton.padding = new RectOffset(5, 5, 5, 5);
 					mToolButton.contentOffset = new Vector2(-1, 0);
@@ -274,7 +319,8 @@ namespace UBS
 			}
 
 		}
-		
+
+		// Editor Window
 		static GUIStyle mSelectedListEntry;
 		public static GUIStyle selectedListEntry
 		{
@@ -285,7 +331,8 @@ namespace UBS
 					mSelectedListEntry = new GUIStyle();
 					mSelectedListEntry.normal.background = GetTexture(0x1b76d1ff);
 					mSelectedListEntry.normal.textColor = GetColor(0xffffffff);
-					mSelectedListEntry.fontStyle = FontStyle.Bold;
+					mSelectedListEntry.font = GetFontBold();
+					mSelectedListEntry.fontSize = fontSizeMedium;
 					mSelectedListEntry.padding = new RectOffset(20, 20, 10, 9);
 					mSelectedListEntry.border = new RectOffset(0, 0, 0, 1);
 				}
@@ -319,8 +366,8 @@ namespace UBS
 					mBigHint.alignment = TextAnchor.MiddleCenter;
 					mBigHint.stretchWidth = true;
 					mBigHint.stretchHeight = true;
-					mBigHint.fontSize = 32;
-					mBigHint.fontStyle = FontStyle.Bold;
+					mBigHint.fontSize = fontSizeLarge;
+					mBigHint.font = GetFontBold();
 					mBigHint.normal.textColor = GetColor(0x00000066);
 				}
 				return mBigHint;
@@ -337,8 +384,8 @@ namespace UBS
 					mMediumHint.alignment = TextAnchor.MiddleCenter;
 					mMediumHint.stretchWidth = true;
 					mMediumHint.stretchHeight = false;
-					mMediumHint.fontSize = 24;
-					mMediumHint.fontStyle = FontStyle.Bold;
+					mMediumHint.fontSize = fontSizeMedium;
+					mMediumHint.font = GetFontBold();
 					mMediumHint.normal.textColor = GetColor(0x00000066);
 				}
 				return mMediumHint;
@@ -408,8 +455,8 @@ namespace UBS
 				{
 					mDetailsTitle = new GUIStyle();
 					mDetailsTitle.alignment = TextAnchor.MiddleLeft;
-					mDetailsTitle.fontSize = 32;
-					mDetailsTitle.fontStyle = FontStyle.Bold;
+					mDetailsTitle.fontSize = fontSizeLarge;
+					mDetailsTitle.font = GetFontBold();
 					mDetailsTitle.margin = new RectOffset(10, 10, 10, 10);
 					mDetailsTitle.normal.textColor = GetColor(0x00000066);
 					
@@ -449,7 +496,8 @@ namespace UBS
 					mStatusMessage.stretchWidth = false;
 					mStatusMessage.stretchHeight = false;
 					mStatusMessage.fixedHeight = 20;
-					mStatusMessage.fontSize = 12;
+					mStatusMessage.fontSize = fontSizeSmall;
+					mStatusMessage.font = GetFontBook();
 					mStatusMessage.margin = new RectOffset(10, 10, 2, 2);
 					mStatusMessage.normal.textColor = GetColor(0x00000066);
 				}
@@ -555,6 +603,7 @@ namespace UBS
 					mProgressBar.alignment = TextAnchor.MiddleCenter;
 					mProgressBar.stretchWidth = true;
 					mProgressBar.stretchHeight = true;
+					mProgressBar.font = GetFontBook(); 
 					mProgressBar.margin = new RectOffset(5, 5, 1, 1);
 					mProgressBar.normal.background = GetTexture(0x128ce1ff);
 				}

@@ -43,7 +43,7 @@ MonoBehaviour:
     mPretend: 0
     mPlatform: 9
     mBuildOptions: 0
-    mSelected: 0
+    mSelected: 1
     mScenes: []
     mSceneAssets: []
   - mPreBuildSteps: []
