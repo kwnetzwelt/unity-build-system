@@ -13,25 +13,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mProcesses:
   - mPreBuildSteps: []
-    mPostBuildSteps:
-    - mParams: 
-      mTypeName: UBS.RenameOutput
-    mName: Build Step
-    mOutputPath: ../build/unity-build-system.app
-    mPretend: 0
-    mPlatform: 13
-    mBuildOptions: 0
-    mSelected: 1
-    mScenes:
-    - 
-    mSceneAssets:
-    - {fileID: 0}
-  - mPreBuildSteps: []
     mPostBuildSteps: []
     mName: Build Process
     mOutputPath: 
     mPretend: 0
     mPlatform: 5
+    mBuildOptions: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
+  - mPreBuildSteps: []
+    mPostBuildSteps:
+    - mParams: 
+      mTypeName: UBS.RenameOutput
+    mName: Build Sasdsdddtep
+    mOutputPath: ../build/unity-build-system.app
+    mPretend: 0
+    mPlatform: 25
+    mBuildOptions: 0
+    mSelected: 1
+    mScenes:
+    - Assets/packages/UBS/Demo/scene1.unity
+    mSceneAssets:
+    - {fileID: 102900000, guid: 72fde28137bdc44fc822dd38f81b992a, type: 3}
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: Build Process
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 0
     mBuildOptions: 0
     mSelected: 0
     mScenes: []
@@ -44,16 +54,6 @@ MonoBehaviour:
     mPlatform: 9
     mBuildOptions: 0
     mSelected: 1
-    mScenes: []
-    mSceneAssets: []
-  - mPreBuildSteps: []
-    mPostBuildSteps: []
-    mName: Build Process
-    mOutputPath: 
-    mPretend: 0
-    mPlatform: 0
-    mBuildOptions: 0
-    mSelected: 0
     mScenes: []
     mSceneAssets: []
   versionCode: 1

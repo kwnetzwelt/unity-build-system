@@ -162,22 +162,26 @@ namespace UBS
 
 			GUILayout.BeginVertical();
 
-			GUILayout.Label("Build Process", Styles.detailsTitle);
-
-			Styles.HorizontalSeparator();
+			GUILayout.Label("Build Process", UBS.Styles.detailsTitle);
+			UBS.Styles.HorizontalSeparator();
 			
 			Undo.RecordObject(mCollection, "Edit Build Process Details");
-			pProcess.mName = EditorGUILayout.TextField("Name", mEditedBuildProcess.mName);
 
+			pProcess.mName = EditorGUILayout.TextField("Name", mEditedBuildProcess.mName, UBS.Styles.input);
+			GUILayout.Space(8);
 
-			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", mEditedBuildProcess.mPlatform);
+			GUILayout.BeginHorizontal();
+			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", mEditedBuildProcess.mPlatform, UBS.Styles.dropdown, GUILayout.ExpandWidth(false));
+			GUILayout.Box(UBS.Styles.GetToolIcon(UBS.Styles.ToolIcon.Down), UBS.Styles.DropDownIcon);
+			GUILayout.EndHorizontal();
+			GUILayout.Space(8);
 
 			mEditedBuildProcess.mPretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", "Will not trigger a unity build, but run everything else."), mEditedBuildProcess.mPretend);
 
-			GUILayout.Space(5);
+			GUILayout.Space(6);
 			mShowBuildOptions = EditorGUILayout.Foldout(mShowBuildOptions, "Build Options");
 			GUILayout.BeginHorizontal();
-			GUILayout.Space(25);
+			GUILayout.Space(26);
 
 			if (mShowBuildOptions)
 			{
@@ -227,16 +231,16 @@ namespace UBS
 
 			GUILayout.EndHorizontal();
 
-			Styles.HorizontalSeparator();
+			UBS.Styles.HorizontalSeparator();
 
 			mDrawingBuildStepType = EBuildStepType.PreBuildStep;
 			ReorderableListGUI.Title("Pre Build Steps");
 			ReorderableListGUI.ListField(mEditedBuildProcess.mPreBuildSteps, StepDrawer);
 
 
-			Styles.HorizontalSeparator();
-			GUILayout.Label("Actual Unity Build", Styles.mediumHint);
-			Styles.HorizontalSeparator();
+			UBS.Styles.HorizontalSeparator();
+			GUILayout.Label("Actual Unity Build", UBS.Styles.mediumHint);
+			UBS.Styles.HorizontalSeparator();
 
 
 			mDrawingBuildStepType = EBuildStepType.PostBuildStep;
@@ -297,7 +301,7 @@ namespace UBS
 			int idx = EditorGUI.Popup(r1, selected, displayedProviders);
 			if (!EditorGUIUtility.isProSkin)
 				GUI.color = Color.black;
-			if (idx > 0 && GUI.Button(r2, Styles.gear, EditorStyles.miniLabel))
+			if (idx > 0 && GUI.Button(r2, UBS.Styles.gear))
 			{
 				if (idx > 0)
 				{
@@ -310,7 +314,7 @@ namespace UBS
 			}
 			GUI.color = Color.white;
 			//r.x += r.width;
-			GUI.Label(r3, "Parameters", EditorStyles.miniLabel);
+			GUI.Label(r3, "Parameters");
 			
 			//r.x += r.width;
 			pStep.mParams = EditorGUI.TextField(r4, pStep.mParams);

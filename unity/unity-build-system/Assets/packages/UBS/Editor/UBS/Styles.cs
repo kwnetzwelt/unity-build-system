@@ -10,12 +10,29 @@ namespace UBS
 		public const string imagePath = "Assets/packages/UBS/Editor/images/";
 		public const string fontPath = "Assets/packages/UBS/Editor/font/bebas/";
 
+		static Dictionary<ToolIcon, Texture2D> toolIcons = new Dictionary<ToolIcon, Texture2D>();
+
 		static Font fontRegular;
 		static Font fontBook;
 		static Font fontBold;
-		const int fontSizeSmall = 14;
-		const int fontSizeMedium = 20;
-		const int fontSizeLarge = 30;
+		const int fontSizeSmall = 18;
+		const int fontSizeMedium = 24;
+		const int fontSizeLarge = 32;
+
+		public enum Colors : long
+		{
+			White = 0xfffdfcff,
+			Blue = 0x2f3c4aff,
+			LightGrey = 0xf1f1f1ff,
+			Grey = 0x363335ff,
+			Orange = 0xff8033ff,
+			Cyan = 0x5ae7c4ff,
+			Purple = 0xb83c82ff,
+			DarkBlue = 0x222c36ff,
+			LightPurple = 0xff0066ff,
+			LightBlue = 0x00ccccff,
+			Transparent = 0xffffff00
+		}
 
 		static Dictionary<long,Texture2D>mTextures = new Dictionary<long, Texture2D>();
 		
@@ -49,6 +66,44 @@ namespace UBS
 			return c;
 		}
 
+		public static Texture2D GetPlatformIcon(BuildTarget mPlatform)
+		{
+			switch (mPlatform)
+			{
+				case BuildTarget.iPhone:
+					return icoIOS;
+				case BuildTarget.Android:
+					return icoAndroid;
+				case BuildTarget.StandaloneWindows:
+					return icoWindows;
+				case BuildTarget.StandaloneWindows64:
+					return icoWindows;
+				default:
+					return new Texture2D(0, 0);
+			}
+		}
+
+		public enum ToolIcon
+		{
+			Add,
+			Remove,
+			Copy,
+			Up,
+			Down,
+			DrownDown,
+			Search
+		}
+		
+		public static Texture2D GetToolIcon(ToolIcon tool)
+		{
+			if (!toolIcons.ContainsKey(tool))
+			{
+				var toolIcon = (Texture2D)AssetDatabase.LoadAssetAtPath(string.Format("{0}icons/tools/ico_{1}.png", Styles.imagePath, tool.ToString().ToLower()), typeof(Texture2D));
+				toolIcons.Add(tool, toolIcon);
+			}
+			return toolIcons [tool];
+		}
+        
 		static Font GetFontRegular()
 		{
 			if (fontRegular == null)
@@ -85,9 +140,101 @@ namespace UBS
 				{
 					standardStyle = new GUIStyle();
 					standardStyle.font = GetFontBook();
-					standardStyle.fontSize = fontSizeMedium;
+					standardStyle.normal.textColor = GetColor((long)Colors.DarkBlue);
+					standardStyle.fontSize = fontSizeSmall;
+					standardStyle.padding = new RectOffset();
+					standardStyle.margin = new RectOffset(4, 2, 3, 3);
 				}
 				return standardStyle;
+			}
+		}
+
+		static GUIStyle inputStyle;
+		public static GUIStyle input
+		{
+			get
+			{
+				if (inputStyle == null)
+				{
+					inputStyle = new GUIStyle(standard);
+					inputStyle.font = GetFontBook();
+					inputStyle.padding = new RectOffset(2, 2, 2, 2);
+					inputStyle.fixedHeight = inputStyle.fontSize * 1.25f;
+					inputStyle.fixedWidth = inputStyle.fixedHeight * 15f;
+					inputStyle.normal.background = GetTexture((long)Colors.White);
+
+					// active input
+					var activeTextClr = GetColor((long)Colors.DarkBlue);
+					var activeBGClr = GetTexture((long)Colors.Cyan);
+					inputStyle.hover.background = activeBGClr;
+					inputStyle.hover.textColor = activeTextClr;
+					inputStyle.active.background = activeBGClr;
+					inputStyle.hover.textColor = activeTextClr;
+					inputStyle.onFocused.textColor = activeTextClr;
+				}
+				return inputStyle;
+			}
+		}
+
+		static GUIStyle smallInputStyle;
+		public static GUIStyle smallInput
+		{
+			get
+			{
+				if (smallInputStyle == null)
+				{
+					smallInputStyle = new GUIStyle(input);
+					smallInputStyle.margin = new RectOffset(0, 2, 1, 0);
+					smallInputStyle.padding = new RectOffset(4, 0, 0, 0);
+					smallInputStyle.fontSize = fontSizeSmall;
+					smallInputStyle.fixedHeight = fontSizeSmall * 0.95f;
+					smallInputStyle.fixedWidth = 60f;
+				}
+				return smallInputStyle;
+			}
+		}
+
+		static GUIStyle rightAligned;
+		public static GUIStyle RightAligned
+		{
+			get
+			{
+				if (rightAligned == null)
+				{
+					rightAligned = new GUIStyle();
+					rightAligned.alignment = TextAnchor.MiddleRight;
+				}
+				return rightAligned;
+			}
+		}
+
+		static GUIStyle dropdownStyle;
+		public static GUIStyle dropdown
+		{
+			get
+			{
+				if (dropdownStyle == null)
+				{
+					dropdownStyle = new GUIStyle(input);
+					dropdownStyle.font = GetFontBook();
+				}
+				return dropdownStyle;
+			}
+		}
+
+		static GUIStyle dropdownIcon;
+		public static GUIStyle DropDownIcon
+		{
+			get
+			{
+				if (dropdownIcon == null)
+				{
+					dropdownIcon = new GUIStyle();
+					dropdownIcon.fixedWidth = 20f;
+					dropdownIcon.contentOffset = new Vector2(256f, 0f);
+					dropdownIcon.padding = new RectOffset(0, 0, 4, 0);
+				}
+				return dropdownIcon;
 			}
 		}
 		
@@ -101,7 +248,7 @@ namespace UBS
 					mList = new GUIStyle();
 					mList.normal.background = GetTexture(0x424646ff);
 					mList.alignment = TextAnchor.UpperLeft;
-					mList.fontSize = fontSizeMedium;
+					mList.fontSize = fontSizeSmall;
 					mList.font = GetFontRegular();
 					mList.stretchWidth = true;
 					mList.stretchHeight = true;
@@ -168,7 +315,7 @@ namespace UBS
 			{
 				if (mIcoIOS == null)
 				{
-					mIcoIOS = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/ico_ios.png", typeof(Texture2D));
+					mIcoIOS = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/platform/ico_ios.png", typeof(Texture2D));
 					
 				}
 				return mIcoIOS;
@@ -181,7 +328,7 @@ namespace UBS
 			{
 				if (mIcoAndroid == null)
 				{
-					mIcoAndroid = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/ico_android.png", typeof(Texture2D));
+					mIcoAndroid = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/platform/ico_android.png", typeof(Texture2D));
 					
 				}
 				return mIcoAndroid;
@@ -194,7 +341,7 @@ namespace UBS
 			{
 				if (mIcoWindows == null)
 				{
-					mIcoWindows = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/ico_windows.png", typeof(Texture2D));
+					mIcoWindows = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.imagePath + "icons/platform/ico_windows.png", typeof(Texture2D));
 					
 				}
 				return mIcoWindows;
@@ -210,12 +357,12 @@ namespace UBS
 					mIcon = new GUIStyle();
 					mIcon.fixedWidth = 20;
 					mIcon.fixedHeight = 20;
-					mIcon.contentOffset = new Vector2(-8f, -2f);
+					mIcon.contentOffset = new Vector2(-6f, -2f);
 				}
 				return mIcon;
 			}
 		}
-
+        
 		static GUIStyle mNormalValue;
 		public static GUIStyle normalValue
 		{
@@ -237,34 +384,7 @@ namespace UBS
 			}
 		}
 
-		static GUIStyle mSelectableListEntryText;
-		public static GUIStyle selectableListEntryText
-		{
-			get
-			{
-				if (mSelectableListEntryText == null)
-				{
-					mSelectableListEntryText = new GUIStyle(list);
-					mSelectableListEntryText.normal.textColor = GetColor(0xb5b5b5ff);
-				}
-				return mSelectableListEntryText;
-			}
-		}
-		static GUIStyle mSelectableListEntryTextOdd;
-		public static GUIStyle selectableListEntryTextOdd
-		{
-			get
-			{
-				if (mSelectableListEntryTextOdd == null)
-				{
-					mSelectableListEntryTextOdd = new GUIStyle(list);
-					mSelectableListEntryTextOdd.normal.textColor = GetColor(0xb5b5b5ff);
-					mSelectableListEntryTextOdd.normal.background = GetTexture(0x333535ff);
-				}
-				return mSelectableListEntryTextOdd;
-			}
-		}
-
+		// Inspector list
 		static GUIStyle mSelectableListEntry;
 		public static GUIStyle selectableListEntry
 		{
@@ -274,15 +394,17 @@ namespace UBS
 				{
 					mSelectableListEntry = new GUIStyle(list);
 					mSelectableListEntry.stretchHeight = false;
-					mSelectableListEntry.normal.textColor = GetColor(0xb5b5b5ff);
-					mSelectableListEntry.padding = new RectOffset(20, 20, 10, 9);
+					mSelectableListEntry.normal.textColor = GetColor((long)Colors.White);
+					mSelectableListEntry.normal.background = GetTexture((long)Colors.Blue);
+					mSelectableListEntry.padding = new RectOffset(10, 10, 6, 6);
 					mSelectableListEntry.border = new RectOffset(0, 0, 0, 1);
 					
 				}
 				return mSelectableListEntry;
 			}
 		}
-		
+
+		// Inspector list
 		static GUIStyle mSelectableListEntryOdd;
 		public static GUIStyle selectableListEntryOdd
 		{
@@ -291,7 +413,7 @@ namespace UBS
 				if (mSelectableListEntryOdd == null)
 				{
 					mSelectableListEntryOdd = new GUIStyle(selectableListEntry);
-					mSelectableListEntryOdd.normal.background = GetTexture(0x333535ff);
+					mSelectableListEntryOdd.normal.background = GetTexture((long)Colors.DarkBlue);
 					
 				}
 				return mSelectableListEntryOdd;
@@ -299,41 +421,72 @@ namespace UBS
 		}
 
 		static GUIStyle mToolButton;
-		public static GUIStyle toolButton
+		public static GUIStyle ToolButton
 		{
 			get
 			{
 				if (mToolButton == null)
 				{
-					mToolButton = new GUIStyle("TE toolbarbutton");
+					mToolButton = new GUIStyle();
 
-					mToolButton.fontSize = Styles.fontSizeMedium;
-					mToolButton.font = GetFontRegular();
-					mToolButton.fixedHeight = 28;
-					mToolButton.padding = new RectOffset(5, 5, 5, 5);
-					mToolButton.contentOffset = new Vector2(-1, 0);
-					mToolButton.clipping = TextClipping.Overflow;
-
+					mToolButton.fixedHeight = 34f;
+					mToolButton.fixedWidth = 34f;
+					mToolButton.padding = new RectOffset(2, 2, 2, 2);
+					mToolButton.margin = new RectOffset(0, 0, 1, 1);
+					mToolButton.border = new RectOffset(0, 0, 0, 0);
+					mToolButton.normal.background = GetTexture((long)Colors.Purple);
+					mToolButton.active.background = GetTexture((long)Colors.LightPurple);
 				}
 				return mToolButton;
 			}
-
 		}
 
+		static GUIStyle mToolColumn;
+		public static GUIStyle ToolColumn
+		{
+			get
+			{
+				if (mToolColumn == null)
+				{
+					mToolColumn = new GUIStyle();
+					mToolColumn.fixedWidth = 33f;
+					mToolColumn.fixedHeight = 405f; // hack to color the entire column //TODO
+					mToolColumn.normal.background = GetTexture((long)Colors.LightGrey);
+				}
+				return mToolColumn;
+			}
+		}
+
+		static GUIStyle mProcessColumn;
+		public static GUIStyle ProcessColumn
+		{
+			get
+			{
+				if (mProcessColumn == null)
+				{
+					mProcessColumn = new GUIStyle();
+					mProcessColumn.fixedWidth = 250f;
+					mProcessColumn.normal.background = GetTexture((long)Colors.DarkBlue);
+				}
+				return mProcessColumn;
+			}
+		}
+        
 		// Editor Window
 		static GUIStyle mSelectedListEntry;
-		public static GUIStyle selectedListEntry
+		public static GUIStyle selectedListEntryButton
 		{
 			get
 			{
 				if (mSelectedListEntry == null)
 				{
 					mSelectedListEntry = new GUIStyle();
-					mSelectedListEntry.normal.background = GetTexture(0x1b76d1ff);
-					mSelectedListEntry.normal.textColor = GetColor(0xffffffff);
+					mSelectedListEntry.normal.background = GetTexture((long)Colors.Cyan);
+					mSelectedListEntry.normal.textColor = GetColor((long)Colors.DarkBlue);
 					mSelectedListEntry.font = GetFontBold();
-					mSelectedListEntry.fontSize = fontSizeMedium;
-					mSelectedListEntry.padding = new RectOffset(20, 20, 10, 9);
+					mSelectedListEntry.fontSize = fontSizeSmall;
+					mSelectedListEntry.padding = new RectOffset(6, 6, 6, 6);
+					mSelectedListEntry.margin = new RectOffset(4, 0, 0, 0);
 					mSelectedListEntry.border = new RectOffset(0, 0, 0, 1);
 				}
 				return mSelectedListEntry;
@@ -453,12 +606,14 @@ namespace UBS
 			{
 				if (mDetailsTitle == null)
 				{
-					mDetailsTitle = new GUIStyle();
+					mDetailsTitle = new GUIStyle(standard);
 					mDetailsTitle.alignment = TextAnchor.MiddleLeft;
 					mDetailsTitle.fontSize = fontSizeLarge;
 					mDetailsTitle.font = GetFontBold();
-					mDetailsTitle.margin = new RectOffset(10, 10, 10, 10);
-					mDetailsTitle.normal.textColor = GetColor(0x00000066);
+					mDetailsTitle.padding = new RectOffset(10, 10, 10, 5);
+					mDetailsTitle.margin = new RectOffset();
+					mDetailsTitle.normal.textColor = GetColor((long)Colors.White);
+					mDetailsTitle.normal.background = GetTexture((long)Colors.DarkBlue);
 					
 				}
 				return mDetailsTitle;
@@ -499,7 +654,7 @@ namespace UBS
 					mStatusMessage.fontSize = fontSizeSmall;
 					mStatusMessage.font = GetFontBook();
 					mStatusMessage.margin = new RectOffset(10, 10, 2, 2);
-					mStatusMessage.normal.textColor = GetColor(0x00000066);
+					mStatusMessage.normal.textColor = GetColor((long)Colors.Grey);
 				}
 				return mStatusMessage;
 			}

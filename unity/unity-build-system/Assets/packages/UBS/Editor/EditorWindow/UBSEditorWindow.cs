@@ -13,11 +13,11 @@ namespace UBS
 
 
 
-		public static void Init (BuildCollection pCollection) 
+		public static void Init(BuildCollection pCollection)
 		{
-			var window = EditorWindow.GetWindow<UBSEditorWindow>("Build System",true);
+			var window = EditorWindow.GetWindow<UBSEditorWindow>("Build System", true);
 			window.mData = pCollection;
-			window.position = new Rect(50,50, kMinWidth + 50 + kListWidth,kMinHeight + 50);
+			window.position = new Rect(50, 50, kMinWidth + 50 + kListWidth, kMinHeight + 50);
 
 		}
 
@@ -33,10 +33,10 @@ namespace UBS
 
 		void SearchField()
 		{
-			GUILayout.BeginHorizontal( UBS.Styles.detailsGroup );
+			GUILayout.BeginHorizontal(UBS.Styles.detailsGroup);
 			{
-				mSearchContent = GUILayout.TextField(mSearchContent,"SearchTextField");
-				if(GUILayout.Button("", string.IsNullOrEmpty(mSearchContent)? "SearchCancelButtonEmpty" : "SearchCancelButton"))
+				mSearchContent = GUILayout.TextField(mSearchContent, "SearchTextField");
+				if (GUILayout.Button("", string.IsNullOrEmpty(mSearchContent) ? "SearchCancelButtonEmpty" : "SearchCancelButton"))
 				{
 					mSearchContent = "";
 				}
@@ -49,86 +49,86 @@ namespace UBS
 		}
 		protected override void OnGUI()
 		{
-			base.OnGUI ();
+			base.OnGUI();
 
 			Initialize();
-			if(!mInitialized)
+			if (!mInitialized)
 				return;
 
 			GUILayout.BeginVertical();
-			mScrollPositions[0] = GUILayout.BeginScrollView(mScrollPositions[0]);
+			mScrollPositions [0] = GUILayout.BeginScrollView(mScrollPositions [0]);
 
 			
 			GUILayout.BeginHorizontal();
 			//
 			// selectable Build Processes
 			//
-			GUILayout.BeginVertical("GameViewBackground",GUILayout.MaxWidth(kListWidth));
+			GUILayout.BeginVertical("GameViewBackground", UBS.Styles.ProcessColumn);
 			SearchField();
-			mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1], GUILayout.ExpandWidth(true));
+			mScrollPositions [1] = GUILayout.BeginScrollView(mScrollPositions [1], GUILayout.ExpandWidth(true));
 			bool odd = true;
-			if(mData != null)
+			if (mData != null)
 			{
-				foreach(var process in mData.mProcesses)
+				foreach (var process in mData.mProcesses)
 				{
-					if(process == null)
+					if (process == null)
 					{
 						mData.mProcesses.Remove(process);
 						GUIUtility.ExitGUI();
 						return;
 					}
-					if( string.IsNullOrEmpty(mSearchContent) || process.mName.StartsWith(mSearchContent))
+					if (string.IsNullOrEmpty(mSearchContent) || process.mName.Contains(mSearchContent))
 					{
-						RenderSelectableBuildProcess(process,odd);
+						RenderSelectableBuildProcess(process, odd);
 						odd = !odd;
 					}
 				}
 			}
 			GUILayout.EndScrollView();
 			GUILayout.EndVertical();
-			GUILayout.BeginVertical(GUILayout.Width(32));
+			GUILayout.BeginVertical(UBS.Styles.ToolColumn);
 			{
-				if(GUILayout.Button(new GUIContent("+","Add"),UBS.Styles.toolButton))
+				if (GUILayout.Button(UBS.Styles.GetToolIcon(Styles.ToolIcon.Add), UBS.Styles.ToolButton))
 				{
 					var el = new BuildProcess();
 					Undo.RecordObject(mData, "Add Build Process");
 					mData.mProcesses.Add(el);
 				}
 				GUI.enabled = mSelectedBuildProcess != null;
-				if(GUILayout.Button(new GUIContent("-","Remove"),UBS.Styles.toolButton))
+				if (GUILayout.Button(UBS.Styles.GetToolIcon(Styles.ToolIcon.Remove), UBS.Styles.ToolButton))
 				{
 					Undo.RecordObject(mData, "Add Build Process");
 					mData.mProcesses.Remove(mSelectedBuildProcess);
 				}
-				if(GUILayout.Button(new GUIContent(('\u274f').ToString(),"Duplicate"),UBS.Styles.toolButton))
+				if (GUILayout.Button(UBS.Styles.GetToolIcon(Styles.ToolIcon.Copy), UBS.Styles.ToolButton))
 				{
 					Undo.RecordObject(mData, "Duplicate Build Process");
 					BuildProcess bp = new BuildProcess(mSelectedBuildProcess);
 					mData.mProcesses.Add(bp);
 				}
-				if(GUILayout.Button(new GUIContent(('\u21e1').ToString(),"Move Up"),UBS.Styles.toolButton))
+				if (GUILayout.Button(UBS.Styles.GetToolIcon(Styles.ToolIcon.Up), UBS.Styles.ToolButton))
 				{
-					if(mSelectedBuildProcess != null)
+					if (mSelectedBuildProcess != null)
 					{
-						int idx = mData.mProcesses.IndexOf( mSelectedBuildProcess );
-						if(idx > 0)
+						int idx = mData.mProcesses.IndexOf(mSelectedBuildProcess);
+						if (idx > 0)
 						{
 							Undo.RecordObject(mData, "Sort Build Processes");
 							mData.mProcesses.Remove(mSelectedBuildProcess);
-							mData.mProcesses.Insert(idx-1,mSelectedBuildProcess);
+							mData.mProcesses.Insert(idx - 1, mSelectedBuildProcess);
 						}
 					}
 				}
-				if(GUILayout.Button(new GUIContent(('\u21e3').ToString(), "Move Down"),UBS.Styles.toolButton))
+				if (GUILayout.Button(UBS.Styles.GetToolIcon(Styles.ToolIcon.Down), UBS.Styles.ToolButton))
 				{
-					if(mSelectedBuildProcess != null)
+					if (mSelectedBuildProcess != null)
 					{
-						int idx = mData.mProcesses.IndexOf( mSelectedBuildProcess );
-						if(idx < mData.mProcesses.Count-1)
+						int idx = mData.mProcesses.IndexOf(mSelectedBuildProcess);
+						if (idx < mData.mProcesses.Count - 1)
 						{
 							Undo.RecordObject(mData, "Sort Build Processes");
 							mData.mProcesses.Remove(mSelectedBuildProcess);
-							mData.mProcesses.Insert(idx+1,mSelectedBuildProcess);
+							mData.mProcesses.Insert(idx + 1, mSelectedBuildProcess);
 						}
 					}
 				}
@@ -139,7 +139,7 @@ namespace UBS
 			//
 			// selected Build Process
 			//
-			mScrollPositions[2] = GUILayout.BeginScrollView(mScrollPositions[2],UBS.Styles.buildProcessEditorBackground);
+			mScrollPositions [2] = GUILayout.BeginScrollView(mScrollPositions [2], UBS.Styles.buildProcessEditorBackground);
 
 			mEditor.OnGUI(mSelectedBuildProcess, mData);
 
@@ -158,23 +158,34 @@ namespace UBS
 
 		}
 
-		void RenderSelectableBuildProcess (BuildProcess pProcess, bool pOdd)
+		void RenderSelectableBuildProcess(BuildProcess process, bool odd)
 		{
+			GUILayout.BeginHorizontal(odd ? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
+			RenderPlatformIcon(process.mPlatform);
+
 			bool selected = false; 
 
-			if(mSelectedBuildProcess == pProcess)
+			if (mSelectedBuildProcess == process)
 			{
-				selected = GUILayout.Button(pProcess.mName, Styles.selectedListEntry);
-			}else
+				selected = GUILayout.Button(process.mName, Styles.selectedListEntryButton);
+			} else
 			{
-				selected = GUILayout.Button(pProcess.mName, pOdd ? Styles.selectableListEntryOdd : Styles.selectableListEntry);
+				selected = GUILayout.Button(process.mName, odd ? Styles.selectableListEntryOdd : Styles.selectableListEntry);
 			}
 
-			if(selected)
+			if (selected)
 			{
-				DoSelectBuildProcess( pProcess );
+				DoSelectBuildProcess(process);
 			}
+			GUILayout.EndHorizontal();
+		}
 
+		void RenderPlatformIcon(BuildTarget platform)
+		{
+			Texture2D platformIcon = UBS.Styles.GetPlatformIcon(platform);
+			var iconStyle = new GUIStyle(UBS.Styles.icon);
+			iconStyle.contentOffset = new Vector2(2f, 4f);
+			GUILayout.Box(platformIcon, iconStyle);
 		}
 
 		void RenderStatusBar()
@@ -186,43 +197,44 @@ namespace UBS
 
 		void RenderBuildVersion()
 		{
-			GUILayout.BeginHorizontal();
+			GUILayout.BeginHorizontal(UBS.Styles.RightAligned);
 			GUILayout.FlexibleSpace();
-			GUILayout.Label("Build version:");
+			GUILayout.Space(440f);
+			GUILayout.Label("Build version:", UBS.Styles.statusMessage);
 
 			int v;
 
-			v = EditorGUILayout.IntField( mData.version.major, GUILayout.Width(50));
-			if(v != mData.version.major)
+			v = EditorGUILayout.IntField(mData.version.major, UBS.Styles.smallInput);
+			if (v != mData.version.major)
 			{
 				mData.version.major = v;
 				mData.SaveVersion();
 			}
 
-			v = EditorGUILayout.IntField( mData.version.minor, GUILayout.Width(50));
-			if(v != mData.version.minor)
+			v = EditorGUILayout.IntField(mData.version.minor, UBS.Styles.smallInput);
+			if (v != mData.version.minor)
 			{
 				mData.version.minor = v;
 				mData.SaveVersion();
 			}
 
-			v = EditorGUILayout.IntField( mData.version.build, GUILayout.Width(50));
-			if(v != mData.version.build)
+			v = EditorGUILayout.IntField(mData.version.build, UBS.Styles.smallInput);
+			if (v != mData.version.build)
 			{
 				mData.version.build = v;
 				mData.SaveVersion();
 			}
 
-			BuildVersion.BuildType type = (BuildVersion.BuildType)EditorGUILayout.EnumPopup( mData.version.type, GUILayout.Width(50));
-			if(type != mData.version.type)
+			BuildVersion.BuildType type = (BuildVersion.BuildType)EditorGUILayout.EnumPopup(mData.version.type, UBS.Styles.smallInput);
+			if (type != mData.version.type)
 			{
 				mData.version.type = type;
 				mData.SaveVersion();
 			}
 
-			GUILayout.Label("Revision:");
-			v = EditorGUILayout.IntField( mData.version.revision, GUILayout.Width(80));
-			if(v != mData.version.revision)
+			GUILayout.Label("Revision:", UBS.Styles.statusMessage);
+			v = EditorGUILayout.IntField(mData.version.revision, UBS.Styles.smallInput);
+			if (v != mData.version.revision)
 			{
 				mData.version.revision = v;
 				mData.SaveVersion();
@@ -236,17 +248,20 @@ namespace UBS
 		#region data handling
 		
 		[SerializeField]
-		BuildCollection mData;
+		BuildCollection
+			mData;
 
 		[System.NonSerialized]
-		bool mInitialized = false;
+		bool
+			mInitialized = false;
 		
 		[System.NonSerialized]
-		BuildProcess mSelectedBuildProcess;
+		BuildProcess
+			mSelectedBuildProcess;
 
 		void Initialize()
 		{
-			if(mInitialized || mData == null)
+			if (mInitialized || mData == null)
 				return;
 
 			mScrollPositions = new Vector2[3];
@@ -261,14 +276,14 @@ namespace UBS
 			this.Repaint();
 		}
 
-		void DoSelectBuildProcess (BuildProcess pProcess)
+		void DoSelectBuildProcess(BuildProcess pProcess)
 		{
 			mSelectedBuildProcess = pProcess;
 		}
 
 		void OnDestroy()
 		{
-			if(mEditor != null)
+			if (mEditor != null)
 				mEditor.OnDestroy();
 
 			if (mData)

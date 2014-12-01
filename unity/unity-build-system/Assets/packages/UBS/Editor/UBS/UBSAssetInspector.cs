@@ -1,7 +1,6 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using UBS;
 using System.IO;
 
 namespace UBS
@@ -16,23 +15,23 @@ namespace UBS
 			
 			int selectedCount = 0;
 
-			GUILayout.Label("Build Processes", Styles.standard);
+			GUILayout.Label("Build Processes", UBS.Styles.standard);
 
 			GUILayout.BeginVertical("HelpBox", GUILayout.MinHeight(40));
 
 			{
 				if (data.mProcesses.Count == 0) 
-					GUILayout.Label("None", Styles.bigHint);
+					GUILayout.Label("None", UBS.Styles.bigHint);
 				bool odd = false;
 				foreach (var e in data.mProcesses)
 				{
 					if (e == null)
 						break;
-					GUILayout.BeginHorizontal(odd ? Styles.selectableListEntryOdd : Styles.selectableListEntry);
+					GUILayout.BeginHorizontal(odd ? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
 					{
-						Texture2D platformIcon = GetPlatformIcon(e.mPlatform);
-						GUILayout.Box(platformIcon, Styles.icon);
-						GUILayout.Label(e.mName, odd ? Styles.selectableListEntryTextOdd : Styles.selectableListEntryText);
+						Texture2D platformIcon = UBS.Styles.GetPlatformIcon(e.mPlatform);
+						GUILayout.Box(platformIcon, UBS.Styles.icon);
+						GUILayout.Label(e.mName, odd ? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
 						GUILayout.FlexibleSpace();
 						var sel = GUILayout.Toggle(e.mSelected, "");
 						if (sel != e.mSelected)
@@ -104,23 +103,6 @@ namespace UBS
 				}
 			}
 			GUILayout.EndHorizontal(); 
-		}
-
-		Texture2D GetPlatformIcon(BuildTarget mPlatform)
-		{
-			switch (mPlatform)
-			{
-				case BuildTarget.iPhone:
-					return Styles.icoIOS;
-				case BuildTarget.Android:
-					return Styles.icoAndroid;
-				case BuildTarget.StandaloneWindows:
-					return Styles.icoWindows;
-				case BuildTarget.StandaloneWindows64:
-					return Styles.icoWindows;
-				default:
-					return new Texture2D(0, 0);
-			}
 		}
 
 		void Build(object pProcess)

@@ -7,7 +7,7 @@ namespace UBS
 	public class UBSWindowBase : EditorWindow
 	{
 		static Texture2D mBigLogo;
-		protected static Texture2D bigLogo
+		protected static Texture2D BigLogo
 		{
 			get
 			{
@@ -18,7 +18,6 @@ namespace UBS
 				return mBigLogo;
 			}
 		}
-		
 
 		protected virtual void OnDisable()
 		{
@@ -29,7 +28,7 @@ namespace UBS
 		{
 			
 			GUI.color = new Color(1, 1, 1, 0.3f);
-			GUI.DrawTexture(new Rect(position.width - 160, position.height - 160, 256, 256), bigLogo);
+			GUI.DrawTexture(new Rect(position.width - 160, position.height - 160, 256, 256), BigLogo);
 			GUI.color = Color.white;
 		}
 	}
