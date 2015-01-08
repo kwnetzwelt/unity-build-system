@@ -146,18 +146,28 @@ namespace UBS
 		public static void BuildFromCommandLine()
 		{
 			string[] arguments = System.Environment.GetCommandLineArgs();
-			string argument = "-collection=";
+			string[] availableArgs = {"-collection=", "-android-sdk="};
 			string collectionPath = "";
+			string androidSdkPath = "";
 			foreach(var s in arguments)
 			{
 				if(s.StartsWith("-collection="))
-					collectionPath = s.Substring(argument.Length);
+					collectionPath = s.Substring(availableArgs[0].Length);
+
+				if(s.StartsWith("-android-sdk="))
+					androidSdkPath = s.Substring(availableArgs[1].Length);
 				
 			}
 			if(collectionPath == null)
 			{
 				Debug.LogError("NO BUILD COLLECTION SET");
 				return;
+			}
+			
+			if(!string.IsNullOrEmpty(androidSdkPath))
+			{
+				EditorPrefs.SetString("AndroidSdkRoot", androidSdkPath);
+				Debug.Log("Set Android SDK root to: " + androidSdkPath);
 			}
 
 			Debug.Log("Loading Build Collection: " + collectionPath);
