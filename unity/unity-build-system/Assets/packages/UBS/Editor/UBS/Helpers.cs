@@ -62,8 +62,8 @@ namespace UBS
 			case BuildTarget.BlackBerry: return BuildTargetGroup.BB10;
 
 #endif
-				case BuildTarget.iOS:
-					return BuildTargetGroup.iOS;
+				case BuildTarget.iPhone:
+					return BuildTargetGroup.iPhone;
 				case BuildTarget.MetroPlayer:
 					return BuildTargetGroup.Metro;
 				case BuildTarget.PS3:

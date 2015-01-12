@@ -37,6 +37,13 @@ namespace UBS
 		bool mBuildAndRun;
 
 		[SerializeField]
+		bool mBatchMode;
+		public bool IsInBatchMode
+		{
+			get { return mBatchMode; }
+		}
+
+		[SerializeField]
 		BuildCollection mCollection;
 		public BuildCollection BuildCollection
 		{
@@ -145,8 +152,10 @@ namespace UBS
 		/// </summary>
 		public static void BuildFromCommandLine()
 		{
+			bool batchMode = false;
+
 			string[] arguments = System.Environment.GetCommandLineArgs();
-			string[] availableArgs = {"-collection=", "-android-sdk="};
+			string[] availableArgs = {"-collection=", "-android-sdk=", "-batchmode"};
 			string collectionPath = "";
 			string androidSdkPath = "";
 			foreach(var s in arguments)
@@ -156,6 +165,12 @@ namespace UBS
 
 				if(s.StartsWith("-android-sdk="))
 					androidSdkPath = s.Substring(availableArgs[1].Length);
+
+				if(s.StartsWith("-batchmode"))
+				{
+					batchMode = true;
+					Debug.Log("UBS process started in batchmode!");
+				}
 				
 			}
 			if(collectionPath == null)
@@ -175,7 +190,7 @@ namespace UBS
 			// Load Build Collection
 			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
 			// Run Create Command
-			Create(collection, false);
+			Create(collection, false, batchMode);
 			
 			
 			UBSProcess process = LoadUBSProcess();
@@ -186,6 +201,7 @@ namespace UBS
 				{
 					process.MoveNext();
 					Debug.Log("Wait..");
+					Debug.Log ("Process state: " + process.CurrentState);
 					if(process.CurrentState == UBSState.done)
 					{
 						return;
@@ -201,10 +217,11 @@ namespace UBS
 
 #endregion
 
-		public static void Create(BuildCollection pCollection, bool pBuildAndRun)
+		public static void Create(BuildCollection pCollection, bool pBuildAndRun, bool pBatchMode = false)
 		{
 			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
 			p.mBuildAndRun = pBuildAndRun;
+			p.mBatchMode = pBatchMode;
 			p.mCollection = pCollection;
 			p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
 			p.mCurrentState = UBSState.invalid;

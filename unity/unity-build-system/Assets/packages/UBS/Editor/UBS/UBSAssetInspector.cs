@@ -110,7 +110,7 @@ namespace UBS
 		{
 			switch (mPlatform)
 			{
-				case BuildTarget.iOS:
+				case BuildTarget.iPhone:
 					return UBS.Styles.icoIOS;
 				case BuildTarget.Android:
 					return UBS.Styles.icoAndroid;
