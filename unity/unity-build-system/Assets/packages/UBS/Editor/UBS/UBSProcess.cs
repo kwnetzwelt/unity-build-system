@@ -37,6 +37,13 @@ namespace UBS
 		bool mBuildAndRun;
 
 		[SerializeField]
+		bool mBatchMode;
+		public bool IsInBatchMode
+		{
+			get { return mBatchMode; }
+		}
+
+		[SerializeField]
 		BuildCollection mCollection;
 		public BuildCollection BuildCollection
 		{
@@ -145,13 +152,25 @@ namespace UBS
 		/// </summary>
 		public static void BuildFromCommandLine()
 		{
+			bool batchMode = false;
+
 			string[] arguments = System.Environment.GetCommandLineArgs();
-			string argument = "-collection=";
+			string[] availableArgs = {"-collection=", "-android-sdk=", "-batchmode"};
 			string collectionPath = "";
+			string androidSdkPath = "";
 			foreach(var s in arguments)
 			{
 				if(s.StartsWith("-collection="))
-					collectionPath = s.Substring(argument.Length);
+					collectionPath = s.Substring(availableArgs[0].Length);
+
+				if(s.StartsWith("-android-sdk="))
+					androidSdkPath = s.Substring(availableArgs[1].Length);
+
+				if(s.StartsWith("-batchmode"))
+				{
+					batchMode = true;
+					Debug.Log("UBS process started in batchmode!");
+				}
 				
 			}
 			if(collectionPath == null)
@@ -159,13 +178,19 @@ namespace UBS
 				Debug.LogError("NO BUILD COLLECTION SET");
 				return;
 			}
+			
+			if(!string.IsNullOrEmpty(androidSdkPath))
+			{
+				EditorPrefs.SetString("AndroidSdkRoot", androidSdkPath);
+				Debug.Log("Set Android SDK root to: " + androidSdkPath);
+			}
 
 			Debug.Log("Loading Build Collection: " + collectionPath);
 
 			// Load Build Collection
 			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
 			// Run Create Command
-			Create(collection, false);
+			Create(collection, false, batchMode);
 			
 			
 			UBSProcess process = LoadUBSProcess();
@@ -176,6 +201,7 @@ namespace UBS
 				{
 					process.MoveNext();
 					Debug.Log("Wait..");
+					Debug.Log ("Process state: " + process.CurrentState);
 					if(process.CurrentState == UBSState.done)
 					{
 						return;
@@ -191,10 +217,11 @@ namespace UBS
 
 #endregion
 
-		public static void Create(BuildCollection pCollection, bool pBuildAndRun)
+		public static void Create(BuildCollection pCollection, bool pBuildAndRun, bool pBatchMode = false)
 		{
 			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
 			p.mBuildAndRun = pBuildAndRun;
+			p.mBatchMode = pBatchMode;
 			p.mCollection = pCollection;
 			p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
 			p.mCurrentState = UBSState.invalid;

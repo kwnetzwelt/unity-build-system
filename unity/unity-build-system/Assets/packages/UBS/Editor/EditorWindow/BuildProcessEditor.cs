@@ -413,7 +413,7 @@ namespace UBS
 				case BuildTarget.Android: 
 					return EditorUtility.SaveFilePanel(kTitle, path, "android", "apk");
 				
-				case BuildTarget.iOS:
+				case BuildTarget.iPhone:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
 				
 				case BuildTarget.MetroPlayer:
