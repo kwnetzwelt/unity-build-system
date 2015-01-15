@@ -369,6 +369,19 @@ namespace UBS
 
 			if(!CurrentProcess.mPretend)
 			{
+				// Apply metro player specific options
+				if(CurrentProcess.mPlatform == BuildTarget.MetroPlayer)
+				{
+					EditorUserBuildSettings.metroSDK = CurrentProcess.mMetroSdk;
+					EditorUserBuildSettings.metroBuildType = CurrentProcess.mMetroBuildType;
+
+					if(LoadUBSProcess().IsInBatchMode)
+					{
+						Debug.Log("Set Windows SDK to: " + EditorUserBuildSettings.metroSDK.ToString());
+						Debug.Log("Set build type to: " + EditorUserBuildSettings.metroBuildType.ToString());
+					}
+				}
+
 				BuildPipeline.BuildPlayer(
 					scenes.ToArray(),
 					CurrentProcess.mOutputPath,

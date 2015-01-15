@@ -172,6 +172,12 @@ namespace UBS
 
 			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", mEditedBuildProcess.mPlatform);
 
+			if(mEditedBuildProcess.mPlatform == BuildTarget.MetroPlayer)
+			{
+				mEditedBuildProcess.mMetroSdk = (MetroSDK)EditorGUILayout.EnumPopup("SDK", mEditedBuildProcess.mMetroSdk);
+				mEditedBuildProcess.mMetroBuildType = (MetroBuildType)EditorGUILayout.EnumPopup("Type", mEditedBuildProcess.mMetroBuildType);
+			}
+
 			mEditedBuildProcess.mPretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", "Will not trigger a unity build, but run everything else. "), mEditedBuildProcess.mPretend);
 
 			GUILayout.Space(5);
