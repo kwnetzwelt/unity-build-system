@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-namespace UBS
+namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the minor version of the project to a given value. ")]
-	public class VersionSetMinor : IBuildStepProvider
+	public class SetMinor : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
 

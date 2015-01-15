@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-namespace UBS
+namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the build version of the project to a given value. ")]
-	public class VersionSetBuild : IBuildStepProvider
+	public class SetBuild : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
 

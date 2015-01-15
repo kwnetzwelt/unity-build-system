@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-namespace UBS
+namespace UBS.Shared
 {
 	[BuildStepDescriptionAttribute("Sets the bundle identifier (shared between multiple platforms)")]
 	public class SetBundleIdentifier : IBuildStepProvider

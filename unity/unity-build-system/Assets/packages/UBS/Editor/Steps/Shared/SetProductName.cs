@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-namespace UBS
+namespace UBS.Shared
 {
 	[BuildStepDescriptionAttribute("Sets the product name (shared between multiple platforms)")]
 	public class SetProductName : IBuildStepProvider

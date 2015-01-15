@@ -6,10 +6,10 @@ using System.IO;
 using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
-namespace UBS
+namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Increases the build revision by one. ")]
-	public class VersionIncreaseRevision : IBuildStepProvider
+	public class IncreaseRevision : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
 		
