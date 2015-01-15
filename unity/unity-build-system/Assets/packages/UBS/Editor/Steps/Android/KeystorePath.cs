@@ -2,17 +2,17 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-namespace UBS
+namespace UBS.Android
 {
 	[BuildStepPlatformFilterAttribute(BuildTarget.Android)]
-	[BuildStepDescriptionAttribute("Sets the password for the currently set keystore to a given value")]
-	public class AndroidKeystorePassword : IBuildStepProvider
+	[BuildStepDescriptionAttribute("Sets the path to the used keystore to a given value")]
+	public class KeystorePath : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
 		
 		public void BuildStepStart (BuildConfiguration pConfiguration)
 		{
-			PlayerSettings.Android.keystorePass = pConfiguration.Params;
+			PlayerSettings.Android.keystoreName = pConfiguration.Params;
 		}
 		
 		public void BuildStepUpdate ()

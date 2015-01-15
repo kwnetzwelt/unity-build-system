@@ -2,17 +2,17 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-namespace UBS
+namespace UBS.Android
 {
 	[BuildStepPlatformFilterAttribute(BuildTarget.Android)]
-	[BuildStepDescriptionAttribute("Sets the password for the alias (name) for the used keystore to a given value")]
-	public class AndroidKeystoreAliasPassword : IBuildStepProvider
+	[BuildStepDescriptionAttribute("Sets the alias (name) for the used keystore to a given value")]
+	public class KeystoreAlias : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
 		
 		public void BuildStepStart (BuildConfiguration pConfiguration)
 		{
-			PlayerSettings.Android.keyaliasPass = pConfiguration.Params;
+			PlayerSettings.Android.keyaliasName = pConfiguration.Params;
 		}
 		
 		public void BuildStepUpdate ()

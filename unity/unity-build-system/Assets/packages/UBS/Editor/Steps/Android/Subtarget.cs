@@ -2,17 +2,17 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-namespace UBS
+namespace UBS.Android
 {
 	[BuildStepPlatformFilterAttribute(BuildTarget.Android)]
-	[BuildStepDescriptionAttribute("Sets the path to the used keystore to a given value")]
-	public class AndroidKeystorePath : IBuildStepProvider
+	[BuildStepDescriptionAttribute("Sets the subtarget (texture compression type) for android. Values: Generic, DXT, PVRTC,	ATC, ETC, ETC2, ASTC")]
+	public class Subtarget : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
 		
 		public void BuildStepStart (BuildConfiguration pConfiguration)
 		{
-			PlayerSettings.Android.keystoreName = pConfiguration.Params;
+			EditorUserBuildSettings.androidBuildSubtarget = (AndroidBuildSubtarget)System.Enum.Parse(typeof(AndroidBuildSubtarget),pConfiguration.Params);
 		}
 		
 		public void BuildStepUpdate ()
