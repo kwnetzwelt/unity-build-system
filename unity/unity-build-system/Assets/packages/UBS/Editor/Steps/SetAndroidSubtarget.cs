@@ -12,7 +12,7 @@ namespace UBS
 		
 		public void BuildStepStart (BuildConfiguration pConfiguration)
 		{
-			EditorUserBuildSettings.androidBuildSubtarget = System.Enum.Parse(typeof(AndroidBuildSubtarget),pConfiguration.Params);
+			EditorUserBuildSettings.androidBuildSubtarget = (AndroidBuildSubtarget)System.Enum.Parse(typeof(AndroidBuildSubtarget),pConfiguration.Params);
 		}
 		
 		public void BuildStepUpdate ()
