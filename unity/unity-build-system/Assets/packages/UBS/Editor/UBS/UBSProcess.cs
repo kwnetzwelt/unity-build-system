@@ -155,22 +155,26 @@ namespace UBS
 			bool batchMode = false;
 
 			string[] arguments = System.Environment.GetCommandLineArgs();
-			string[] availableArgs = {"-collection=", "-android-sdk=", "-batchmode"};
+			string[] availableArgs = {"-batchmode", "-collection=", "-android-sdk=", "-buildTag="};
 			string collectionPath = "";
 			string androidSdkPath = "";
+			string buildTag = "";
 			foreach(var s in arguments)
 			{
-				if(s.StartsWith("-collection="))
-					collectionPath = s.Substring(availableArgs[0].Length);
-
-				if(s.StartsWith("-android-sdk="))
-					androidSdkPath = s.Substring(availableArgs[1].Length);
-
 				if(s.StartsWith("-batchmode"))
 				{
 					batchMode = true;
 					Debug.Log("UBS process started in batchmode!");
 				}
+
+				if(s.StartsWith("-collection="))
+					collectionPath = s.Substring(availableArgs[1].Length);
+
+				if(s.StartsWith("-android-sdk="))
+					androidSdkPath = s.Substring(availableArgs[2].Length);
+
+				if(s.StartsWith("-buildTag="))
+					buildTag = s.Substring(availableArgs[3].Length);
 				
 			}
 			if(collectionPath == null)
@@ -190,11 +194,11 @@ namespace UBS
 			// Load Build Collection
 			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
 			// Run Create Command
-			Create(collection, false, batchMode);
+			Create(collection, false, batchMode, buildTag);
 			
 			
 			UBSProcess process = LoadUBSProcess();
-			
+
 			try
 			{
 				while(true)
@@ -215,9 +219,31 @@ namespace UBS
 			}
 		}
 
+		public static string AddBuildTag(string pOutputPath, string pTag)
+		{
+			string[] splittedPath = pOutputPath.Split('/');
+			
+			if(splittedPath[splittedPath.Length - 1].Contains("."))
+			{
+				string returnPath = "";
+				
+				for (int i = 0; i < splittedPath.Length - 1; i++) 
+				{
+					returnPath += splittedPath[i] + '/';
+				}
+				
+				returnPath += pTag + '/' + splittedPath[splittedPath.Length - 1];
+				return returnPath;
+			}
+			else
+			{
+				return pOutputPath += '/' + pTag + '/';
+			}
+		}
+
 #endregion
 
-		public static void Create(BuildCollection pCollection, bool pBuildAndRun, bool pBatchMode = false)
+		public static void Create(BuildCollection pCollection, bool pBuildAndRun, bool pBatchMode = false, string pBuildTag = "")
 		{
 			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
 			p.mBuildAndRun = pBuildAndRun;
@@ -226,6 +252,13 @@ namespace UBS
 			p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
 			p.mCurrentState = UBSState.invalid;
 
+			if(!string.IsNullOrEmpty(pBuildTag))
+			{
+				foreach(var sp in p.mSelectedProcesses)
+				{
+					sp.mOutputPath = AddBuildTag(sp.mOutputPath, pBuildTag);
+				}
+			}
 
 			AssetDatabase.CreateAsset( p, GetProcessPath());
 			AssetDatabase.SaveAssets();
