@@ -2,10 +2,10 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace UBS
+namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the Version type to final or beta. Provide a parameter 'final' to set the version type to final. ")]
-	public class VersionSetType : IBuildStepProvider
+	public class SetType : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
 

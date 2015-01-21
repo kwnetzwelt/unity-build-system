@@ -19,7 +19,8 @@ namespace UBS
 				return;
 			}
 			mType = pType;
-			mName = mType.ToString();
+			mName = mType.Name;
+			mNamespace = mType.Namespace;
 
 			foreach (var a in mType.GetCustomAttributes(true))
 			{
@@ -32,6 +33,8 @@ namespace UBS
 			}
 		}
 		public string mName;
+		public string mNamespace;
+
 		public System.Type mType;
 		public BuildStepDescriptionAttribute mDescription;
 		public BuildStepPlatformFilterAttribute mPlatformFilter;
@@ -39,6 +42,14 @@ namespace UBS
 		public override string ToString()
 		{
 			return mName;
+		}
+
+		public string ToMenuPath ()
+		{
+			if(mNamespace == null)
+				return mName;
+
+			return mNamespace.Replace(".","/") + "/" + mName;
 		}
 
 		public string GetDescription()
@@ -343,9 +354,9 @@ namespace UBS
 				{
 					string desc = bsp.GetDescription();
 					if (desc != null)
-						outList.Add(new GUIContent(bsp.mName, desc));
+						outList.Add(new GUIContent(bsp.ToMenuPath(), desc));
 					else
-						outList.Add(new GUIContent(bsp.mName));
+						outList.Add(new GUIContent(bsp.ToMenuPath()));
 				}
 			}
 			return outList.ToArray();

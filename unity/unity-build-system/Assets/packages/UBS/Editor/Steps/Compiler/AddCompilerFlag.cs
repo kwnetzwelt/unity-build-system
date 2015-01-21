@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UBS;
 using UnityEditor;
 
-namespace UBS
+namespace UBS.Compiler
 {
 	[BuildStepDescriptionAttribute("Adds a compiler flag to your build.")]
 	public class AddCompilerFlag : IBuildStepProvider
