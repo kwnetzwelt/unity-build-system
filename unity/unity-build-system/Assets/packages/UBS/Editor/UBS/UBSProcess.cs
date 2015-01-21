@@ -221,24 +221,23 @@ namespace UBS
 
 		public static string AddBuildTag(string pOutputPath, string pTag)
 		{
-			string[] splittedPath = pOutputPath.Split('/');
-			
-			if(splittedPath[splittedPath.Length - 1].Contains("."))
+			List<string> splittedPath = new List<string>(pOutputPath.Split('/'));
+
+			if(splittedPath[splittedPath.Count - 1].Contains("."))
 			{
-				string returnPath = "";
-				
-				for (int i = 0; i < splittedPath.Length - 1; i++) 
-				{
-					returnPath += splittedPath[i] + '/';
-				}
-				
-				returnPath += pTag + '/' + splittedPath[splittedPath.Length - 1];
-				return returnPath;
+
+				splittedPath.Insert(splittedPath.Count - 2, pTag);
 			}
 			else
 			{
-				return pOutputPath += '/' + pTag + '/';
+				splittedPath.Add(pTag);
 			}
+
+			splittedPath.RemoveAll((str) => {
+				return string.IsNullOrEmpty(str);
+			});
+
+			return string.Join("/", splittedPath.ToArray());
 		}
 
 #endregion
