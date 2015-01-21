@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UBS;
 using UnityEditor;
 
-namespace UBS
+namespace UBS.Compiler
 {
 	[BuildStepDescriptionAttribute("Removes a compiler flag from your build.")]
 	public class RemoveCompilerFlag : IBuildStepProvider
