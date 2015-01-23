@@ -28,8 +28,6 @@ namespace UBS {
 			mName = pOther.mName;
 			mOutputPath = pOther.mOutputPath;
 			mPlatform = pOther.mPlatform;
-			mMetroSdk = pOther.mMetroSdk;
-			mMetroBuildType = pOther.mMetroBuildType;
 			mBuildOptions = pOther.mBuildOptions;
 			mSelected = false;
 			mScenes = new List<string>( pOther.mScenes.ToArray() );
@@ -51,10 +49,6 @@ namespace UBS {
 		public bool mPretend = false;
 
 		public BuildTarget mPlatform;
-
-		//Metro player options
-		public MetroSDK mMetroSdk;
-		public MetroBuildType mMetroBuildType;
 
 		public BuildOptions mBuildOptions;
 

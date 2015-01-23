@@ -183,12 +183,6 @@ namespace UBS
 
 			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", mEditedBuildProcess.mPlatform);
 
-			if(mEditedBuildProcess.mPlatform == BuildTarget.MetroPlayer)
-			{
-				mEditedBuildProcess.mMetroSdk = (MetroSDK)EditorGUILayout.EnumPopup("SDK", mEditedBuildProcess.mMetroSdk);
-				mEditedBuildProcess.mMetroBuildType = (MetroBuildType)EditorGUILayout.EnumPopup("Type", mEditedBuildProcess.mMetroBuildType);
-			}
-
 			mEditedBuildProcess.mPretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", "Will not trigger a unity build, but run everything else. "), mEditedBuildProcess.mPretend);
 
 			GUILayout.Space(5);
@@ -429,26 +423,34 @@ namespace UBS
 				
 				case BuildTarget.Android: 
 					return EditorUtility.SaveFilePanel(kTitle, path, "android", "apk");
-				
+#if !UNITY_5
 				case BuildTarget.iPhone:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
 				
 				case BuildTarget.MetroPlayer:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
-#if UNITY_4_5 || UNITY_4_6 || UNITY_5_0
+
+				case BuildTarget.NaCl:
+					return EditorUtility.SaveFolderPanel(kTitle, path,"NativeClientDeployment");
+#else
+				case BuildTarget.iOS:
+					return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
+					
+				case BuildTarget.WSAPlayer:
+					return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
+
+				case BuildTarget.WebGL:
+					return EditorUtility.SaveFolderPanel(kTitle, path, "WebGLDeployment");
+#endif
+
+#if UNITY_4_5 || UNITY_4_6 || UNITY_5
 				case BuildTarget.BlackBerry:
-#elif !UNITY_5_0
+#else
 			case BuildTarget.BB10:
 #endif
 					return EditorUtility.SaveFolderPanel(kTitle, path, "BlackBerryDeployment");
 
-#if !UNITY_5_0
-			case BuildTarget.NaCl:
-				return EditorUtility.SaveFolderPanel(kTitle, path,"NativeClientDeployment");
-#else
-				case BuildTarget.WebGL:
-					return EditorUtility.SaveFolderPanel(kTitle, path, "WebGLDeployment");
-#endif
+
 				case BuildTarget.WebPlayer:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "WebPlayerDeployment");
 				

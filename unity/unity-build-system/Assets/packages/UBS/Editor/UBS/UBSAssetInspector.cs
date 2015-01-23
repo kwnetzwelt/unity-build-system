@@ -110,8 +110,13 @@ namespace UBS
 		{
 			switch (mPlatform)
 			{
+#if !UNITY_5
 				case BuildTarget.iPhone:
 					return UBS.Styles.icoIOS;
+#else
+			case BuildTarget.iOS:
+				return UBS.Styles.icoIOS;
+#endif
 				case BuildTarget.Android:
 					return UBS.Styles.icoAndroid;
 				case BuildTarget.StandaloneWindows:

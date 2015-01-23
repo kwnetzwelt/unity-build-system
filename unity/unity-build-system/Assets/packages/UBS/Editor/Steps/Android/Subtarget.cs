@@ -12,7 +12,11 @@ namespace UBS.Android
 		
 		public void BuildStepStart (BuildConfiguration pConfiguration)
 		{
+#if !UNITY_5
 			EditorUserBuildSettings.androidBuildSubtarget = (AndroidBuildSubtarget)System.Enum.Parse(typeof(AndroidBuildSubtarget),pConfiguration.Params);
+#else
+			EditorUserBuildSettings.androidBuildSubtarget = (MobileTextureSubtarget)System.Enum.Parse(typeof(MobileTextureSubtarget),pConfiguration.Params);
+#endif
 		}
 		
 		public void BuildStepUpdate ()

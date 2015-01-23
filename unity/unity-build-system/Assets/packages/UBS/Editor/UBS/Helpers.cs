@@ -51,21 +51,24 @@ namespace UBS
 			{
 				case BuildTarget.Android:
 					return BuildTargetGroup.Android;
-#if UNITY_4_5 || UNITY_4_6 || UNITY_5_0
-				case BuildTarget.BlackBerry:
-					return BuildTargetGroup.BlackBerry;
-#elif UNITY_5_0
-			case BuildTarget.WebGL: return BuildTarget.WebGL;
-#elif !UNITY_5_0
+			
+#if !UNITY_5
+			case BuildTarget.iPhone: return BuildTargetGroup.iPhone;
 			case BuildTarget.NaCl: return BuildTargetGroup.NaCl;
+			case BuildTarget.MetroPlayer: return BuildTargetGroup.Metro;
 #else
-			case BuildTarget.BlackBerry: return BuildTargetGroup.BB10;
+			case BuildTarget.iOS: return BuildTargetGroup.iOS;
+			case BuildTarget.WSAPlayer: return BuildTargetGroup.WSA;
+			case BuildTarget.WebGL: return BuildTargetGroup.WebGL;
 
 #endif
-				case BuildTarget.iPhone:
-					return BuildTargetGroup.iPhone;
-				case BuildTarget.MetroPlayer:
-					return BuildTargetGroup.Metro;
+
+#if UNITY_4_5 || UNITY_4_6 || UNITY_5
+			case BuildTarget.BlackBerry: return BuildTargetGroup.BlackBerry;
+#else
+			case BuildTarget.BlackBerry: return BuildTargetGroup.BB10;
+#endif
+
 				case BuildTarget.PS3:
 					return BuildTargetGroup.PS3;
 				case BuildTarget.PS4:
