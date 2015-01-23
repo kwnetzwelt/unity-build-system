@@ -20,8 +20,6 @@ MonoBehaviour:
     mOutputPath: ../build/unity-build-system.app
     mPretend: 0
     mPlatform: 21
-    mMetroSdk: 0
-    mMetroBuildType: 2
     mBuildOptions: 0
     mSelected: 1
     mScenes:
@@ -34,8 +32,6 @@ MonoBehaviour:
     mOutputPath: 
     mPretend: 0
     mPlatform: 5
-    mMetroSdk: 0
-    mMetroBuildType: 0
     mBuildOptions: 0
     mSelected: 0
     mScenes: []
@@ -46,8 +42,6 @@ MonoBehaviour:
     mOutputPath: 
     mPretend: 0
     mPlatform: 9
-    mMetroSdk: 0
-    mMetroBuildType: 0
     mBuildOptions: 0
     mSelected: 0
     mScenes: []
@@ -58,8 +52,6 @@ MonoBehaviour:
     mOutputPath: 
     mPretend: 0
     mPlatform: 0
-    mMetroSdk: 0
-    mMetroBuildType: 0
     mBuildOptions: 0
     mSelected: 0
     mScenes: []
