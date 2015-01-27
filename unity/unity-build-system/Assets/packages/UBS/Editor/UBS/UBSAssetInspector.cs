@@ -142,7 +142,7 @@ namespace UBS
 		[MenuItem("Assets/Create/UBS Build Collection")]
 		public static void CreateBuildCollectionMenuCommand()
 		{
-			var asset = new BuildCollection();
+			var asset = BuildCollection.CreateInstance<BuildCollection>();
 			asset.hideFlags = HideFlags.None;
 			var path = AssetDatabase.GetAssetPath(Selection.activeObject);
 
