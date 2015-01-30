@@ -6,6 +6,7 @@ namespace UBS.Android
 {
 	[BuildStepPlatformFilterAttribute(BuildTarget.Android)]
 	[BuildStepDescriptionAttribute("Sets the subtarget (texture compression type) for android. Values: Generic, DXT, PVRTC,	ATC, ETC, ETC2, ASTC")]
+	[BuildStepParameterFilterAttribute(typeof(AndroidBuildSubtarget))]
 	public class Subtarget : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

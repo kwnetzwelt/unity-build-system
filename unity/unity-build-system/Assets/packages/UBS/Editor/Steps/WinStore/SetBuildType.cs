@@ -10,6 +10,7 @@ using UBS;
 [BuildStepPlatformFilter(BuildTarget.WSAPlayer)]
 [System.Obsolete("This option is deprecated and can't be used anymore!")]
 #endif
+[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 public class SetBuildType : IBuildStepProvider 
 {
 	#region IBuildStepProvider implementation

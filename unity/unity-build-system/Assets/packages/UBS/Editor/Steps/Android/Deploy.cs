@@ -9,6 +9,7 @@ namespace UBS.Android
 {
 	[UBS.BuildStepDescription("Your build apk will be deployed to an attached Android device. This scripts includes obb deployment. Include a paramter run to instantly run the apk. ")]
 	[UBS.BuildStepPlatformFilter( UnityEditor.BuildTarget.Android )]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class Deploy : IBuildStepProvider
 	{
 		string scriptPath = "Assets/packages/UBS/Dependencies/PythonScripts/";
