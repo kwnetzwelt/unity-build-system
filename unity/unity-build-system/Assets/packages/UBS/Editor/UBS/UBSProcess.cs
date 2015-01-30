@@ -37,6 +37,13 @@ namespace UBS
 		bool mBuildAndRun;
 
 		[SerializeField]
+		bool mBatchMode;
+		public bool IsInBatchMode
+		{
+			get { return mBatchMode; }
+		}
+
+		[SerializeField]
 		BuildCollection mCollection;
 		public BuildCollection BuildCollection
 		{
@@ -145,13 +152,42 @@ namespace UBS
 		/// </summary>
 		public static void BuildFromCommandLine()
 		{
+			bool batchMode = false;
+
 			string[] arguments = System.Environment.GetCommandLineArgs();
-			string argument = "-collection=";
+			string[] availableArgs = {"-batchmode", "-collection=", "-android-sdk=", "-buildTag=", "-buildAll"};
 			string collectionPath = "";
+			string androidSdkPath = "";
+			string buildTag = "";
+			bool buildAll = false;
 			foreach(var s in arguments)
 			{
+				if(s.StartsWith("-batchmode"))
+				{
+					batchMode = true;
+					Debug.Log("UBS process started in batchmode!");
+				}
+
 				if(s.StartsWith("-collection="))
-					collectionPath = s.Substring(argument.Length);
+				{
+					collectionPath = s.Substring(availableArgs[1].Length);
+				}
+
+				if(s.StartsWith("-android-sdk="))
+				{
+					androidSdkPath = s.Substring(availableArgs[2].Length);
+				}
+
+				if(s.StartsWith("-buildTag="))
+				{
+					buildTag = s.Substring(availableArgs[3].Length);
+				}
+
+				if(s.StartsWith("-buildAll"))
+				{
+					buildAll = true;
+					Debug.Log("Selection override: building whole collection!");
+				}
 				
 			}
 			if(collectionPath == null)
@@ -159,23 +195,30 @@ namespace UBS
 				Debug.LogError("NO BUILD COLLECTION SET");
 				return;
 			}
+			
+			if(!string.IsNullOrEmpty(androidSdkPath))
+			{
+				EditorPrefs.SetString("AndroidSdkRoot", androidSdkPath);
+				Debug.Log("Set Android SDK root to: " + androidSdkPath);
+			}
 
 			Debug.Log("Loading Build Collection: " + collectionPath);
 
 			// Load Build Collection
 			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
 			// Run Create Command
-			Create(collection, false);
+			Create(collection, false, batchMode, buildAll ,buildTag);
 			
 			
 			UBSProcess process = LoadUBSProcess();
-			
+
 			try
 			{
 				while(true)
 				{
 					process.MoveNext();
 					Debug.Log("Wait..");
+					Debug.Log ("Process state: " + process.CurrentState);
 					if(process.CurrentState == UBSState.done)
 					{
 						return;
@@ -189,16 +232,52 @@ namespace UBS
 			}
 		}
 
+		public static string AddBuildTag(string pOutputPath, string pTag)
+		{
+			List<string> splittedPath = new List<string>(pOutputPath.Split('/'));
+
+			if(splittedPath[splittedPath.Count - 1].Contains("."))
+			{
+
+				splittedPath.Insert(splittedPath.Count - 2, pTag);
+			}
+			else
+			{
+				splittedPath.Add(pTag);
+			}
+
+			splittedPath.RemoveAll((str) => {
+				return string.IsNullOrEmpty(str);
+			});
+
+			return string.Join("/", splittedPath.ToArray());
+		}
+
 #endregion
 
-		public static void Create(BuildCollection pCollection, bool pBuildAndRun)
+		public static void Create(BuildCollection pCollection, bool pBuildAndRun, bool pBatchMode = false, bool pBuildAll = false, string pBuildTag = "")
 		{
 			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
 			p.mBuildAndRun = pBuildAndRun;
+			p.mBatchMode = pBatchMode;
 			p.mCollection = pCollection;
-			p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
+			if(!pBuildAll)
+			{
+				p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
+			}
+			else
+			{
+				p.mSelectedProcesses = p.mCollection.mProcesses;
+			}
 			p.mCurrentState = UBSState.invalid;
 
+			if(!string.IsNullOrEmpty(pBuildTag))
+			{
+				foreach(var sp in p.mSelectedProcesses)
+				{
+					sp.mOutputPath = AddBuildTag(sp.mOutputPath, pBuildTag);
+				}
+			}
 
 			AssetDatabase.CreateAsset( p, GetProcessPath());
 			AssetDatabase.SaveAssets();

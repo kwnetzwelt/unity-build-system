@@ -7,7 +7,7 @@ namespace UBS
 	[Serializable]
 	public class BuildCollection : ScriptableObject
 	{
-		public BuildCollection ()
+		public BuildCollection()
 		{
 			version = BuildVersion.Load();
 
@@ -20,8 +20,11 @@ namespace UBS
 			version.Save();
 			UnityEditor.PlayerSettings.Android.bundleVersionCode = version.revision;
 			UnityEditor.PlayerSettings.bundleVersion = version.ToString();
+			#if UNITY_5_0
+			UnityEditor.PlayerSettings.WSA.packageVersion = version;
+			#else
 			UnityEditor.PlayerSettings.Metro.packageVersion = version;
-
+			#endif
 		}
 
 		public BuildVersion version = null;

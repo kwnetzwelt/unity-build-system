@@ -65,7 +65,7 @@ To get started, you should get the latest version of this software here <https:/
 \subsection gestarted2 Import the build system into your project
 
 
-The Build System is a Unity project. To use it in your already existing project, you can simply copy the `packages` folder. Or if you already have a `packages` folder, copy the `UBS` folder within that folder into your existing project. 
+The Build System is a Unity project. To use it in your already existing project, you can simply copy the `packages` folder in `unity/unity-build-system/Assets`. Or if you already have a `packages` folder, copy the `UBS` folder within the UBS' `packages` into yours. 
 
 _Make sure the Build System resides in the same structure!_ 
 
@@ -91,6 +91,8 @@ A build process is your actual build target. You create one in the Editor Window
 2. select a target platform
 3. choose the output path
 4. select scenes which should be included
+
+Observe that, depending on the target platform, the output path must either point to the executable file you want to build, or a folder you want to deploy to. The path must be relative to the project directory, absolute paths are not supported.
 
 ![Newly created build collection](../screenshots/build_process_created.jpg)
 

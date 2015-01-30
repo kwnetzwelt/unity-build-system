@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using System.Diagnostics;
+using System.IO ;
 
 namespace UBS
 {
@@ -23,16 +24,16 @@ namespace UBS
 			return p;
 		}
 
-		public static List<System.Type> FindClassesImplementingInterface( System.Type pInterface)
+		public static List<System.Type> FindClassesImplementingInterface(System.Type pInterface)
 		{
 			List<System.Type> mOutList = new List<System.Type>();
-			foreach(var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 
-				foreach(var t in assembly.GetTypes())
+				foreach (var t in assembly.GetTypes())
 				{
 
-					if(t.GetInterfaces().Contains( pInterface ))
+					if (t.GetInterfaces().Contains(pInterface))
 					{
 						mOutList.Add(t);
 					}
@@ -46,38 +47,51 @@ namespace UBS
 		public static BuildTargetGroup GroupFromBuildTarget(BuildTarget pTarget)
 		{
 
-			switch( pTarget )
+			switch (pTarget)
 			{
-			case BuildTarget.Android: return BuildTargetGroup.Android;
-#if UNITY_4_5 || UNITY_4_6
+				case BuildTarget.Android:
+					return BuildTargetGroup.Android;
+			
+#if !UNITY_5
+			case BuildTarget.iPhone: return BuildTargetGroup.iPhone;
+			case BuildTarget.NaCl: return BuildTargetGroup.NaCl;
+			case BuildTarget.MetroPlayer: return BuildTargetGroup.Metro;
+#else
+			case BuildTarget.iOS: return BuildTargetGroup.iOS;
+			case BuildTarget.WSAPlayer: return BuildTargetGroup.WSA;
+			case BuildTarget.WebGL: return BuildTargetGroup.WebGL;
+
+#endif
+
+#if UNITY_4_5 || UNITY_4_6 || UNITY_5
 			case BuildTarget.BlackBerry: return BuildTargetGroup.BlackBerry;
 #else
-			case BuildTarget.BB10: return BuildTargetGroup.BB10;
+			case BuildTarget.BlackBerry: return BuildTargetGroup.BB10;
 #endif
-			case BuildTarget.FlashPlayer: return BuildTargetGroup.FlashPlayer;
-			case BuildTarget.iPhone: return BuildTargetGroup.iPhone;
-			case BuildTarget.MetroPlayer: return BuildTargetGroup.Metro;
-			case BuildTarget.NaCl: return BuildTargetGroup.NaCl;
-			case BuildTarget.PS3: return BuildTargetGroup.PS3;
-			case BuildTarget.StandaloneGLESEmu:
-			case BuildTarget.StandaloneLinux:
-			case BuildTarget.StandaloneLinux64:
-			case BuildTarget.StandaloneLinuxUniversal:
-			case BuildTarget.StandaloneOSXIntel:
-			case BuildTarget.StandaloneOSXIntel64:
-			case BuildTarget.StandaloneOSXUniversal:
-			case BuildTarget.StandaloneWindows:
-			case BuildTarget.StandaloneWindows64:
-				return BuildTargetGroup.Standalone;
-			case BuildTarget.Tizen:
-				return BuildTargetGroup.Tizen;
-			case BuildTarget.WebPlayer:
-			case BuildTarget.WebPlayerStreamed:
-				return BuildTargetGroup.WebPlayer;
-			case BuildTarget.WP8Player:
-				return BuildTargetGroup.WP8;
-			case BuildTarget.XBOX360:
-				return BuildTargetGroup.XBOX360;
+
+				case BuildTarget.PS3:
+					return BuildTargetGroup.PS3;
+				case BuildTarget.PS4:
+					return BuildTargetGroup.PS4;
+				case BuildTarget.StandaloneGLESEmu:
+				case BuildTarget.StandaloneLinux:
+				case BuildTarget.StandaloneLinux64:
+				case BuildTarget.StandaloneLinuxUniversal:
+				case BuildTarget.StandaloneOSXIntel:
+				case BuildTarget.StandaloneOSXIntel64:
+				case BuildTarget.StandaloneOSXUniversal:
+				case BuildTarget.StandaloneWindows:
+				case BuildTarget.StandaloneWindows64:
+					return BuildTargetGroup.Standalone;
+				case BuildTarget.Tizen:
+					return BuildTargetGroup.Tizen;
+				case BuildTarget.WebPlayer:
+				case BuildTarget.WebPlayerStreamed:
+					return BuildTargetGroup.WebPlayer;
+				case BuildTarget.WP8Player:
+					return BuildTargetGroup.WP8;
+				case BuildTarget.XBOX360:
+					return BuildTargetGroup.XBOX360;
 			}
 			return BuildTargetGroup.Unknown;
 		}
@@ -86,15 +100,19 @@ namespace UBS
 		{	
 			// Otherwise, the Uri will retain the Assets-relative fix
 			Uri projectUri = new Uri(new Uri(UnityEngine.Application.dataPath + "/../").ToString());
-			Uri targetUri = new Uri (absolutePath);
-			return projectUri.MakeRelativeUri(targetUri).ToString ();
+			Uri targetUri = new Uri(absolutePath);
+			return projectUri.MakeRelativeUri(targetUri).ToString();
 		}
 
-		public static string GetAbsolutePathRelativeToProject(string relativePath) 
+		public static string GetAbsolutePathRelativeToProject(string relativePath)
 		{
 			// Otherwise, the Uri will retain the Assets-relative fix
 			Uri projectUri = new Uri(new Uri(UnityEngine.Application.dataPath + "/../").ToString());
-			return new Uri (projectUri + relativePath).AbsolutePath;
+            
+			// Use GetFullPath to resolve ../../ backreferences.
+			// Hint from http://softwareblog.alcedo.com/post/2010/02/24/Resolving-relative-paths-in-C.aspx
+			//
+			return Path.GetFullPath(new Uri(projectUri + relativePath).AbsolutePath);
 		}
 
 	}

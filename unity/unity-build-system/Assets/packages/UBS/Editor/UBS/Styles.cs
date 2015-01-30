@@ -7,37 +7,37 @@ namespace UBS
 {
 	internal static class Styles
 	{
-		public const string kImagePath ="Assets/packages/UBS/Editor/images/";
+		public const string kImagePath = "Assets/packages/UBS/Editor/images/";
 
 		static Dictionary<long,Texture2D>mTextures = new Dictionary<long, Texture2D>();
 		
 		static Texture2D GetTexture(long pColorRGBA)
 		{
-			if(mTextures.ContainsKey(pColorRGBA) && mTextures[pColorRGBA] != null)
-				return mTextures[pColorRGBA];
+			if (mTextures.ContainsKey(pColorRGBA) && mTextures [pColorRGBA] != null)
+				return mTextures [pColorRGBA];
 				
 			Color32 c = GetColor(pColorRGBA);
 			
-			var tmp = new Texture2D(4,4);
-			for(int x = 0;x < 4;x++)
-				for(int y = 0;y < 4;y++)
-					tmp.SetPixel(x,y,c);
+			var tmp = new Texture2D(4, 4);
+			for (int x = 0; x < 4; x++)
+				for (int y = 0; y < 4; y++)
+					tmp.SetPixel(x, y, c);
 			tmp.Apply();
 			tmp.Compress(true);
 			
-			mTextures[pColorRGBA] = tmp;
+			mTextures [pColorRGBA] = tmp;
 			
-			return tmp;
+			return tmp; 
 		}
 		
 		static Color32 GetColor(long pColorRGBA)
 		{
-			byte r =(byte)( (pColorRGBA & 0xff000000) >> 24 );
-			byte g =(byte)( (pColorRGBA & 0xff0000) >> 16 );
-			byte b =(byte)( (pColorRGBA & 0xff00) >> 8 );
-			byte a =(byte)( (pColorRGBA & 0xff) );
+			byte r = (byte)((pColorRGBA & 0xff000000) >> 24);
+			byte g = (byte)((pColorRGBA & 0xff0000) >> 16);
+			byte b = (byte)((pColorRGBA & 0xff00) >> 8);
+			byte a = (byte)((pColorRGBA & 0xff));
 			
-			Color32 c = new Color32(r,g,b,a);
+			Color32 c = new Color32(r, g, b, a);
 			return c;
 		}
 		
@@ -46,7 +46,7 @@ namespace UBS
 		{
 			get
 			{
-				if(mList == null)
+				if (mList == null)
 				{
 					mList = new GUIStyle();
 					mList.normal.background = GetTexture(0x424646ff);
@@ -63,10 +63,10 @@ namespace UBS
 		{
 			get
 			{
-				if(mBoldKey == null)
+				if (mBoldKey == null)
 				{
 					mBoldKey = new GUIStyle();
-					if(EditorGUIUtility.isProSkin)
+					if (EditorGUIUtility.isProSkin)
 						mBoldKey.normal.textColor = GetColor(0xffffffff);
 					else
 						mBoldKey.normal.textColor = GetColor(0x000000ff);
@@ -84,10 +84,10 @@ namespace UBS
 		{
 			get
 			{
-				if(mBuildProcessEditorBackground == null)
+				if (mBuildProcessEditorBackground == null)
 				{
 					mBuildProcessEditorBackground = new GUIStyle();
-					if(EditorGUIUtility.isProSkin)
+					if (EditorGUIUtility.isProSkin)
 						mBuildProcessEditorBackground.normal.background = GetTexture(0x444444aa);
 					else
 						mBuildProcessEditorBackground.normal.background = GetTexture(0xeeeeeeaa);
@@ -97,14 +97,70 @@ namespace UBS
 		}
 
 		static Texture2D mGear;
-		public static Texture2D gear {
-			get{
-				if(mGear == null)
+		public static Texture2D gear
+		{
+			get
+			{
+				if (mGear == null)
 				{
-					mGear = (Texture2D) AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "gear.png", typeof(Texture2D));
+					mGear = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "gear.png", typeof(Texture2D));
 
 				}
 				return mGear;
+			}
+		}
+		static Texture2D mIcoIOS;
+		public static Texture2D icoIOS
+		{
+			get
+			{
+				if (mIcoIOS == null)
+				{
+					mIcoIOS = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "icons/ico_ios.png", typeof(Texture2D));
+					
+				}
+				return mIcoIOS;
+			}
+		}
+		static Texture2D mIcoAndroid;
+		public static Texture2D icoAndroid
+		{
+			get
+			{
+				if (mIcoAndroid == null)
+				{
+					mIcoAndroid = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "icons/ico_android.png", typeof(Texture2D));
+					
+				}
+				return mIcoAndroid;
+			}
+		}
+		static Texture2D mIcoWindows;
+		public static Texture2D icoWindows
+		{ 
+			get
+			{
+				if (mIcoWindows == null)
+				{
+					mIcoWindows = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles.kImagePath + "icons/ico_windows.png", typeof(Texture2D));
+					
+				}
+				return mIcoWindows;
+			}
+		}
+		static GUIStyle mIcon;
+		public static GUIStyle icon
+		{ 
+			get
+			{
+				if (mIcon == null)
+				{
+					mIcon = new GUIStyle();
+					mIcon.fixedWidth = 20;
+					mIcon.fixedHeight = 20;
+					mIcon.contentOffset = new Vector2(-8f, -2f);
+				}
+				return mIcon;
 			}
 		}
 
@@ -113,10 +169,10 @@ namespace UBS
 		{
 			get
 			{
-				if(mNormalValue == null)
+				if (mNormalValue == null)
 				{
 					mNormalValue = new GUIStyle();
-					if(EditorGUIUtility.isProSkin)
+					if (EditorGUIUtility.isProSkin)
 						mNormalValue.normal.textColor = GetColor(0xffffffff);
 					else
 						mNormalValue.normal.textColor = GetColor(0x000000ff);
@@ -134,7 +190,7 @@ namespace UBS
 		{
 			get
 			{
-				if(mSelectableListEntryText == null)
+				if (mSelectableListEntryText == null)
 				{
 					mSelectableListEntryText = new GUIStyle(list);
 					mSelectableListEntryText.normal.textColor = GetColor(0xb5b5b5ff);
@@ -145,20 +201,37 @@ namespace UBS
 				return mSelectableListEntryText;
 			}
 		}
+		static GUIStyle mSelectableListEntryTextOdd;
+		public static GUIStyle selectableListEntryTextOdd
+		{
+			get
+			{
+				if (mSelectableListEntryTextOdd == null)
+				{
+					mSelectableListEntryTextOdd = new GUIStyle(list);
+					mSelectableListEntryTextOdd.normal.textColor = GetColor(0xb5b5b5ff);
+					mSelectableListEntryTextOdd.normal.background = GetTexture(0x333535ff);
+					mSelectableListEntryTextOdd.fontStyle = FontStyle.Bold;
+					
+					
+				}
+				return mSelectableListEntryTextOdd;
+			}
+		}
 
 		static GUIStyle mSelectableListEntry;
 		public static GUIStyle selectableListEntry
 		{
 			get
 			{
-				if(mSelectableListEntry == null)
+				if (mSelectableListEntry == null)
 				{
 					mSelectableListEntry = new GUIStyle(list);
 					mSelectableListEntry.stretchHeight = false;
 					mSelectableListEntry.normal.textColor = GetColor(0xb5b5b5ff);
 					mSelectableListEntry.fontStyle = FontStyle.Bold;
-					mSelectableListEntry.padding = new RectOffset(20,20,10,9);
-					mSelectableListEntry.border = new RectOffset(0,0,0,1);
+					mSelectableListEntry.padding = new RectOffset(20, 20, 10, 9);
+					mSelectableListEntry.border = new RectOffset(0, 0, 0, 1);
 					
 				}
 				return mSelectableListEntry;
@@ -170,9 +243,9 @@ namespace UBS
 		{
 			get
 			{
-				if(mSelectableListEntryOdd == null)
+				if (mSelectableListEntryOdd == null)
 				{
-					mSelectableListEntryOdd = new GUIStyle( selectableListEntry );
+					mSelectableListEntryOdd = new GUIStyle(selectableListEntry);
 					mSelectableListEntryOdd.normal.background = GetTexture(0x333535ff);
 					
 				}
@@ -181,18 +254,19 @@ namespace UBS
 		}
 
 		static GUIStyle mToolButton;
-		public static GUIStyle toolButton {
+		public static GUIStyle toolButton
+		{
 			get
 			{
-				if(mToolButton == null)
+				if (mToolButton == null)
 				{
-					mToolButton = new GUIStyle( "TE toolbarbutton" );
+					mToolButton = new GUIStyle("TE toolbarbutton");
 
 					mToolButton.fontSize = 24;
 					mToolButton.fontStyle = FontStyle.Bold;
 					mToolButton.fixedHeight = 28;
-					mToolButton.padding = new RectOffset( 5, 5, 5, 5);
-					mToolButton.contentOffset = new Vector2(-1,0);
+					mToolButton.padding = new RectOffset(5, 5, 5, 5);
+					mToolButton.contentOffset = new Vector2(-1, 0);
 					mToolButton.clipping = TextClipping.Overflow;
 
 				}
@@ -206,14 +280,14 @@ namespace UBS
 		{
 			get
 			{
-				if(mSelectedListEntry == null)
+				if (mSelectedListEntry == null)
 				{
 					mSelectedListEntry = new GUIStyle();
 					mSelectedListEntry.normal.background = GetTexture(0x1b76d1ff);
 					mSelectedListEntry.normal.textColor = GetColor(0xffffffff);
 					mSelectedListEntry.fontStyle = FontStyle.Bold;
-					mSelectedListEntry.padding = new RectOffset(20,20,10,9);
-					mSelectedListEntry.border = new RectOffset(0,0,0,1);
+					mSelectedListEntry.padding = new RectOffset(20, 20, 10, 9);
+					mSelectedListEntry.border = new RectOffset(0, 0, 0, 1);
 				}
 				return mSelectedListEntry;
 			}
@@ -224,7 +298,7 @@ namespace UBS
 		{
 			get
 			{
-				if(mDirtySetting == null)
+				if (mDirtySetting == null)
 				{
 					mDirtySetting = new GUIStyle();
 					mDirtySetting.normal.background = GetTexture(0x1b76d1ff);
@@ -239,7 +313,7 @@ namespace UBS
 		{
 			get
 			{
-				if(mBigHint == null)
+				if (mBigHint == null)
 				{
 					mBigHint = new GUIStyle();
 					mBigHint.alignment = TextAnchor.MiddleCenter;
@@ -257,7 +331,7 @@ namespace UBS
 		{
 			get
 			{
-				if(mMediumHint == null)
+				if (mMediumHint == null)
 				{
 					mMediumHint = new GUIStyle();
 					mMediumHint.alignment = TextAnchor.MiddleCenter;
@@ -276,11 +350,11 @@ namespace UBS
 		{
 			get
 			{
-				if(mDetailsGroup == null)
+				if (mDetailsGroup == null)
 				{
 					mDetailsGroup = new GUIStyle();
 					mDetailsGroup.alignment = TextAnchor.UpperLeft;
-					mDetailsGroup.margin = new RectOffset(2,2,2,2);
+					mDetailsGroup.margin = new RectOffset(2, 2, 2, 2);
 					
 				}
 				return mDetailsGroup;
@@ -292,12 +366,12 @@ namespace UBS
 		{
 			get
 			{
-				if(mInfoGroup == null)
+				if (mInfoGroup == null)
 				{
 					mInfoGroup = new GUIStyle();
 					mInfoGroup.alignment = TextAnchor.UpperLeft;
-					mInfoGroup.margin = new RectOffset(20,20,2,10);
-					mInfoGroup.padding = new RectOffset(10,10,5,5);
+					mInfoGroup.margin = new RectOffset(20, 20, 2, 10);
+					mInfoGroup.padding = new RectOffset(10, 10, 5, 5);
 					mInfoGroup.normal.background = GetTexture(0x00000066);
 					
 				}
@@ -310,13 +384,13 @@ namespace UBS
 		{
 			get
 			{
-				if(mDetailsGizmo == null)
+				if (mDetailsGizmo == null)
 				{
 					mDetailsGizmo = new GUIStyle();
 					mDetailsGizmo.alignment = TextAnchor.MiddleLeft;
 					mDetailsGizmo.fixedWidth = 32;
 					mDetailsGizmo.fixedHeight = 32;
-					mDetailsGizmo.margin = new RectOffset(10,10,0,0);
+					mDetailsGizmo.margin = new RectOffset(10, 10, 0, 0);
 					mDetailsGizmo.normal.textColor = Color.white;
 					
 				}
@@ -330,13 +404,13 @@ namespace UBS
 		{
 			get
 			{
-				if(mDetailsTitle == null)
+				if (mDetailsTitle == null)
 				{
 					mDetailsTitle = new GUIStyle();
 					mDetailsTitle.alignment = TextAnchor.MiddleLeft;
 					mDetailsTitle.fontSize = 32;
 					mDetailsTitle.fontStyle = FontStyle.Bold;
-					mDetailsTitle.margin = new RectOffset(10,10,10,10);
+					mDetailsTitle.margin = new RectOffset(10, 10, 10, 10);
 					mDetailsTitle.normal.textColor = GetColor(0x00000066);
 					
 				}
@@ -349,11 +423,11 @@ namespace UBS
 		{
 			get
 			{
-				if(mDetailsDescription == null)
+				if (mDetailsDescription == null)
 				{
 					mDetailsDescription = new GUIStyle();
 					mDetailsDescription.alignment = TextAnchor.UpperLeft;
-					mDetailsDescription.margin = new RectOffset(65,10,10,15);
+					mDetailsDescription.margin = new RectOffset(65, 10, 10, 15);
 					mDetailsDescription.wordWrap = true;
 					
 				}
@@ -368,7 +442,7 @@ namespace UBS
 		{
 			get
 			{
-				if(mStatusMessage == null)
+				if (mStatusMessage == null)
 				{
 					mStatusMessage = new GUIStyle();
 					mStatusMessage.alignment = TextAnchor.MiddleCenter;
@@ -376,7 +450,7 @@ namespace UBS
 					mStatusMessage.stretchHeight = false;
 					mStatusMessage.fixedHeight = 20;
 					mStatusMessage.fontSize = 12;
-					mStatusMessage.margin = new RectOffset(10,10,2,2);
+					mStatusMessage.margin = new RectOffset(10, 10, 2, 2);
 					mStatusMessage.normal.textColor = GetColor(0x00000066);
 				}
 				return mStatusMessage;
@@ -388,7 +462,7 @@ namespace UBS
 		{
 			get
 			{
-				if(mSettingsDescription == null)
+				if (mSettingsDescription == null)
 				{
 					mSettingsDescription = new GUIStyle();
 					mSettingsDescription.alignment = TextAnchor.MiddleRight;
@@ -397,7 +471,7 @@ namespace UBS
 					mSettingsDescription.fixedHeight = 20;
 					mSettingsDescription.stretchHeight = false;
 					mSettingsDescription.stretchWidth = false;
-					mSettingsDescription.margin = new RectOffset(10,10,2,2);
+					mSettingsDescription.margin = new RectOffset(10, 10, 2, 2);
 
 				}
 				return mSettingsDescription;
@@ -410,13 +484,13 @@ namespace UBS
 		{
 			get
 			{
-				if(mHLine == null)
+				if (mHLine == null)
 				{
 					mHLine = new GUIStyle();
 					mHLine.alignment = TextAnchor.MiddleCenter;
 					mHLine.stretchWidth = true;
 					mHLine.fixedHeight = 1;
-					mHLine.normal.background  = GetTexture(0x00000066);
+					mHLine.normal.background = GetTexture(0x00000066);
 				}
 				return mHLine;
 			}
@@ -428,14 +502,14 @@ namespace UBS
 		{
 			get
 			{
-				if(mVLine == null)
+				if (mVLine == null)
 				{
 					mVLine = new GUIStyle();
 					mVLine.alignment = TextAnchor.MiddleCenter;
 					mVLine.stretchHeight = true;
 					mVLine.fixedHeight = 0;
 					mVLine.fixedWidth = 1;
-					mVLine.normal.background  = GetTexture(0xffffff66);
+					mVLine.normal.background = GetTexture(0xffffff66);
 				}
 				return mVLine;
 			}
@@ -444,12 +518,12 @@ namespace UBS
 		
 		public static void VerticalLine()
 		{
-			GUILayout.Label("",vLine);
+			GUILayout.Label("", vLine);
 		}
 		
 		public static void HorizontalLine()
 		{
-			GUILayout.Label("",hLine);
+			GUILayout.Label("", hLine);
 		}
 
 		static GUIStyle mHSeparator;
@@ -457,14 +531,14 @@ namespace UBS
 		{
 			get
 			{
-				if(mHSeparator == null)
+				if (mHSeparator == null)
 				{
 					mHSeparator = new GUIStyle();
 					mHSeparator.alignment = TextAnchor.MiddleCenter;
 					mHSeparator.stretchWidth = true;
 					mHSeparator.fixedHeight = 1;
-					mHSeparator.margin = new RectOffset(20,20,5,5);
-					mHSeparator.normal.background  = GetTexture(0x00000066);
+					mHSeparator.margin = new RectOffset(20, 20, 5, 5);
+					mHSeparator.normal.background = GetTexture(0x00000066);
 				}
 				return mHSeparator;
 			}
@@ -475,14 +549,14 @@ namespace UBS
 		{
 			get
 			{
-				if(mProgressBar == null)
+				if (mProgressBar == null)
 				{
 					mProgressBar = new GUIStyle();
 					mProgressBar.alignment = TextAnchor.MiddleCenter;
 					mProgressBar.stretchWidth = true;
 					mProgressBar.stretchHeight = true;
-					mProgressBar.margin = new RectOffset(5,5,1,1);
-					mProgressBar.normal.background  = GetTexture(0x128ce1ff);
+					mProgressBar.margin = new RectOffset(5, 5, 1, 1);
+					mProgressBar.normal.background = GetTexture(0x128ce1ff);
 				}
 				return mProgressBar;
 			}
@@ -490,7 +564,7 @@ namespace UBS
 
 		public static void HorizontalSeparator()
 		{
-			GUILayout.Label("",hSeparator);
+			GUILayout.Label("", hSeparator);
 		}
 
 
