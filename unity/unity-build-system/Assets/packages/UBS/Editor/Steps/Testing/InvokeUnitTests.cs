@@ -10,6 +10,7 @@ using UnityTest.UnitTestRunner;
 namespace UBS.Testing
 {
 	[BuildStepDescriptionAttribute("Invokes Unit Tests from Unity Testing Tools. Use parameter to filter tests by full name. For multiple parameter use ';' to split.")]
+	[BuildStepParameterFilter(EBuildStepParameterType.String)]
 	public class InvokeUnitTests : IBuildStepProvider, ITestRunnerCallback
 	{
 		/// <summary>
