@@ -11,7 +11,7 @@ namespace UBS
 
         public void BuildStepStart(BuildConfiguration pConfiguration)
         {
-			CSharpWatchdog cswd = new CSharpWatchdog();
+			ExozetCSharpWatchdog cswd = new ExozetCSharpWatchdog();
 			
 			cswd.Init();
 			
@@ -27,6 +27,10 @@ namespace UBS
 			WatchdogWindow w = ScriptableObject.CreateInstance<WatchdogWindow>();
 			
 			w.DisplayText = cswd.Summary();
+			
+			w.title = "CodeWatchdog Results";
+			
+			w.minSize = new Vector2(500, 300);
 			
 			w.Show();
 			
@@ -52,9 +56,9 @@ namespace UBS
 	    
 	    void OnGUI()
 	    {
-	        GUILayout.Label("CodeWatchdog Results", EditorStyles.boldLabel);
+			GUILayout.Label("CodeWatchdog Results", EditorStyles.boldLabel);
 	        
-			GUILayout.Label(DisplayText);
+			GUILayout.Label(DisplayText, GUILayout.Width(500));
 			
 			return;
 	    }

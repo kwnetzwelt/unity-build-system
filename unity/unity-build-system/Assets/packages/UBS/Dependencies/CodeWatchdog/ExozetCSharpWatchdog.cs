@@ -32,25 +32,31 @@ using System.Text.RegularExpressions;
 namespace CodeWatchdog
 {
     /// <summary>
-    /// A Watchdog implementation for C#.
+    /// A Watchdog implementation for exozet's C# coding style.
     /// </summary>
-    public class CSharpWatchdog: Watchdog
+    public class ExozetCSharpWatchdog: Watchdog
     {
         // Error code variables, for reading convenience
         //
         const int TAB_ERROR = 0; 
         const int PASCALCASE_ERROR = 1;
-        const int SPECIALCHARACTER_ERROR = 2;
-        const int MISSINGBRACES_ERROR = 3;
-        const int MULTIPLESTATEMENT_ERROR = 4;
-        const int COMMENTONSAMELINE_ERROR = 5;
+        const int CAMELCASE_ERROR = 2;
+        const int SPECIALCHARACTER_ERROR = 3;
+        const int MISSINGBRACES_ERROR = 4;
+        const int MULTIPLESTATEMENT_ERROR = 5;
+        const int COMMENTONSAMELINE_ERROR = 6;
+        const int COMMENTNOSPACE_ERROR = 7;
         
+        // MSDN Coding Conventions
+        // https://msdn.microsoft.com/en-us/library/ff926074.aspx
+        // https://msdn.microsoft.com/en-us/library/xzf533w0%28v=vs.71%29.aspx
+        //
         // TODO: camelCase for parameters
-        
         // TODO: Use implicit typing with var in for, foreach
-        
         // TODO: Prefer 'using' to 'try ... finally' for cleanups
         
+        // Selected antipatterns
+        //
         // TODO: if ()- nullchecks without else
         
         // Rainers C#-Workshop
@@ -60,16 +66,25 @@ namespace CodeWatchdog
         
         // exozet's Unity C# Coding Conventions:
         //
-        // TODO: grundsätzlich ist die CamelCase Schreibweise zu verwenden
-        // TODO: Member Variablen werden klein geschrieben und dann in CamelCase
-        // TODO: Variablen beginnen mit einem kleinen Buchstaben
         // TODO: Properties beginnen mit einem großen Buchstaben
-        // TODO: Konstanten beginnen mit einem großen Buchstaben
         // TODO: Funktionen/Methoden und Klassen beginnen mit einem großen Buchstaben
         // TODO: Parameter von Funktionen/Methoden beginnen mit einem kleinen Buchstaben
         // TODO: Enums werden in CamelCase Schreibweise (beginnend mit einem Großbuchstaben) benannt
         // TODO: Interfaces beginnen mit einem großen "I"
                 
+        // c2 Code Smells: http://www.c2.com/cgi/wiki?CodeSmell
+        //
+        // TODO: Duplicated code
+        // TODO: Method too big
+        // TODO: Classes with too many variables
+        // TODO: Classes with too little variables
+        // TODO: Classes with too much code
+        // TODO: Classes with too little code
+        // TODO: Too many private methods
+        // TODO: Empty catch clauses
+        // TODO: Long method names
+        // TODO: Too many parameters
+        // TODO: Deeply nested if clauses / loops
         
         /// <summary>
         /// Initialise the underlying Watchdog for C#.
@@ -90,10 +105,12 @@ namespace CodeWatchdog
             
             ErrorCodeStrings[TAB_ERROR] = "Tabs instead of spaces used for indentation";
             ErrorCodeStrings[PASCALCASE_ERROR] = "Identifier is not in PascalCase";
+            ErrorCodeStrings[CAMELCASE_ERROR] = "Identifier is not in camelCase";
             ErrorCodeStrings[SPECIALCHARACTER_ERROR] = "Disallowed character used in identifier";
             ErrorCodeStrings[MISSINGBRACES_ERROR] = "Missing curly braces in if / while / foreach / for";
             ErrorCodeStrings[MULTIPLESTATEMENT_ERROR] = "Multiple statements on a single line";
             ErrorCodeStrings[COMMENTONSAMELINE_ERROR] = "Comment not on a separate line";
+            ErrorCodeStrings[COMMENTNOSPACE_ERROR] = "No space between comment delimiter and comment text";
             
             StatementHandler += CheckStatement;
             CommentHandler += CheckComment;
@@ -172,25 +189,7 @@ namespace CodeWatchdog
             
             if (possibleIdentifier != "")
             {
-                // PASCALCASE_ERROR
-                // TODO: Check for more PascalCase characteristics
-                //
-                if (possibleIdentifier.Length > 2 && char.IsLower(possibleIdentifier, 0))
-                {
-                    if (ErrorCodeCount.ContainsKey(PASCALCASE_ERROR))
-                    {
-                        ErrorCodeCount[PASCALCASE_ERROR] += 1;
-                    }
-                    else
-                    {
-                        ErrorCodeCount[PASCALCASE_ERROR] = 1;
-                    }
-                    
-                    // TODO: The line report is inaccurate, as several lines may have passed.
-                    // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
-                    //
-                    Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[PASCALCASE_ERROR], possibleIdentifier, CheckedLinesOfCode + 1));
-                }
+                // TODO: Identifiers should not contain common types. But this is hard to check, as 'Char' or 'Int' may be legitimate in 'Charter' or 'International'.
                 
                 // SPECIALCHARACTER_ERROR
                 //
@@ -210,8 +209,54 @@ namespace CodeWatchdog
                     //
                     Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[SPECIALCHARACTER_ERROR], possibleIdentifier, CheckedLinesOfCode + 1));
                 }
-                
-                // TODO: Identifiers should not contain common types. But this is hard to check, as 'Char' or 'Int' may be legitimate in 'Charter' or 'International'.
+                else
+                {
+                    if (statement.Contains("const "))
+                    {
+                        // PASCALCASE_ERROR
+                        // TODO: Check for more PascalCase / camelCase characteristics
+                        //
+                        if (possibleIdentifier.Length > 2 && char.IsLower(possibleIdentifier, 0))
+                        {
+                            if (ErrorCodeCount.ContainsKey(PASCALCASE_ERROR))
+                            {
+                                ErrorCodeCount[PASCALCASE_ERROR] += 1;
+                            }
+                            else
+                            {
+                                ErrorCodeCount[PASCALCASE_ERROR] = 1;
+                            }
+                            
+                            // TODO: The line report is inaccurate, as several lines may have passed.
+                            // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
+                            //
+                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[PASCALCASE_ERROR], possibleIdentifier, CheckedLinesOfCode + 1));
+                        }
+                    }
+                    else
+                    {
+                        // CAMELCASE_ERROR
+                        // TODO: Check for more PascalCase / camelCase characteristics
+                        //
+                        if (possibleIdentifier.Length > 2 && char.IsUpper(possibleIdentifier, 0))
+                        {
+                            
+                            if (ErrorCodeCount.ContainsKey(CAMELCASE_ERROR))
+                            {
+                                ErrorCodeCount[CAMELCASE_ERROR] += 1;
+                            }
+                            else
+                            {
+                                ErrorCodeCount[CAMELCASE_ERROR] = 1;
+                            }
+                            
+                            // TODO: The line report is inaccurate, as several lines may have passed.
+                            // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
+                            //
+                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[CAMELCASE_ERROR], possibleIdentifier, CheckedLinesOfCode + 1));
+                        }
+                    }
+                }
             }
             
             // MISSINGBRACES_ERROR
@@ -243,10 +288,15 @@ namespace CodeWatchdog
         /// Check a single comment.
         /// </summary>
         /// <param name="comment">A string containing a comment, possibly multi-line.</param>
-
-        
         void CheckComment(string comment, string precedingInput)
         {
+            // TODO: Begin comments with uppercase letter
+            // TODO: End comment with a period.
+            
+            // TODO: /// comment classes
+            // TODO: /// comment methods
+            // TODO: /// comment public members
+
             // COMMENTONSAMELINE_ERROR
             //
             if (CheckedLinesOfCode > 1 && !precedingInput.Contains("\n"))
@@ -263,13 +313,22 @@ namespace CodeWatchdog
                 Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTONSAMELINE_ERROR], CheckedLinesOfCode));
             }
             
-            // TODO: One space between comment delimiter and text
-            // TODO: Begin comments with uppercase letter
-            // TODO: End comment with a period.
-            
-            // TODO: /// comment classes
-            // TODO: /// comment methods
-            // TODO: /// comment public members
+            // COMMENTNOSPACE_ERROR
+            // Also include /// doc comments.
+            //
+            if (!(comment.StartsWith(START_COMMENT_DELIMITER + " ") || comment.StartsWith(START_COMMENT_DELIMITER + "/ ")))
+            {
+                if (ErrorCodeCount.ContainsKey(COMMENTNOSPACE_ERROR))
+                {
+                    ErrorCodeCount[COMMENTNOSPACE_ERROR] += 1;
+                }
+                else
+                {
+                    ErrorCodeCount[COMMENTNOSPACE_ERROR] = 1;
+                }
+                
+                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTNOSPACE_ERROR], CheckedLinesOfCode));
+            }
         }
     }
 }
