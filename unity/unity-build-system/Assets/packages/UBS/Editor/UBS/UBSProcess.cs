@@ -155,10 +155,11 @@ namespace UBS
 			bool batchMode = false;
 
 			string[] arguments = System.Environment.GetCommandLineArgs();
-			string[] availableArgs = {"-batchmode", "-collection=", "-android-sdk=", "-buildTag="};
+			string[] availableArgs = {"-batchmode", "-collection=", "-android-sdk=", "-buildTag=", "-buildAll"};
 			string collectionPath = "";
 			string androidSdkPath = "";
 			string buildTag = "";
+			bool buildAll = false;
 			foreach(var s in arguments)
 			{
 				if(s.StartsWith("-batchmode"))
@@ -168,13 +169,25 @@ namespace UBS
 				}
 
 				if(s.StartsWith("-collection="))
+				{
 					collectionPath = s.Substring(availableArgs[1].Length);
+				}
 
 				if(s.StartsWith("-android-sdk="))
+				{
 					androidSdkPath = s.Substring(availableArgs[2].Length);
+				}
 
 				if(s.StartsWith("-buildTag="))
+				{
 					buildTag = s.Substring(availableArgs[3].Length);
+				}
+
+				if(s.StartsWith("-buildAll"))
+				{
+					buildAll = true;
+					Debug.Log("Selection override: building whole collection!");
+				}
 				
 			}
 			if(collectionPath == null)
@@ -194,7 +207,7 @@ namespace UBS
 			// Load Build Collection
 			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
 			// Run Create Command
-			Create(collection, false, batchMode, buildTag);
+			Create(collection, false, batchMode, buildAll ,buildTag);
 			
 			
 			UBSProcess process = LoadUBSProcess();
@@ -242,13 +255,20 @@ namespace UBS
 
 #endregion
 
-		public static void Create(BuildCollection pCollection, bool pBuildAndRun, bool pBatchMode = false, string pBuildTag = "")
+		public static void Create(BuildCollection pCollection, bool pBuildAndRun, bool pBatchMode = false, bool pBuildAll = false, string pBuildTag = "")
 		{
 			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
 			p.mBuildAndRun = pBuildAndRun;
 			p.mBatchMode = pBatchMode;
 			p.mCollection = pCollection;
-			p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
+			if(!pBuildAll)
+			{
+				p.mSelectedProcesses = p.mCollection.mProcesses.FindAll( obj => obj.mSelected );
+			}
+			else
+			{
+				p.mSelectedProcesses = p.mCollection.mProcesses;
+			}
 			p.mCurrentState = UBSState.invalid;
 
 			if(!string.IsNullOrEmpty(pBuildTag))
