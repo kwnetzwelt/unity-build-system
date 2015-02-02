@@ -6,6 +6,7 @@ namespace UBS.Android
 {
 	[BuildStepPlatformFilterAttribute(BuildTarget.Android)]
 	[BuildStepDescriptionAttribute("Sets the path to the used keystore to a given value")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class KeystorePath : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

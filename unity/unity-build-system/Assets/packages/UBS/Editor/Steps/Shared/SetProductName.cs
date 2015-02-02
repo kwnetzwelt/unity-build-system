@@ -5,6 +5,7 @@ using UnityEditor;
 namespace UBS.Shared
 {
 	[BuildStepDescriptionAttribute("Sets the product name (shared between multiple platforms)")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class SetProductName : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

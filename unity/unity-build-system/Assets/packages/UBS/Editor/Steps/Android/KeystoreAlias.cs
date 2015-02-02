@@ -6,6 +6,7 @@ namespace UBS.Android
 {
 	[BuildStepPlatformFilterAttribute(BuildTarget.Android)]
 	[BuildStepDescriptionAttribute("Sets the alias (name) for the used keystore to a given value")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class KeystoreAlias : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

@@ -30,6 +30,9 @@ namespace UBS
 					mPlatformFilter = a as BuildStepPlatformFilterAttribute;
 				else if (a is BuildStepTypeFilterAttribute)
 					mTypeFilter = a as BuildStepTypeFilterAttribute;
+				else if(a is BuildStepParameterFilterAttribute)
+					mParameterFilter = a as BuildStepParameterFilterAttribute;
+
 			}
 		}
 		public string mName;
@@ -39,6 +42,7 @@ namespace UBS
 		public BuildStepDescriptionAttribute mDescription;
 		public BuildStepPlatformFilterAttribute mPlatformFilter;
 		public BuildStepTypeFilterAttribute mTypeFilter;
+		public BuildStepParameterFilterAttribute mParameterFilter;
 		public override string ToString()
 		{
 			return mName;
@@ -58,6 +62,34 @@ namespace UBS
 				return mDescription.mDescription;
 			return "";
 		}
+
+		
+		public EBuildStepParameterType GetParameterType()
+		{
+			if(mParameterFilter != null)
+			{
+				return mParameterFilter.BuildParameterType;
+			}
+			else
+			{                
+				// this is the default behavior, since the former buildsteps were designed as string parameters
+				return EBuildStepParameterType.String;
+			} 
+		}
+		
+		public string[] GetParameterDropdownOptions()
+		{
+			if(mParameterFilter != null &&
+			   mParameterFilter.BuildParameterType == EBuildStepParameterType.Dropdown)
+			{
+				return mParameterFilter.DropdownOptions;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
 
 		public bool CheckFilters(EBuildStepType pDrawingBuildStepType, BuildTarget pPlatform)
 		{
@@ -169,6 +201,11 @@ namespace UBS
 
 				LoadScenesFromStringList();
 				OnEnable();
+				
+				// after switching to another process, we want to make sure to unfocus all possible controls
+				// like textfields. This will remove an issue, where dangling focus between process switching could happen
+				GUI.FocusControl("");
+
 			}
 
 			GUILayout.BeginVertical();
@@ -292,20 +329,22 @@ namespace UBS
 				return obj.CheckFilters(mDrawingBuildStepType, mEditedBuildProcess.mPlatform);
 			});
 			
-			int selected = 0; 
+			int selectedIndex = 0; 
+			int listIndex = 0; 
 			if (pStep.mTypeName != null)
 			{
 				pStep.InferType();
-				selected = filtered.FindIndex((obj) => {
-					return obj.mType == pStep.mType;}) + 1;
+				listIndex = filtered.FindIndex( (obj) => {return obj.mType == pStep.mType;});
+				selectedIndex =  listIndex+1;
 			}
 			GUIContent[] displayedProviders = GetBuildStepProvidersFiltered();
 			Rect r1 = new Rect(pRect.x, pRect.y + 1, 140, pRect.height); // drop down list
 			Rect r2 = new Rect(r1.x + r1.width, pRect.y, 20, pRect.height); // gears
-			Rect r3 = new Rect(r2.x + r2.width, pRect.y, 60, pRect.height); // parameters label
-			Rect r4 = new Rect(r3.x + r3.width, pRect.y, pRect.width - 220, pRect.height); // parameters input
+			Rect r3 = new Rect(r2.x + r2.width, pRect.y, 70, pRect.height); // parameters label
+			Rect r4 = new Rect(r3.x + r3.width - 5, pRect.y, pRect.width - 230, pRect.height); // parameters input
 
-			int idx = EditorGUI.Popup(r1, selected, displayedProviders);
+
+			int idx = EditorGUI.Popup(r1, selectedIndex, displayedProviders);
 			if (!EditorGUIUtility.isProSkin)
 				GUI.color = Color.black;
 			if (idx > 0 && GUI.Button(r2, Styles.gear, EditorStyles.miniLabel))
@@ -324,9 +363,53 @@ namespace UBS
 			GUI.Label(r3, "Parameters", EditorStyles.miniLabel);
 			
 			//r.x += r.width;
-			pStep.mParams = EditorGUI.TextField(r4, pStep.mParams);
 
-			if (idx != selected)
+			// search for buildstepprovider
+			EBuildStepParameterType parametersToDisplay = EBuildStepParameterType.None;
+			BuildStepProviderEntry buildStepProvider = null;
+			if(listIndex >= 0 && listIndex < filtered.Count())
+			{                
+				buildStepProvider = filtered[listIndex];
+				parametersToDisplay = buildStepProvider.GetParameterType();
+			}
+			
+			switch(parametersToDisplay)
+			{
+			case EBuildStepParameterType.None:
+			{
+				// dont show anything!
+			}
+				break;
+				
+			case EBuildStepParameterType.String:
+			{
+				pStep.mParams = EditorGUI.TextField(r4, pStep.mParams );
+			}
+				break;
+				
+			case EBuildStepParameterType.Dropdown:
+			{
+				List<string> options = new List<string>(buildStepProvider.GetParameterDropdownOptions());                    
+				int selectedValue = 0;
+				if(!String.IsNullOrEmpty(pStep.mParams))
+				{
+					selectedValue = options.FindIndex((option) => {return option == pStep.mParams;});
+				}
+					
+				if(selectedValue == -1) 
+				{
+					selectedValue = 0; // first index as fallback
+					Debug.LogError("Invalid dropdown entry found: " + pStep.mParams + " for buildstep: " + buildStepProvider.mName + ". Fallback to index 0 applied!");
+				}
+				
+				// create popup control and assign selected index
+				int returnedIndex = EditorGUI.Popup(r4, selectedValue, GetBuildStepProvidersParameterOptions(buildStepProvider) );
+				pStep.mParams = options[returnedIndex];
+			}
+				break;
+			}
+			
+			if(idx != selectedIndex)
 			{
 				Undo.RecordObject(mCollection, "Set Build Step Class Reference");
 
@@ -353,6 +436,21 @@ namespace UBS
 						outList.Add(new GUIContent(bsp.ToMenuPath()));
 				}
 			}
+			return outList.ToArray();
+		}
+
+		GUIContent[] GetBuildStepProvidersParameterOptions(BuildStepProviderEntry entry)
+		{
+			List<GUIContent> outList = new List<GUIContent>();
+			if(entry != null)
+			{
+				string[] entries = entry.GetParameterDropdownOptions();
+				foreach(var option in entries)
+				{
+					outList.Add(new GUIContent(option));
+				}
+			}
+			
 			return outList.ToArray();
 		}
 

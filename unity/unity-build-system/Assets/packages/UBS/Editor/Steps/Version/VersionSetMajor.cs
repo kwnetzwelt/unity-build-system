@@ -4,6 +4,7 @@ using System.Collections;
 namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the major version of the project to a given value. ")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class SetMajor : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

@@ -6,6 +6,7 @@ using UnityEditor;
 namespace UBS.Compiler
 {
 	[BuildStepDescriptionAttribute("Removes a compiler flag from your build.")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class RemoveCompilerFlag : IBuildStepProvider
 	{
 		
