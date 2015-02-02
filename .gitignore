@@ -12,3 +12,5 @@ unity/unity-build-system/Assets/Resources/buildVersion.txt
 unity/unity-build-system/Assets/Resources/buildVersion.txt.meta
 documentation/html
 documentation/latex
+Assembly-UnityScript-vs.unityproj
+Assembly-UnityScript.unityproj
