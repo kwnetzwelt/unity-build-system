@@ -6,6 +6,7 @@ namespace UBS.Android
 {
 	[BuildStepPlatformFilterAttribute(BuildTarget.Android)]
 	[BuildStepDescriptionAttribute("Sets the password for the currently set keystore to a given value")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class KeystorePassword : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

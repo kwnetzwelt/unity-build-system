@@ -6,6 +6,7 @@ namespace UBS
 	[BuildStepTypeFilter(EBuildStepType.PostBuildStep)]
 	[BuildStepDescription("Renames the build output file accordingly with identifier, bundleVersion and textureFormat.")]
 	[BuildStepPlatformFilter(BuildTarget.Android)]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.None)]
 	public class RenameOutput : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

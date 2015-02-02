@@ -9,6 +9,7 @@ using System.Collections.Generic;
 namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Increases the build revision by one. ")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.None)]
 	public class IncreaseRevision : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

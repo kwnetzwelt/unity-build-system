@@ -1,6 +1,7 @@
 using UnityEngine;
 namespace UBS
 {
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.None)]
 	public class StopBuild : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
