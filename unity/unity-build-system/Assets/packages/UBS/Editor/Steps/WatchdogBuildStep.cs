@@ -11,7 +11,7 @@ namespace UBS
 
         public void BuildStepStart(BuildConfiguration pConfiguration)
         {
-			ExozetCSharpWatchdog cswd = new ExozetCSharpWatchdog();
+			CamelCaseCSharpWatchdog cswd = new CamelCaseCSharpWatchdog();
 			
 			cswd.Init();
 			

@@ -1,3 +1,6 @@
+// This file is part of CodeWatchdog.
+// https://bitbucket.org/flberger/codewatchdog
+
 using System;
 
 namespace CodeWatchdog

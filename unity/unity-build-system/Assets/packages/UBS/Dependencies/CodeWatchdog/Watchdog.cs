@@ -1,29 +1,5 @@
 // This file is part of CodeWatchdog.
-//
-// Copyright (c) 2014, 2015 Florian Berger <mail@florian-berger.de>
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-// 1. Redistributions of source code must retain the above copyright notice,
-//    this list of conditions and the following disclaimer.
-//
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-//    this list of conditions and the following disclaimer in the documentation
-//    and/or other materials provided with the distribution.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// https://bitbucket.org/flberger/codewatchdog
 
 using System;
 using System.IO;
@@ -41,7 +17,6 @@ namespace CodeWatchdog
     /// </summary>
     public class Watchdog
     {
-        // TODO: Flag the start of a new file, for line count, wrong multiple statement errors etc. !!!
         // TODO: Errors should have a severity.
         
         // TODO: Most, if not all delimiters should be strings, and be parsed for accordingly.
@@ -94,11 +69,15 @@ namespace CodeWatchdog
         
         // Variables for processing a project
         //
-        protected int CheckedLinesOfCode;
+        protected int TotalCheckedLines;
         protected int CommentLines;
         protected Dictionary<int, int> ErrorCodeCount;
         
         const double MaxCodeScore = 10.0;
+        
+        // Class-accessible variable for each run
+        //
+        protected int CheckedLinesThisFile;
         
         /// <summary>
         /// Initialise this CodeWatchdog instance.
@@ -106,7 +85,7 @@ namespace CodeWatchdog
         /// </summary>
         public virtual void Init()
         {
-            CheckedLinesOfCode = 0;
+            TotalCheckedLines = 0;
             
             CommentLines = 0;
             
@@ -130,6 +109,10 @@ namespace CodeWatchdog
             StringBuilder commentSb = new StringBuilder();
 
             Nullable<char> previousChar = null;
+            
+            // Resetting globals
+            //
+            CheckedLinesThisFile = 0;
             
             // TODO: stringRunning, comments ... this calls for a state machine.
 
@@ -156,7 +139,8 @@ namespace CodeWatchdog
                 
                 if ((char)character == '\n')
                 {
-                    CheckedLinesOfCode += 1;
+                    CheckedLinesThisFile += 1;
+                    TotalCheckedLines += 1;
                 }
                 
                 // Comments need special handling since there might be
@@ -423,7 +407,7 @@ namespace CodeWatchdog
             //
             StringBuilder summary = new StringBuilder("\nSUMMARY\n=======\n\n");
             
-            summary.AppendLine(string.Format("Checked {0} line(s) of code.", CheckedLinesOfCode));
+            summary.AppendLine(string.Format("Checked {0} line(s) of code.", TotalCheckedLines));
             
             // TODO: Add comment lines value to score formula
             //
@@ -456,7 +440,7 @@ namespace CodeWatchdog
             // Compute errors per lines of code. This yields a double [0.0, ~infinity],
             // but typically [0.0, 1.0]. 0.0 means no errors.
             //
-            double score = (double)count / (double)CheckedLinesOfCode;
+            double score = (double)count / (double)TotalCheckedLines;
             
             // Substract it from 1 to get a [0.0, 1.0] range. Now a value of 1 means
             // no errors.

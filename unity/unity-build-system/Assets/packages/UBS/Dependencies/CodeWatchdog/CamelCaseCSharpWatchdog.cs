@@ -1,29 +1,5 @@
 // This file is part of CodeWatchdog.
-//
-// Copyright (c) 2014, 2015 Florian Berger <mail@florian-berger.de>
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-// 1. Redistributions of source code must retain the above copyright notice,
-//    this list of conditions and the following disclaimer.
-//
-// 2. Redistributions in binary form must reproduce the above copyright notice,
-//    this list of conditions and the following disclaimer in the documentation
-//    and/or other materials provided with the distribution.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+// https://bitbucket.org/flberger/codewatchdog
 
 using System;
 using System.Collections.Generic;
@@ -32,9 +8,9 @@ using System.Text.RegularExpressions;
 namespace CodeWatchdog
 {
     /// <summary>
-    /// A Watchdog implementation for exozet's C# coding style.
+    /// A Watchdog implementation for C# that favors camelCase coding style.
     /// </summary>
-    public class ExozetCSharpWatchdog: Watchdog
+    public class CamelCaseCSharpWatchdog: Watchdog
     {
         // Error code variables, for reading convenience
         //
@@ -59,12 +35,12 @@ namespace CodeWatchdog
         //
         // TODO: if ()- nullchecks without else
         
-        // Rainers C#-Workshop
+        // C#-Workshop
         //
         // TODO: .Equals() statt ==
         // TODO: int parse mit invariant culture
         
-        // exozet's Unity C# Coding Conventions:
+        // Internal Unity C# Coding Conventions:
         //
         // TODO: Properties beginnen mit einem großen Buchstaben
         // TODO: Funktionen/Methoden und Klassen beginnen mit einem großen Buchstaben
@@ -142,14 +118,14 @@ namespace CodeWatchdog
                 // TODO: The line report is inaccurate, as several lines may have passed.
                 // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                 //
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[TAB_ERROR], CheckedLinesOfCode + 1));
+                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[TAB_ERROR], CheckedLinesThisFile + 1));
             }
             
             // MULTIPLESTATEMENT_ERROR
             //
             // Trim leading spaces before check
             //
-            if (CheckedLinesOfCode > 1 && !statement.TrimStart(char.Parse(" ")).StartsWith("\n"))
+            if (CheckedLinesThisFile > 1 && !statement.TrimStart(char.Parse(" ")).StartsWith("\n"))
             {
                 if (ErrorCodeCount.ContainsKey(MULTIPLESTATEMENT_ERROR))
                 {
@@ -160,7 +136,7 @@ namespace CodeWatchdog
                     ErrorCodeCount[MULTIPLESTATEMENT_ERROR] = 1;
                 }
                 
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[MULTIPLESTATEMENT_ERROR], CheckedLinesOfCode + 1));
+                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[MULTIPLESTATEMENT_ERROR], CheckedLinesThisFile + 1));
             }
             
             // Identifiers
@@ -207,7 +183,7 @@ namespace CodeWatchdog
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[SPECIALCHARACTER_ERROR], possibleIdentifier, CheckedLinesOfCode + 1));
+                    Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[SPECIALCHARACTER_ERROR], possibleIdentifier, CheckedLinesThisFile + 1));
                 }
                 else
                 {
@@ -230,7 +206,7 @@ namespace CodeWatchdog
                             // TODO: The line report is inaccurate, as several lines may have passed.
                             // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                             //
-                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[PASCALCASE_ERROR], possibleIdentifier, CheckedLinesOfCode + 1));
+                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[PASCALCASE_ERROR], possibleIdentifier, CheckedLinesThisFile + 1));
                         }
                     }
                     else
@@ -253,7 +229,7 @@ namespace CodeWatchdog
                             // TODO: The line report is inaccurate, as several lines may have passed.
                             // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                             //
-                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[CAMELCASE_ERROR], possibleIdentifier, CheckedLinesOfCode + 1));
+                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[CAMELCASE_ERROR], possibleIdentifier, CheckedLinesThisFile + 1));
                         }
                     }
                 }
@@ -278,7 +254,7 @@ namespace CodeWatchdog
                 // TODO: The line report is inaccurate, as several lines may have passed.
                 // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                 //
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[MISSINGBRACES_ERROR], CheckedLinesOfCode + 1));
+                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[MISSINGBRACES_ERROR], CheckedLinesThisFile + 1));
             }
             
             return;
@@ -299,7 +275,7 @@ namespace CodeWatchdog
 
             // COMMENTONSAMELINE_ERROR
             //
-            if (CheckedLinesOfCode > 1 && !precedingInput.Contains("\n"))
+            if (CheckedLinesThisFile > 1 && !precedingInput.Contains("\n"))
             {
                 if (ErrorCodeCount.ContainsKey(COMMENTONSAMELINE_ERROR))
                 {
@@ -310,7 +286,7 @@ namespace CodeWatchdog
                     ErrorCodeCount[COMMENTONSAMELINE_ERROR] = 1;
                 }
                 
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTONSAMELINE_ERROR], CheckedLinesOfCode));
+                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTONSAMELINE_ERROR], CheckedLinesThisFile));
             }
             
             // COMMENTNOSPACE_ERROR
@@ -327,7 +303,7 @@ namespace CodeWatchdog
                     ErrorCodeCount[COMMENTNOSPACE_ERROR] = 1;
                 }
                 
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTNOSPACE_ERROR], CheckedLinesOfCode));
+                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTNOSPACE_ERROR], CheckedLinesThisFile));
             }
         }
     }
