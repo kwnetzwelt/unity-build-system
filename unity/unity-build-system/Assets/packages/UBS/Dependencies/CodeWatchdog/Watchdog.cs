@@ -78,6 +78,7 @@ namespace CodeWatchdog
         // Class-accessible variable for each run
         //
         protected int CheckedLinesThisFile;
+        protected string PreviousToken;
         
         /// <summary>
         /// Initialise this CodeWatchdog instance.
@@ -113,6 +114,7 @@ namespace CodeWatchdog
             // Resetting globals
             //
             CheckedLinesThisFile = 0;
+            PreviousToken = "";
             
             // TODO: stringRunning, comments ... this calls for a state machine.
 
@@ -248,6 +250,10 @@ namespace CodeWatchdog
                                                sb.ToString());
                             }
                             
+                            // NOTE: Set after handler call
+                            //
+                            PreviousToken = removedChar + commentSb.ToString();
+                            
                             commentSb.Length = 0;
                             
                             CommentLines += 1;
@@ -290,6 +296,10 @@ namespace CodeWatchdog
                                                    sb.ToString());
                                 }
                                 
+                                // NOTE: Set after handler call
+                                //
+                                PreviousToken = removedChar + commentSb.ToString();
+
                                 commentSb.Length = 0;
                                 
                                 CommentLines += 1;
@@ -328,7 +338,11 @@ namespace CodeWatchdog
                     {
                         StatementHandler(sb.ToString());
                     }
- 
+                    
+                    // NOTE: Set after handler call
+                    //
+                    PreviousToken = sb.ToString();
+                    
                     sb.Length = 0;
                 }
                 else if (! commentRunning && !stringRunning && (char)character == START_BLOCK_DELIMITER)
@@ -341,7 +355,11 @@ namespace CodeWatchdog
                     }
 
                     // TODO: Set active block to block type (stack)
-
+                    
+                    // NOTE: Set after handler call
+                    //
+                    PreviousToken = sb.ToString();
+                    
                     sb.Length = 0;
                 }
                 else if (! commentRunning && !stringRunning && (char)character == END_BLOCK_DELIMITER)
@@ -351,6 +369,8 @@ namespace CodeWatchdog
                     // TODO: Run end block checks
 
                     // TODO: Pop active block from stack
+                    
+                    PreviousToken = "";
                 }
                 else if (! commentRunning && STRING_DELIMITERS.Contains((char)character))
                 {

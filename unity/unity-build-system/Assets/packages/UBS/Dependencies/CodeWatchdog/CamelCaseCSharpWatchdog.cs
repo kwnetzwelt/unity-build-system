@@ -22,6 +22,7 @@ namespace CodeWatchdog
         const int MULTIPLESTATEMENT_ERROR = 5;
         const int COMMENTONSAMELINE_ERROR = 6;
         const int COMMENTNOSPACE_ERROR = 7;
+        const int CLASSNOTDOCUMENTED_ERROR = 8;
         
         // MSDN Coding Conventions
         // https://msdn.microsoft.com/en-us/library/ff926074.aspx
@@ -33,7 +34,7 @@ namespace CodeWatchdog
         
         // Selected antipatterns
         //
-        // TODO: if ()- nullchecks without else
+        // TODO: *** if ()- nullchecks without else
         
         // C#-Workshop
         //
@@ -42,11 +43,11 @@ namespace CodeWatchdog
         
         // Internal Unity C# Coding Conventions:
         //
-        // TODO: Properties beginnen mit einem großen Buchstaben
-        // TODO: Funktionen/Methoden und Klassen beginnen mit einem großen Buchstaben
-        // TODO: Parameter von Funktionen/Methoden beginnen mit einem kleinen Buchstaben
-        // TODO: Enums werden in CamelCase Schreibweise (beginnend mit einem Großbuchstaben) benannt
-        // TODO: Interfaces beginnen mit einem großen "I"
+        // TODO: *** Properties beginnen mit einem großen Buchstaben
+        // TODO: *** Funktionen/Methoden und Klassen beginnen mit einem großen Buchstaben
+        // TODO: *** Parameter von Funktionen/Methoden beginnen mit einem kleinen Buchstaben
+        // TODO: *** Enums werden in CamelCase Schreibweise (beginnend mit einem Großbuchstaben) benannt
+        // TODO: *** Interfaces beginnen mit einem großen "I"
                 
         // c2 Code Smells: http://www.c2.com/cgi/wiki?CodeSmell
         //
@@ -87,9 +88,11 @@ namespace CodeWatchdog
             ErrorCodeStrings[MULTIPLESTATEMENT_ERROR] = "Multiple statements on a single line";
             ErrorCodeStrings[COMMENTONSAMELINE_ERROR] = "Comment not on a separate line";
             ErrorCodeStrings[COMMENTNOSPACE_ERROR] = "No space between comment delimiter and comment text";
+            ErrorCodeStrings[CLASSNOTDOCUMENTED_ERROR] = "Class not documented";
             
             StatementHandler += CheckStatement;
             CommentHandler += CheckComment;
+            StartBlockHandler += CheckStartBlock;
         }
         
         /// <summary>
@@ -98,7 +101,9 @@ namespace CodeWatchdog
         /// <param name="statement">A string containing a statement, possibly multi-line.</param>
         void CheckStatement(string statement)
         {
-            // TODO: 4-character indents
+            // TODO: *** /// comment public members
+            
+            // TODO: *** 4-character indents
             
             // TODO: Use var for common types and new statements.
             
@@ -268,10 +273,6 @@ namespace CodeWatchdog
         {
             // TODO: Begin comments with uppercase letter
             // TODO: End comment with a period.
-            
-            // TODO: /// comment classes
-            // TODO: /// comment methods
-            // TODO: /// comment public members
 
             // COMMENTONSAMELINE_ERROR
             //
@@ -305,6 +306,36 @@ namespace CodeWatchdog
                 
                 Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTNOSPACE_ERROR], CheckedLinesThisFile));
             }
+        }
+        
+        /// <summary>
+        /// Checks the beginning of a block.
+        /// </summary>
+        /// <param name="startBlock">A string containing the start block.</param>
+        void CheckStartBlock(string startBlock)
+        {
+            // TODO: *** /// comment methods
+            
+            // CLASSNOTDOCUMENTED_ERROR
+            //
+            if (startBlock.Contains("public ")
+                && startBlock.Contains(" class ")
+                && !PreviousToken.Contains(START_COMMENT_DELIMITER + "/")
+                && !PreviousToken.Contains("</summary>"))
+            {
+                if (ErrorCodeCount.ContainsKey(CLASSNOTDOCUMENTED_ERROR))
+                {
+                    ErrorCodeCount[CLASSNOTDOCUMENTED_ERROR] += 1;
+                }
+                else
+                {
+                    ErrorCodeCount[CLASSNOTDOCUMENTED_ERROR] = 1;
+                }
+                
+                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[CLASSNOTDOCUMENTED_ERROR], CheckedLinesThisFile));
+            }
+            
+            return;
         }
     }
 }
