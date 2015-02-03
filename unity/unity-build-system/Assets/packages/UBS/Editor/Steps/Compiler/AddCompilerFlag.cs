@@ -6,6 +6,7 @@ using UnityEditor;
 namespace UBS.Compiler
 {
 	[BuildStepDescriptionAttribute("Adds a compiler flag to your build.")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class AddCompilerFlag : IBuildStepProvider
 	{
 		

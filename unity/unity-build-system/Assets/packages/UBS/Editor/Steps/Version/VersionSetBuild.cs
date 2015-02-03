@@ -4,6 +4,7 @@ using System.Collections;
 namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the build version of the project to a given value. ")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class SetBuild : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation

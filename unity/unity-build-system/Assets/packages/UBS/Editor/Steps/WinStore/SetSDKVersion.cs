@@ -9,6 +9,7 @@ using UBS;
 [BuildStepPlatformFilter(BuildTarget.WSAPlayer)]
 #endif
 [BuildStepDescriptionAttribute("Sets the Windows SDK version. This is usually used for commandline build processes. Values: SDK80, SDK81, PhoneSDK81, UniversalSDK81")]
+[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 public class SetSDKVersion : IBuildStepProvider 
 {
 	#region IBuildStepProvider implementation

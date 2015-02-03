@@ -5,6 +5,7 @@ using UnityEditor;
 namespace UBS.Shared
 {
 	[BuildStepDescriptionAttribute("Sets the bundle identifier (shared between multiple platforms)")]
+	[BuildStepParameterFilterAttribute(EBuildStepParameterType.String)]
 	public class SetBundleIdentifier : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
