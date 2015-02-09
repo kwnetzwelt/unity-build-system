@@ -126,12 +126,23 @@ namespace CodeWatchdog
             
             // MultipleStatementError
             //
+            // TODO: Inline(() => {MethodsShouldProbably(BeLegal);})
+            // TODO: Inline Property get / set should also be legal.q
+            //
             // Trim leading spaces before check.
             // Ignore empty statements, e.g. inline 'new' statements.
+            // Ignore comparison operators, as they most probably are part of a 'for' loop.
+            // Ignore single closing braces, mosrt probably closing inline lambdas.
+            // Ignore 'get' and 'set': Properties are OK in a single line.
             //
             if (checkedLinesThisFile > 1
                 && statement.Length > 0
-                && !statement.TrimStart(char.Parse(" "), char.Parse("\r")).StartsWith("\n"))
+                && !statement.TrimStart(char.Parse(" "), char.Parse("\r"), char.Parse("\t")).StartsWith("\n")
+                && !statement.Contains("<")
+                && !statement.Contains(">")
+                && statement != ")"
+                && !statement.Contains("get")
+                && !statement.Contains("set"))
             {
                 if (errorCodeCount.ContainsKey(MultipleStatementError))
                 {
@@ -175,7 +186,14 @@ namespace CodeWatchdog
                 && possibleIdentifier != "while"
                 && possibleIdentifier != "foreach"
                 && possibleIdentifier != "for"
-                && !statement.Contains("using"))
+                && !statement.Contains("using")
+                && possibleIdentifier != "get"
+                && possibleIdentifier != "set"
+                && possibleIdentifier != "try"
+                && possibleIdentifier != "catch"
+                && possibleIdentifier != "delegate"
+                && possibleIdentifier != "public"
+                && possibleIdentifier != "switch")
             {
                 // TODO: Identifiers should not contain common types. But this is hard to check, as 'Char' or 'Int' may be legitimate in 'Charter' or 'International'.
                 
@@ -247,12 +265,14 @@ namespace CodeWatchdog
             }
             
             // MissingBracesError
+            // Check for closing brace, indicating the statement is complete.
             //
-            if (statement.Trim().StartsWith("if")
+            if ((statement.Trim().StartsWith("if")
                 || statement.Trim().StartsWith("else")
                 || statement.Trim().StartsWith("while")
                 || statement.Trim().StartsWith("foreach")
                 || statement.Trim().StartsWith("for"))
+                && statement.Contains(")"))
             {
                 if (errorCodeCount.ContainsKey(MissingBracesError))
                 {
@@ -297,15 +317,15 @@ namespace CodeWatchdog
                 woff(string.Format("{0} (line {1})", errorCodeStrings[CommentOnSameLineError], checkedLinesThisFile));
             }
             
-            Logging.Info("*** '" + comment + "'");
-            
             // CommentNoSpaceError
             // Also include /// doc comments.
             // Ignore empty comments.
+            // Ignore comments starting with "--", these are most probably auto-generated decorative lines.
             //
             if (!comment.Trim().EndsWith(startCommentDelimiter)
                 && !(comment.StartsWith(startCommentDelimiter + " ")
-                     || comment.StartsWith(startCommentDelimiter + "/ ")))
+                     || comment.StartsWith(startCommentDelimiter + "/ "))
+                && !comment.StartsWith(startCommentDelimiter + "--"))
             {
                 if (errorCodeCount.ContainsKey(CommentNoSpaceError))
                 {
@@ -348,7 +368,7 @@ namespace CodeWatchdog
                 
                 string className = "";
                 
-                Match classNameMatch = Regex.Match(startBlock, @"class\s+(\w+)");
+                Match classNameMatch = Regex.Match(startBlock, @"\Wclass\s+(\w+)");
                 
                 if (classNameMatch.Success)
                 {
@@ -360,7 +380,8 @@ namespace CodeWatchdog
                 // PascalCaseError
                 // TODO: Check for more PascalCase / camelCase characteristics
                 //
-                if (className.Length > 2 && char.IsLower(className, 0))
+                if (className.Length > 2
+                    && char.IsLower(className, 0))
                 {
                     if (errorCodeCount.ContainsKey(PascalCaseError))
                     {
@@ -480,7 +501,21 @@ namespace CodeWatchdog
                 // PascalCaseError
                 // TODO: Check for more PascalCase / camelCase characteristics
                 //
-                if (methodName.Length > 2 && char.IsLower(methodName, 0))
+                if (methodName.Length > 2
+                    && char.IsLower(methodName, 0)
+                    && methodName != "if"
+                    && methodName != "else"
+                    && methodName != "while"
+                    && methodName != "foreach"
+                    && methodName != "for"
+                    && methodName != "get"
+                    && methodName != "set"
+                    && methodName != "try"
+                    && methodName != "catch"
+                    && methodName != "delegate"
+                    && methodName != "using"
+                    && methodName != "public"
+                    && methodName != "switch")
                 {
                     if (errorCodeCount.ContainsKey(PascalCaseError))
                     {
@@ -501,7 +536,15 @@ namespace CodeWatchdog
                      && !startBlock.Contains("else")
                      && !startBlock.Contains("while")
                      && !startBlock.Contains("foreach")
-                     && !startBlock.Contains("for"))
+                     && !startBlock.Contains("for")
+                     && !startBlock.Contains("get")
+                     && !startBlock.Contains("set")
+                     && !startBlock.Contains("try")
+                     && !startBlock.Contains("catch")
+                     && !startBlock.Contains("delegate")
+                     && !startBlock.Contains("using")
+                     && !startBlock.Contains("public")
+                     && !startBlock.Contains("switch"))
             {
                 // Assuming it's a property
                 

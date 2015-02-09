@@ -75,6 +75,8 @@ namespace CodeWatchdog
         
         const double MaxCodeScore = 10.0;
         
+        Nullable<DateTime> startTime = null;
+        
         // Class-accessible variable for each run
         //
         protected int checkedLinesThisFile;
@@ -101,6 +103,11 @@ namespace CodeWatchdog
         /// <param name="filepath">The path to the file.</param>
         public void Check(string filepath)
         {
+            if (startTime == null)
+            {
+                startTime = DateTime.Now;
+            }
+            
             // Local variables needed for this scan only
             //
             StreamReader sr = new StreamReader(filepath, true);
@@ -439,6 +446,16 @@ namespace CodeWatchdog
             
             summary.AppendLine(string.Format("Checked {0} line(s) of code.", totalCheckedLines));
             
+            if (startTime != null)
+            {
+                TimeSpan duration = DateTime.Now - (DateTime)startTime;
+                
+                summary.AppendLine(string.Format("Processing time: {0:00}:{1:00}.{2}",
+                                                 duration.Minutes,
+                                                 duration.Seconds,
+                                                 duration.Milliseconds));
+            }
+            
             // TODO: Add comment lines value to score formula
             //
             summary.AppendLine(string.Format("Found {0} comment lines.", commentLines));
@@ -449,14 +466,29 @@ namespace CodeWatchdog
             summary.AppendLine(" Count    Error type");
             summary.AppendLine("------------------------------------------------------------------");
             
-            foreach (int errorCode in errorCodeCount.Keys)
+            // Sort errors by frequency
+            // http://stackoverflow.com/a/292/1132250
+            //
+            List<KeyValuePair<int, int>> errorCodeCountSorted = new List<KeyValuePair<int, int>>(errorCodeCount);
+            
+            errorCodeCountSorted.Sort(delegate(KeyValuePair<int, int> firstPair,
+                                               KeyValuePair<int, int> nextPair)
+                                      {
+                                          // Sort reversed
+                                          //
+                                          return nextPair.Value.CompareTo(firstPair.Value);
+                                      });
+            
+            foreach (KeyValuePair<int, int> errorCodeCountPair in errorCodeCountSorted)
             {
                 // Left-pad count for 4 characters.
                 // Right-pad description for 56 characters.
                 //
-                summary.AppendLine(string.Format("  {0,4}    {1, -56}", errorCodeCount[errorCode], errorCodeStrings[errorCode]));
+                summary.AppendLine(string.Format(" {0,5}    {1, -56}",
+                                                 errorCodeCountPair.Value,
+                                                 errorCodeStrings[errorCodeCountPair.Key]));
                 
-                count += errorCodeCount[errorCode];
+                count += errorCodeCountPair.Value;
             }
             
             summary.AppendLine("------------------------------------------------------------------\n");
