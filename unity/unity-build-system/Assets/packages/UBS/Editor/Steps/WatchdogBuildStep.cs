@@ -32,13 +32,13 @@ namespace UBS
                 cswd.Check(path);
             }
             
-            WatchdogWindow w = ScriptableObject.CreateInstance<WatchdogWindow>();
+			WatchdogEditorWindow w = (WatchdogEditorWindow)EditorWindow.GetWindow(typeof(WatchdogEditorWindow));
             
             w.displayText = cswd.Summary();
             
             w.title = "CodeWatchdog Results";
             
-            w.minSize = new Vector2(500, 300);
+            w.minSize = new Vector2(500, 500);
             
             w.Show();
             
@@ -67,7 +67,7 @@ namespace UBS
     /// <summary>
     /// A window to display the CodeWatchdog results in the Unity editor.
     /// </summary>
-    public class WatchdogWindow : EditorWindow
+    public class WatchdogEditorWindow : EditorWindow
     {
         public string displayText;
         

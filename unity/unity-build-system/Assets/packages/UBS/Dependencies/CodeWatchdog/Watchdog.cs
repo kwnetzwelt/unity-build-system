@@ -72,6 +72,7 @@ namespace CodeWatchdog
         protected int totalCheckedLines;
         protected int commentLines;
         protected Dictionary<int, int> errorCodeCount;
+        protected int checkedFiles;
         
         const double MaxCodeScore = 10.0;
         
@@ -93,6 +94,8 @@ namespace CodeWatchdog
             commentLines = 0;
             
             errorCodeCount = new Dictionary<int, int>();
+            
+            checkedFiles = 0;
             
             return;
         }
@@ -431,6 +434,8 @@ namespace CodeWatchdog
             }
 
             sr.Close();
+            
+            checkedFiles += 1;
 
             return;
         }
@@ -443,6 +448,8 @@ namespace CodeWatchdog
             // Using Markdown
             //
             StringBuilder summary = new StringBuilder("\nSUMMARY\n=======\n\n");
+                        
+            summary.AppendLine(string.Format("Checked {0} file(s).", checkedFiles));
             
             summary.AppendLine(string.Format("Checked {0} line(s) of code.", totalCheckedLines));
             

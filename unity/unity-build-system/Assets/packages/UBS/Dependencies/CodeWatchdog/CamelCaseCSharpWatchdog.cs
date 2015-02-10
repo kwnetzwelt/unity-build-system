@@ -121,7 +121,10 @@ namespace CodeWatchdog
                 // TODO: The line report is inaccurate, as several lines may have passed.
                 // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                 //
-                woff(string.Format("{0} (line {1})", errorCodeStrings[TabError], checkedLinesThisFile + 1));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[TabError], checkedLinesThisFile + 1));
+                }
             }
             
             // MultipleStatementError
@@ -153,16 +156,22 @@ namespace CodeWatchdog
                     errorCodeCount[MultipleStatementError] = 1;
                 }
                 
-                woff(string.Format("{0} (line {1})", errorCodeStrings[MultipleStatementError], checkedLinesThisFile + 1));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[MultipleStatementError], checkedLinesThisFile + 1));
+                }
             }
             
             // Identifiers
             //
             string possibleIdentifier = "";
             
-            Match firstMatch = Regex.Match(statement, @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*$");
+            Match firstMatch = Regex.Match(statement,
+                                           @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*$");
            
-            if (firstMatch.Success)
+            // Ignore "as" casts.
+            //
+            if (firstMatch.Success && !statement.Contains(" as "))
             {
                 possibleIdentifier = firstMatch.Groups[2].Value;
                 
@@ -170,7 +179,8 @@ namespace CodeWatchdog
             }
             else
             {
-                Match secondMatch = Regex.Match(statement, @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*=");
+                Match secondMatch = Regex.Match(statement,
+                                                @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*=");
                 
                 if (secondMatch.Success)
                 {
@@ -213,7 +223,10 @@ namespace CodeWatchdog
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[SpecialCharacterError], possibleIdentifier, checkedLinesThisFile + 1));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[SpecialCharacterError], possibleIdentifier, checkedLinesThisFile + 1));
+                    }
                 }
                 else
                 {
@@ -236,7 +249,10 @@ namespace CodeWatchdog
                             // TODO: The line report is inaccurate, as several lines may have passed.
                             // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                             //
-                            woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], possibleIdentifier, checkedLinesThisFile + 1));
+                            if (woff != null)
+                            {
+                                woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], possibleIdentifier, checkedLinesThisFile + 1));
+                            }
                         }
                     }
                     else
@@ -258,7 +274,10 @@ namespace CodeWatchdog
                             // TODO: The line report is inaccurate, as several lines may have passed.
                             // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                             //
-                            woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[CamelCaseError], possibleIdentifier, checkedLinesThisFile + 1));
+                            if (woff != null)
+                            {
+                                woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[CamelCaseError], possibleIdentifier, checkedLinesThisFile + 1));
+                            }
                         }
                     }
                 }
@@ -286,7 +305,10 @@ namespace CodeWatchdog
                 // TODO: The line report is inaccurate, as several lines may have passed.
                 // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                 //
-                woff(string.Format("{0} (line {1})", errorCodeStrings[MissingBracesError], checkedLinesThisFile + 1));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[MissingBracesError], checkedLinesThisFile + 1));
+                }
             }
             
             return;
@@ -314,7 +336,10 @@ namespace CodeWatchdog
                     errorCodeCount[CommentOnSameLineError] = 1;
                 }
                 
-                woff(string.Format("{0} (line {1})", errorCodeStrings[CommentOnSameLineError], checkedLinesThisFile));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[CommentOnSameLineError], checkedLinesThisFile));
+                }
             }
             
             // CommentNoSpaceError
@@ -336,7 +361,10 @@ namespace CodeWatchdog
                     errorCodeCount[CommentNoSpaceError] = 1;
                 }
                 
-                woff(string.Format("{0} (line {1})", errorCodeStrings[CommentNoSpaceError], checkedLinesThisFile));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[CommentNoSpaceError], checkedLinesThisFile));
+                }
             }
         }
         
@@ -363,7 +391,10 @@ namespace CodeWatchdog
                         errorCodeCount[ClassNotDocumentedError] = 1;
                     }
                     
-                    woff(string.Format("{0} (line {1})", errorCodeStrings[ClassNotDocumentedError], checkedLinesThisFile));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0} (line {1})", errorCodeStrings[ClassNotDocumentedError], checkedLinesThisFile));
+                    }
                 }
                 
                 string className = "";
@@ -395,7 +426,10 @@ namespace CodeWatchdog
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], className, checkedLinesThisFile));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], className, checkedLinesThisFile));
+                    }
                 }
             }
             else if (startBlock.Contains("enum "))
@@ -428,7 +462,10 @@ namespace CodeWatchdog
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], enumName, checkedLinesThisFile));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], enumName, checkedLinesThisFile));
+                    }
                 }
             }
             else if (startBlock.Contains("interface "))
@@ -460,7 +497,10 @@ namespace CodeWatchdog
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[InterfaceNamingError], interfaceName, checkedLinesThisFile));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[InterfaceNamingError], interfaceName, checkedLinesThisFile));
+                    }
                 }
             }
             else if (startBlock.Contains("(") && startBlock.Contains(")"))
@@ -484,7 +524,10 @@ namespace CodeWatchdog
                         errorCodeCount[MethodNotDocumentedError] = 1;
                     }
                     
-                    woff(string.Format("{0} (line {1})", errorCodeStrings[MethodNotDocumentedError], checkedLinesThisFile));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0} (line {1})", errorCodeStrings[MethodNotDocumentedError], checkedLinesThisFile));
+                    }
                 }
                 
                 string methodName = "";
@@ -529,7 +572,10 @@ namespace CodeWatchdog
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], methodName, checkedLinesThisFile));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], methodName, checkedLinesThisFile));
+                    }
                 }
             }
             else if (!startBlock.Contains("if")
@@ -576,7 +622,10 @@ namespace CodeWatchdog
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], propertyName, checkedLinesThisFile));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], propertyName, checkedLinesThisFile));
+                    }
                 }
             }
             
