@@ -3,7 +3,7 @@
 
 using System;
 
-namespace CodeWatchdog
+namespace UBSCodeWatchdog
 {
     /// <summary>
     /// A simple multi-level console logger.

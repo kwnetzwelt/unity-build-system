@@ -5,12 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace CodeWatchdog
+namespace UBSCodeWatchdog
 {
     /// <summary>
     /// A Watchdog implementation for C# that favors camelCase coding style.
     /// </summary>
-    public class CamelCaseCSharpWatchdog: Watchdog
+    public class CamelCaseCSharpWatchdog: UBSCodeWatchdog.Watchdog
     {
         // Error code variables, for reading convenience
         //
@@ -46,15 +46,22 @@ namespace CodeWatchdog
         // c2 Code Smells: http://www.c2.com/cgi/wiki?CodeSmell
         //
         // TODO: Duplicated code
+        //
         // TODO: Method too big
-        // TODO: Classes with too many variables
-        // TODO: Classes with too little variables
         // TODO: Classes with too much code
         // TODO: Classes with too little code
+        //
+        // TODO: Classes with too many variables
+        // TODO: Classes with too little variables
+        //
         // TODO: Too many private methods
+        //
         // TODO: Empty catch clauses
+        //
         // TODO: Long method names
+        //
         // TODO: Too many parameters
+        //
         // TODO: Deeply nested if clauses / loops
         
         // TODO: Code-comment-ratio evaluation
@@ -190,6 +197,8 @@ namespace CodeWatchdog
                 }
             }
             
+            // TODO: Use C# Keywords list from https://msdn.microsoft.com/en-us/library/x53a06bb.aspx
+            //
             if (possibleIdentifier != ""
                 && possibleIdentifier != "if"
                 && possibleIdentifier != "else"

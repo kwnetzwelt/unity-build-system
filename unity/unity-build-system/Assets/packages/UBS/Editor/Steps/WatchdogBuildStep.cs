@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEditor;
-using CodeWatchdog;
+using UBSCodeWatchdog;
 using System.IO;
 
 namespace UBS
@@ -17,7 +17,7 @@ namespace UBS
         /// </summary>
         public void BuildStepStart(BuildConfiguration pConfiguration)
         {
-            CamelCaseCSharpWatchdog cswd = new CamelCaseCSharpWatchdog();
+            CamelCaseCSharpWatchdog cswd = new UBSCodeWatchdog.CamelCaseCSharpWatchdog();
             
             cswd.Init();
             
@@ -32,7 +32,7 @@ namespace UBS
                 cswd.Check(path);
             }
             
-			WatchdogEditorWindow w = (WatchdogEditorWindow)EditorWindow.GetWindow(typeof(WatchdogEditorWindow));
+            WatchdogEditorWindow w = (WatchdogEditorWindow)EditorWindow.GetWindow(typeof(WatchdogEditorWindow));
             
             w.displayText = cswd.Summary();
             
