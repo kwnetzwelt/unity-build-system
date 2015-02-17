@@ -17,10 +17,6 @@ namespace UBSCodeWatchdog
     /// </summary>
     public class Watchdog
     {
-        // TODO: Errors should have a severity.
-        
-        // TODO: Most, if not all delimiters should be strings, and be parsed for accordingly.
-        //
         protected char statementDelimiter;
         protected char startBlockDelimiter;
         protected char endBlockDelimiter;
@@ -126,8 +122,6 @@ namespace UBSCodeWatchdog
             checkedLinesThisFile = 0;
             previousToken = "";
             
-            // TODO: stringRunning, comments ... this calls for a state machine.
-
             bool stringRunning = false;
             
             // -1 = not scanning for further delimiters
@@ -463,8 +457,6 @@ namespace UBSCodeWatchdog
                                                  duration.Milliseconds));
             }
             
-            // TODO: Add comment lines value to score formula
-            //
             summary.AppendLine(string.Format("Found {0} comment lines.", commentLines));
             
             int count = 0;
@@ -501,10 +493,6 @@ namespace UBSCodeWatchdog
             summary.AppendLine("------------------------------------------------------------------\n");
             
             summary.AppendLine(string.Format("Found {0} error(s).", count));
-
-            // TODO: Add a nice table reporting the error types, sorted by frequency.
-
-            // TODO: Use a fancy rating function, in which little errors quickly provide a bad score
 
             // Compute errors per lines of code. This yields a double [0.0, ~infinity],
             // but typically [0.0, 1.0]. 0.0 means no errors.
