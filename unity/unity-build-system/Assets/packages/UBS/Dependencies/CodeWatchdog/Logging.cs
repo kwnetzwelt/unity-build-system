@@ -3,25 +3,34 @@
 
 using System;
 
-namespace CodeWatchdog
+namespace UBSCodeWatchdog
 {
+    /// <summary>
+    /// A simple multi-level console logger.
+    /// </summary>
     public class Logging
     {
-        public static bool DebugMode = true;
+        public static bool debugMode = true;
         
+        /// <summary>
+        /// Log a debug-level message.
+        /// </summary>
         public static void Debug(string message)
         {
-            if (DebugMode)
+            if (debugMode)
             {
-                //Console.WriteLine("[DEBUG] " + message);
+                // Console.WriteLine("[DEBUG] " + message);
             
                 return;
             }
         }
         
+        /// <summary>
+        /// Log an info-level message.
+        /// </summary>
         public static void Info(string message)
         {
-            if (DebugMode)
+            if (debugMode)
             {
                 Console.WriteLine("[INFO] " + message);
             
@@ -29,9 +38,12 @@ namespace CodeWatchdog
             }
         }
         
+        /// <summary>
+        /// Log an error-level message.
+        /// </summary>
         public static void Error(string message)
         {
-            if (DebugMode)
+            if (debugMode)
             {
                 Console.WriteLine("[ERROR] " + message);
                 
@@ -40,4 +52,3 @@ namespace CodeWatchdog
         }
     }
 }
-

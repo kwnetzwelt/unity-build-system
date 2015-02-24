@@ -5,64 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace CodeWatchdog
+namespace UBSCodeWatchdog
 {
     /// <summary>
     /// A Watchdog implementation for C# that favors camelCase coding style.
     /// </summary>
-    public class CamelCaseCSharpWatchdog: Watchdog
+    public class CamelCaseCSharpWatchdog: UBSCodeWatchdog.Watchdog
     {
         // Error code variables, for reading convenience
         //
-        const int TAB_ERROR = 0; 
-        const int PASCALCASE_ERROR = 1;
-        const int CAMELCASE_ERROR = 2;
-        const int SPECIALCHARACTER_ERROR = 3;
-        const int MISSINGBRACES_ERROR = 4;
-        const int MULTIPLESTATEMENT_ERROR = 5;
-        const int COMMENTONSAMELINE_ERROR = 6;
-        const int COMMENTNOSPACE_ERROR = 7;
-        const int CLASSNOTDOCUMENTED_ERROR = 8;
-        
-        // MSDN Coding Conventions
-        // https://msdn.microsoft.com/en-us/library/ff926074.aspx
-        // https://msdn.microsoft.com/en-us/library/xzf533w0%28v=vs.71%29.aspx
-        //
-        // TODO: camelCase for parameters
-        // TODO: Use implicit typing with var in for, foreach
-        // TODO: Prefer 'using' to 'try ... finally' for cleanups
-        
-        // Selected antipatterns
-        //
-        // TODO: *** if ()- nullchecks without else
-        
-        // C#-Workshop
-        //
-        // TODO: .Equals() statt ==
-        // TODO: int parse mit invariant culture
-        
-        // Internal Unity C# Coding Conventions:
-        //
-        // TODO: *** Properties beginnen mit einem großen Buchstaben
-        // TODO: *** Funktionen/Methoden und Klassen beginnen mit einem großen Buchstaben
-        // TODO: *** Parameter von Funktionen/Methoden beginnen mit einem kleinen Buchstaben
-        // TODO: *** Enums werden in CamelCase Schreibweise (beginnend mit einem Großbuchstaben) benannt
-        // TODO: *** Interfaces beginnen mit einem großen "I"
-                
-        // c2 Code Smells: http://www.c2.com/cgi/wiki?CodeSmell
-        //
-        // TODO: Duplicated code
-        // TODO: Method too big
-        // TODO: Classes with too many variables
-        // TODO: Classes with too little variables
-        // TODO: Classes with too much code
-        // TODO: Classes with too little code
-        // TODO: Too many private methods
-        // TODO: Empty catch clauses
-        // TODO: Long method names
-        // TODO: Too many parameters
-        // TODO: Deeply nested if clauses / loops
-        
+        const int TabError = 0; 
+        const int PascalCaseError = 1;
+        const int CamelCaseError = 2;
+        const int SpecialCharacterError = 3;
+        const int MissingBracesError = 4;
+        const int MultipleStatementError = 5;
+        const int CommentOnSameLineError = 6;
+        const int CommentNoSpaceError = 7;
+        const int ClassNotDocumentedError = 8;
+        const int MethodNotDocumentedError = 9;
+        const int InterfaceNamingError = 10;
+
         /// <summary>
         /// Initialise the underlying Watchdog for C#.
         /// </summary>
@@ -70,29 +33,31 @@ namespace CodeWatchdog
         {
             base.Init();
             
-            STATEMENT_DELIMTER = char.Parse(";");
-            START_BLOCK_DELIMITER = char.Parse("{");
-            END_BLOCK_DELIMITER = char.Parse("}");
-            STRING_DELIMITERS = new List<char>() {char.Parse("\"")};
-            STRING_ESCAPE = char.Parse("\\");
-            START_COMMENT_DELIMITER = "//";
-            END_COMMENT_DELIMITER = "\n";
+            statementDelimiter = char.Parse(";");
+            startBlockDelimiter = char.Parse("{");
+            endBlockDelimiter = char.Parse("}");
+            stringDelimiters = new List<char>() {char.Parse("\"")};
+            stringEscape = char.Parse("\\");
+            startCommentDelimiter = "//";
+            endCommentDelimiter = "\n";
             
-            ErrorCodeStrings = new Dictionary<int, string>();
+            errorCodeStrings = new Dictionary<int, string>();
             
-            ErrorCodeStrings[TAB_ERROR] = "Tabs instead of spaces used for indentation";
-            ErrorCodeStrings[PASCALCASE_ERROR] = "Identifier is not in PascalCase";
-            ErrorCodeStrings[CAMELCASE_ERROR] = "Identifier is not in camelCase";
-            ErrorCodeStrings[SPECIALCHARACTER_ERROR] = "Disallowed character used in identifier";
-            ErrorCodeStrings[MISSINGBRACES_ERROR] = "Missing curly braces in if / while / foreach / for";
-            ErrorCodeStrings[MULTIPLESTATEMENT_ERROR] = "Multiple statements on a single line";
-            ErrorCodeStrings[COMMENTONSAMELINE_ERROR] = "Comment not on a separate line";
-            ErrorCodeStrings[COMMENTNOSPACE_ERROR] = "No space between comment delimiter and comment text";
-            ErrorCodeStrings[CLASSNOTDOCUMENTED_ERROR] = "Class not documented";
+            errorCodeStrings[TabError] = "Tabs instead of spaces used for indentation";
+            errorCodeStrings[PascalCaseError] = "Identifier is not in PascalCase";
+            errorCodeStrings[CamelCaseError] = "Identifier is not in camelCase";
+            errorCodeStrings[SpecialCharacterError] = "Disallowed character used in identifier";
+            errorCodeStrings[MissingBracesError] = "Missing curly braces in if / while / foreach / for";
+            errorCodeStrings[MultipleStatementError] = "Multiple statements on a single line";
+            errorCodeStrings[CommentOnSameLineError] = "Comment not on a separate line";
+            errorCodeStrings[CommentNoSpaceError] = "No space between comment delimiter and comment text";
+            errorCodeStrings[ClassNotDocumentedError] = "Public class not documented";
+            errorCodeStrings[MethodNotDocumentedError] = "Public method not documented";
+            errorCodeStrings[InterfaceNamingError] = "Interface name does not begin with an I";
             
-            StatementHandler += CheckStatement;
-            CommentHandler += CheckComment;
-            StartBlockHandler += CheckStartBlock;
+            statementHandler += CheckStatement;
+            commentHandler += CheckComment;
+            startBlockHandler += CheckStartBlock;
         }
         
         /// <summary>
@@ -101,165 +66,203 @@ namespace CodeWatchdog
         /// <param name="statement">A string containing a statement, possibly multi-line.</param>
         void CheckStatement(string statement)
         {
-            // TODO: *** /// comment public members
-            
-            // TODO: *** 4-character indents
-            
-            // TODO: Use var for common types and new statements.
-            
-            // TAB_ERROR
+            // TabError
             //
             if (statement.Contains("\t"))
             {
-                if (ErrorCodeCount.ContainsKey(TAB_ERROR))
+                if (errorCodeCount.ContainsKey(TabError))
                 {
-                    ErrorCodeCount[TAB_ERROR] += 1;
+                    errorCodeCount[TabError] += 1;
                 }
                 else
                 {
-                    ErrorCodeCount[TAB_ERROR] = 1;
+                    errorCodeCount[TabError] = 1;
                 }
                 
                 // TODO: The line report is inaccurate, as several lines may have passed.
                 // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                 //
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[TAB_ERROR], CheckedLinesThisFile + 1));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[TabError], checkedLinesThisFile + 1));
+                }
             }
             
-            // MULTIPLESTATEMENT_ERROR
+            // MultipleStatementError
             //
-            // Trim leading spaces before check
+            // Trim leading spaces before check.
+            // Ignore empty statements, e.g. inline 'new' statements.
+            // Ignore comparison operators, as they most probably are part of a 'for' loop.
+            // Ignore single closing braces, mosrt probably closing inline lambdas.
+            // Ignore 'get' and 'set': Properties are OK in a single line.
             //
-            if (CheckedLinesThisFile > 1 && !statement.TrimStart(char.Parse(" ")).StartsWith("\n"))
+            if (checkedLinesThisFile > 1
+                && statement.Length > 0
+                && !statement.TrimStart(char.Parse(" "), char.Parse("\r"), char.Parse("\t")).StartsWith("\n")
+                && !statement.Contains("<")
+                && !statement.Contains(">")
+                && statement != ")"
+                && !statement.Contains("get")
+                && !statement.Contains("set"))
             {
-                if (ErrorCodeCount.ContainsKey(MULTIPLESTATEMENT_ERROR))
+                if (errorCodeCount.ContainsKey(MultipleStatementError))
                 {
-                    ErrorCodeCount[MULTIPLESTATEMENT_ERROR] += 1;
+                    errorCodeCount[MultipleStatementError] += 1;
                 }
                 else
                 {
-                    ErrorCodeCount[MULTIPLESTATEMENT_ERROR] = 1;
+                    errorCodeCount[MultipleStatementError] = 1;
                 }
                 
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[MULTIPLESTATEMENT_ERROR], CheckedLinesThisFile + 1));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[MultipleStatementError], checkedLinesThisFile + 1));
+                }
             }
             
             // Identifiers
             //
             string possibleIdentifier = "";
             
-            Match firstMatch = Regex.Match(statement, @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*$");
+            Match firstMatch = Regex.Match(statement,
+                                           @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*$");
            
-            if (firstMatch.Success)
+            // Ignore "as" casts.
+            //
+            if (firstMatch.Success && !statement.Contains(" as "))
             {
                 possibleIdentifier = firstMatch.Groups[2].Value;
                 
-                Logging.Debug("Match: " + possibleIdentifier);
+                Logging.Debug("Possible identifier: " + possibleIdentifier);
             }
             else
             {
-                Match secondMatch = Regex.Match(statement, @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*=");
+                Match secondMatch = Regex.Match(statement,
+                                                @"\s+\w+(<[\w, ]+>)?\s+(\w+)\s*=");
                 
                 if (secondMatch.Success)
                 {
                     possibleIdentifier = secondMatch.Groups[2].Value;
                     
-                    Logging.Debug("Match: " + possibleIdentifier);
+                    Logging.Debug("Possible identifier: " + possibleIdentifier);
                 }
             }
             
-            if (possibleIdentifier != "")
+            if (possibleIdentifier != ""
+                && possibleIdentifier != "if"
+                && possibleIdentifier != "else"
+                && possibleIdentifier != "while"
+                && possibleIdentifier != "foreach"
+                && possibleIdentifier != "for"
+                && !statement.Contains("using")
+                && possibleIdentifier != "get"
+                && possibleIdentifier != "set"
+                && possibleIdentifier != "try"
+                && possibleIdentifier != "catch"
+                && possibleIdentifier != "delegate"
+                && possibleIdentifier != "public"
+                && possibleIdentifier != "switch")
             {
-                // TODO: Identifiers should not contain common types. But this is hard to check, as 'Char' or 'Int' may be legitimate in 'Charter' or 'International'.
-                
-                // SPECIALCHARACTER_ERROR
+                // SpecialCharacterError
                 //
                 if (possibleIdentifier.Contains("_"))
                 {
-                    if (ErrorCodeCount.ContainsKey(SPECIALCHARACTER_ERROR))
+                    if (errorCodeCount.ContainsKey(SpecialCharacterError))
                     {
-                        ErrorCodeCount[SPECIALCHARACTER_ERROR] += 1;
+                        errorCodeCount[SpecialCharacterError] += 1;
                     }
                     else
                     {
-                        ErrorCodeCount[SPECIALCHARACTER_ERROR] = 1;
+                        errorCodeCount[SpecialCharacterError] = 1;
                     }
                     
                     // TODO: The line report is inaccurate, as several lines may have passed.
                     // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                     //
-                    Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[SPECIALCHARACTER_ERROR], possibleIdentifier, CheckedLinesThisFile + 1));
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[SpecialCharacterError], possibleIdentifier, checkedLinesThisFile + 1));
+                    }
                 }
                 else
                 {
                     if (statement.Contains("const "))
                     {
-                        // PASCALCASE_ERROR
-                        // TODO: Check for more PascalCase / camelCase characteristics
+                        // PascalCaseError
                         //
                         if (possibleIdentifier.Length > 2 && char.IsLower(possibleIdentifier, 0))
                         {
-                            if (ErrorCodeCount.ContainsKey(PASCALCASE_ERROR))
+                            if (errorCodeCount.ContainsKey(PascalCaseError))
                             {
-                                ErrorCodeCount[PASCALCASE_ERROR] += 1;
+                                errorCodeCount[PascalCaseError] += 1;
                             }
                             else
                             {
-                                ErrorCodeCount[PASCALCASE_ERROR] = 1;
+                                errorCodeCount[PascalCaseError] = 1;
                             }
                             
                             // TODO: The line report is inaccurate, as several lines may have passed.
                             // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                             //
-                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[PASCALCASE_ERROR], possibleIdentifier, CheckedLinesThisFile + 1));
+                            if (woff != null)
+                            {
+                                woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], possibleIdentifier, checkedLinesThisFile + 1));
+                            }
                         }
                     }
                     else
                     {
-                        // CAMELCASE_ERROR
-                        // TODO: Check for more PascalCase / camelCase characteristics
+                        // CamelCaseError
                         //
                         if (possibleIdentifier.Length > 2 && char.IsUpper(possibleIdentifier, 0))
                         {
-                            
-                            if (ErrorCodeCount.ContainsKey(CAMELCASE_ERROR))
+                            if (errorCodeCount.ContainsKey(CamelCaseError))
                             {
-                                ErrorCodeCount[CAMELCASE_ERROR] += 1;
+                                errorCodeCount[CamelCaseError] += 1;
                             }
                             else
                             {
-                                ErrorCodeCount[CAMELCASE_ERROR] = 1;
+                                errorCodeCount[CamelCaseError] = 1;
                             }
                             
                             // TODO: The line report is inaccurate, as several lines may have passed.
                             // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                             //
-                            Woff(string.Format("{0}: '{1}' (line {2})", ErrorCodeStrings[CAMELCASE_ERROR], possibleIdentifier, CheckedLinesThisFile + 1));
+                            if (woff != null)
+                            {
+                                woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[CamelCaseError], possibleIdentifier, checkedLinesThisFile + 1));
+                            }
                         }
                     }
                 }
             }
             
-            // MISSINGBRACES_ERROR
+            // MissingBracesError
+            // Check for closing brace, indicating the statement is complete.
             //
-            if (statement.Trim().StartsWith("if")
+            if ((statement.Trim().StartsWith("if")
+                || statement.Trim().StartsWith("else")
                 || statement.Trim().StartsWith("while")
                 || statement.Trim().StartsWith("foreach")
                 || statement.Trim().StartsWith("for"))
+                && statement.Contains(")"))
             {
-                if (ErrorCodeCount.ContainsKey(MISSINGBRACES_ERROR))
+                if (errorCodeCount.ContainsKey(MissingBracesError))
                 {
-                    ErrorCodeCount[MISSINGBRACES_ERROR] += 1;
+                    errorCodeCount[MissingBracesError] += 1;
                 }
                 else
                 {
-                    ErrorCodeCount[MISSINGBRACES_ERROR] = 1;
+                    errorCodeCount[MissingBracesError] = 1;
                 }
                 
                 // TODO: The line report is inaccurate, as several lines may have passed.
                 // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
                 //
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[MISSINGBRACES_ERROR], CheckedLinesThisFile + 1));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[MissingBracesError], checkedLinesThisFile + 1));
+                }
             }
             
             return;
@@ -271,40 +274,48 @@ namespace CodeWatchdog
         /// <param name="comment">A string containing a comment, possibly multi-line.</param>
         void CheckComment(string comment, string precedingInput)
         {
-            // TODO: Begin comments with uppercase letter
-            // TODO: End comment with a period.
-
-            // COMMENTONSAMELINE_ERROR
+            // CommentOnSameLineError
             //
-            if (CheckedLinesThisFile > 1 && !precedingInput.Contains("\n"))
+            if (checkedLinesThisFile > 1 && !precedingInput.Contains("\n"))
             {
-                if (ErrorCodeCount.ContainsKey(COMMENTONSAMELINE_ERROR))
+                if (errorCodeCount.ContainsKey(CommentOnSameLineError))
                 {
-                    ErrorCodeCount[COMMENTONSAMELINE_ERROR] += 1;
+                    errorCodeCount[CommentOnSameLineError] += 1;
                 }
                 else
                 {
-                    ErrorCodeCount[COMMENTONSAMELINE_ERROR] = 1;
+                    errorCodeCount[CommentOnSameLineError] = 1;
                 }
                 
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTONSAMELINE_ERROR], CheckedLinesThisFile));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[CommentOnSameLineError], checkedLinesThisFile));
+                }
             }
             
-            // COMMENTNOSPACE_ERROR
+            // CommentNoSpaceError
             // Also include /// doc comments.
+            // Ignore empty comments.
+            // Ignore comments starting with "--", these are most probably auto-generated decorative lines.
             //
-            if (!(comment.StartsWith(START_COMMENT_DELIMITER + " ") || comment.StartsWith(START_COMMENT_DELIMITER + "/ ")))
+            if (!comment.Trim().EndsWith(startCommentDelimiter)
+                && !(comment.StartsWith(startCommentDelimiter + " ")
+                     || comment.StartsWith(startCommentDelimiter + "/ "))
+                && !comment.StartsWith(startCommentDelimiter + "--"))
             {
-                if (ErrorCodeCount.ContainsKey(COMMENTNOSPACE_ERROR))
+                if (errorCodeCount.ContainsKey(CommentNoSpaceError))
                 {
-                    ErrorCodeCount[COMMENTNOSPACE_ERROR] += 1;
+                    errorCodeCount[CommentNoSpaceError] += 1;
                 }
                 else
                 {
-                    ErrorCodeCount[COMMENTNOSPACE_ERROR] = 1;
+                    errorCodeCount[CommentNoSpaceError] = 1;
                 }
                 
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[COMMENTNOSPACE_ERROR], CheckedLinesThisFile));
+                if (woff != null)
+                {
+                    woff(string.Format("{0} (line {1})", errorCodeStrings[CommentNoSpaceError], checkedLinesThisFile));
+                }
             }
         }
         
@@ -314,25 +325,253 @@ namespace CodeWatchdog
         /// <param name="startBlock">A string containing the start block.</param>
         void CheckStartBlock(string startBlock)
         {
-            // TODO: *** /// comment methods
-            
-            // CLASSNOTDOCUMENTED_ERROR
-            //
-            if (startBlock.Contains("public ")
-                && startBlock.Contains(" class ")
-                && !PreviousToken.Contains(START_COMMENT_DELIMITER + "/")
-                && !PreviousToken.Contains("</summary>"))
+            if (startBlock.Contains("class "))
             {
-                if (ErrorCodeCount.ContainsKey(CLASSNOTDOCUMENTED_ERROR))
+                // ClassNotDocumentedError
+                //
+                if (startBlock.Contains("public ")
+                    && !previousToken.Contains(startCommentDelimiter + "/")
+                    && !previousToken.Contains("</summary>"))
                 {
-                    ErrorCodeCount[CLASSNOTDOCUMENTED_ERROR] += 1;
-                }
-                else
-                {
-                    ErrorCodeCount[CLASSNOTDOCUMENTED_ERROR] = 1;
+                    if (errorCodeCount.ContainsKey(ClassNotDocumentedError))
+                    {
+                        errorCodeCount[ClassNotDocumentedError] += 1;
+                    }
+                    else
+                    {
+                        errorCodeCount[ClassNotDocumentedError] = 1;
+                    }
+                    
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0} (line {1})", errorCodeStrings[ClassNotDocumentedError], checkedLinesThisFile));
+                    }
                 }
                 
-                Woff(string.Format("{0} (line {1})", ErrorCodeStrings[CLASSNOTDOCUMENTED_ERROR], CheckedLinesThisFile));
+                string className = "";
+                
+                Match classNameMatch = Regex.Match(startBlock, @"\Wclass\s+(\w+)");
+                
+                if (classNameMatch.Success)
+                {
+                    className = classNameMatch.Groups[1].Value;
+                    
+                    Logging.Debug("Class name: " + className);
+                }
+                
+                // PascalCaseError
+                //
+                if (className.Length > 2
+                    && char.IsLower(className, 0))
+                {
+                    if (errorCodeCount.ContainsKey(PascalCaseError))
+                    {
+                        errorCodeCount[PascalCaseError] += 1;
+                    }
+                    else
+                    {
+                        errorCodeCount[PascalCaseError] = 1;
+                    }
+                    
+                    // TODO: The line report is inaccurate, as several lines may have passed.
+                    // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
+                    //
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], className, checkedLinesThisFile));
+                    }
+                }
+            }
+            else if (startBlock.Contains("enum "))
+            {
+                string enumName = "";
+                
+                Match enumNameMatch = Regex.Match(startBlock, @"enum\s+(\w+)");
+                
+                if (enumNameMatch.Success)
+                {
+                    enumName = enumNameMatch.Groups[1].Value;
+                    
+                    Logging.Debug("Enum name: " + enumName);
+                }
+                
+                // PascalCaseError
+                //
+                if (enumName.Length > 2 && char.IsLower(enumName, 0))
+                {
+                    if (errorCodeCount.ContainsKey(PascalCaseError))
+                    {
+                        errorCodeCount[PascalCaseError] += 1;
+                    }
+                    else
+                    {
+                        errorCodeCount[PascalCaseError] = 1;
+                    }
+                    
+                    // TODO: The line report is inaccurate, as several lines may have passed.
+                    // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
+                    //
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], enumName, checkedLinesThisFile));
+                    }
+                }
+            }
+            else if (startBlock.Contains("interface "))
+            {
+                string interfaceName = "";
+                
+                Match interfaceNameMatch = Regex.Match(startBlock, @"interface\s+(\w+)");
+                
+                if (interfaceNameMatch.Success)
+                {
+                    interfaceName = interfaceNameMatch.Groups[1].Value;
+                    
+                    Logging.Debug("Interface name: " + interfaceName);
+                }
+                
+                // InterfaceNamingError
+                //
+                if (interfaceName.Length > 2 && !interfaceName.StartsWith("I"))
+                {
+                    if (errorCodeCount.ContainsKey(InterfaceNamingError))
+                    {
+                        errorCodeCount[InterfaceNamingError] += 1;
+                    }
+                    else
+                    {
+                        errorCodeCount[InterfaceNamingError] = 1;
+                    }
+                    
+                    // TODO: The line report is inaccurate, as several lines may have passed.
+                    // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
+                    //
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[InterfaceNamingError], interfaceName, checkedLinesThisFile));
+                    }
+                }
+            }
+            else if (startBlock.Contains("(") && startBlock.Contains(")"))
+            {
+                // MethodNotDocumentedError
+                //
+                // Make sure 'public' is before the first brace.
+                //
+                if (startBlock.Split(Char.Parse("("))[0].Contains("public ")
+                    && !previousToken.Contains(startCommentDelimiter + "/")
+                    && !previousToken.Contains("</summary>"))
+                {
+                    if (errorCodeCount.ContainsKey(MethodNotDocumentedError))
+                    {
+                        errorCodeCount[MethodNotDocumentedError] += 1;
+                    }
+                    else
+                    {
+                        errorCodeCount[MethodNotDocumentedError] = 1;
+                    }
+                    
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0} (line {1})", errorCodeStrings[MethodNotDocumentedError], checkedLinesThisFile));
+                    }
+                }
+                
+                string methodName = "";
+                
+                Match methodNameMatch = Regex.Match(startBlock, @"\w+\s+(\w+)\s*\(");
+                
+                if (methodNameMatch.Success)
+                {
+                    methodName = methodNameMatch.Groups[1].Value;
+                    
+                    Logging.Debug("Method name: " + methodName);
+                }
+                
+                // PascalCaseError
+                //
+                if (methodName.Length > 2
+                    && char.IsLower(methodName, 0)
+                    && methodName != "if"
+                    && methodName != "else"
+                    && methodName != "while"
+                    && methodName != "foreach"
+                    && methodName != "for"
+                    && methodName != "get"
+                    && methodName != "set"
+                    && methodName != "try"
+                    && methodName != "catch"
+                    && methodName != "delegate"
+                    && methodName != "using"
+                    && methodName != "public"
+                    && methodName != "switch")
+                {
+                    if (errorCodeCount.ContainsKey(PascalCaseError))
+                    {
+                        errorCodeCount[PascalCaseError] += 1;
+                    }
+                    else
+                    {
+                        errorCodeCount[PascalCaseError] = 1;
+                    }
+                    
+                    // TODO: The line report is inaccurate, as several lines may have passed.
+                    // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
+                    //
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], methodName, checkedLinesThisFile));
+                    }
+                }
+            }
+            else if (!startBlock.Contains("if")
+                     && !startBlock.Contains("else")
+                     && !startBlock.Contains("while")
+                     && !startBlock.Contains("foreach")
+                     && !startBlock.Contains("for")
+                     && !startBlock.Contains("get")
+                     && !startBlock.Contains("set")
+                     && !startBlock.Contains("try")
+                     && !startBlock.Contains("catch")
+                     && !startBlock.Contains("delegate")
+                     && !startBlock.Contains("using")
+                     && !startBlock.Contains("public")
+                     && !startBlock.Contains("switch"))
+            {
+                // Assuming it's a property
+                
+                string propertyName = "";
+                
+                Match propertyNameMatch = Regex.Match(startBlock, @"\s+(\w+)\s*$");
+                
+                if (propertyNameMatch.Success)
+                {
+                    propertyName = propertyNameMatch.Groups[1].Value;
+                    
+                    Logging.Debug("Property name: " + propertyName);
+                }
+                
+                // PascalCaseError
+                //
+                if (propertyName.Length > 2 && char.IsLower(propertyName, 0))
+                {
+                    if (errorCodeCount.ContainsKey(PascalCaseError))
+                    {
+                        errorCodeCount[PascalCaseError] += 1;
+                    }
+                    else
+                    {
+                        errorCodeCount[PascalCaseError] = 1;
+                    }
+                    
+                    // TODO: The line report is inaccurate, as several lines may have passed.
+                    // HACK: Assuming the next line and using CheckedLinesOfCode + 1.
+                    //
+                    if (woff != null)
+                    {
+                        woff(string.Format("{0}: '{1}' (line {2})", errorCodeStrings[PascalCaseError], propertyName, checkedLinesThisFile));
+                    }
+                }
             }
             
             return;
