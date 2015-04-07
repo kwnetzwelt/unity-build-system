@@ -622,15 +622,22 @@ namespace UBS
 				return false;
 		}
 
-		public float Progress
-		{
+		public float Count {
 			get
 			{
 				if(mSteps == null || mSteps.Count == 0)
 					return 0;
+				return (float)mSteps.Count;
+			}
+		}
 
-
-				return mIndex / (float) mSteps.Count;
+		public float Progress
+		{
+			get
+			{
+				if(mIndex == 0 && Count == 0)
+					return 1;
+				return mIndex / Count;
 			}
 		}
 		public string Step
