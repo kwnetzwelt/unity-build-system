@@ -16,6 +16,21 @@ namespace UBS
 			
 			int selectedCount = 0;
 
+			GUILayout.Label("With a Build Collection you can have multiple Build Processes in one list. " +
+			                "They can target different platforms and each have their own pre- and post-steps. ", 
+			                EditorStyles.wordWrappedMiniLabel);
+			GUILayout.Label("You can either run one Build Process manually or run a set of selected " +
+				"Build Processes at once. ", 
+			                EditorStyles.wordWrappedMiniLabel);
+
+			if(data.mProcesses.Count == 0)
+			{
+				GUI.color = Color.yellow;
+				GUILayout.Label("You should start by adding a Build Process. Hit \"Edit\" to do so. ", 
+				                EditorStyles.wordWrappedLabel);
+				GUI.color = Color.white;
+			}
+
 			GUILayout.Label("Build Processes", "BoldLabel");
 
 			GUILayout.BeginVertical("HelpBox", GUILayout.MinHeight(40));
