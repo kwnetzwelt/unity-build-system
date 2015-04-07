@@ -25,13 +25,20 @@ namespace UBS
 			Init(pData, pBuildAndRun);
 		}
 
-		public static void Init(BuildCollection pData, bool pBuildAndRun = false)
+		public static UBSBuildWindow CreateWindow()
 		{
+			
 			var window = EditorWindow.GetWindow<UBSBuildWindow>(true, "Build", true);
-
+			
 			window.position = new Rect(50, 50, 350, 360);
 			window.minSize = new Vector2(350, 360);
 			window.maxSize = new Vector2(350, 360);
+			return window;
+		}
+
+		public static void Init(BuildCollection pData, bool pBuildAndRun = false)
+		{
+			var window = CreateWindow();
 			window.Run(pData, pBuildAndRun);
 		}
 
@@ -71,6 +78,7 @@ namespace UBS
 			}
 
 			Repaint();
+			Focus();
 		}
 
 		void OnDestroy()
