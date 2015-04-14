@@ -1,0 +1,22 @@
+language: csharp
+solution: unity.sln
+git:
+  submodules: false
+branches:
+  only:
+    - master
+    - development
+env:
+  matrix:
+    - MONO_VERSION="3.5.0"
+before_install:
+    - "npm install unity-solution -g"
+    - "unitysolution ./UBS Standalone" # due to nuget restore
+    #- mozroots --import --sync
+    #- mv -f src/.nuget/NuGet.mono.targets src/.nuget/NuGet.targets
+script:
+    - "xbuild /p:Configuration=Debug unity.sln"
+    - "unitysolution ./UBS iOS && xbuild /p:Configuration=Debug unity.sln"
+    - "unitysolution ./UBS Android && xbuild /p:Configuration=Debug unity.sln"
+    - "unitysolution ./UBS WebGL && xbuild /p:Configuration=Debug unity.sln"
+    #- mono ../lib/xunit/xunit.console.clr4.x86.exe ./Tests/bin/Debug/CI.Demo.Tests.dll
