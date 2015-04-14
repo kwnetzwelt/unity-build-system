@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 1
+  m_Script: {fileID: 11500000, guid: fc8d2406aa8b041a8b1e5e7a4b16f2ee, type: 3}
+  m_Name: DemoCollection
+  m_EditorClassIdentifier: 
+  mProcesses:
+  - mPreBuildSteps: []
+    mPostBuildSteps:
+    - mParams: 
+      mTypeName: UBS.RenameOutput
+    mName: WSA
+    mOutputPath: ../build/unity-build-system.app
+    mPretend: 0
+    mPlatform: 21
+    mBuildOptions: 0
+    mSelected: 1
+    mScenes:
+    - 
+    mSceneAssets:
+    - {fileID: 0}
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: StandaloneWin
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 5
+    mBuildOptions: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: iOS
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 9
+    mBuildOptions: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
+  - mPreBuildSteps: []
+    mPostBuildSteps: []
+    mName: Android
+    mOutputPath: 
+    mPretend: 0
+    mPlatform: 13
+    mBuildOptions: 0
+    mSelected: 0
+    mScenes: []
+    mSceneAssets: []
+  versionCode: 1
