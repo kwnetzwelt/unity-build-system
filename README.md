@@ -1,14 +1,16 @@
-Unity Build System
+# Unity Build System
 ==================
+Master: [![Build Status](https://travis-ci.org/kwnetzwelt/unity-build-system.svg?branch=master)](https://travis-ci.org/kwnetzwelt/unity-build-system)
+Development: [![Build Status](https://travis-ci.org/kwnetzwelt/unity-build-system.svg?branch=development)](https://travis-ci.org/kwnetzwelt/unity-build-system)
 
-Goal
+## Goal
 ====
 
 Provide an Editor Extension which allows adding multiple build targets and batch building all, one or a subset of these targets. 
 
 Each target corresponds to a unity deploy plattform and should allow adding custom scripts to the build process to pre- and post-process the build. 
 
-License
+## License
 =======
 
 
