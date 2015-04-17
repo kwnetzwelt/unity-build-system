@@ -6,159 +6,177 @@ using System.IO;
 
 namespace UBS
 {
-	[Serializable]
-	public class UBSProcess : ScriptableObject
-	{
-		const string kProcessPath = "Assets/UBSProcess.asset";
-		const string kProcessPathKey = "UBSProcessPath";
-
+    [Serializable]
+    public class UBSProcess : ScriptableObject
+    {
+        const string kProcessPath = "Assets/UBSProcess.asset";
+        const string kProcessPathKey = "UBSProcessPath";
 
 
 		#region data
 
-		public static UBSBuildBehavior BuildBehavior 
-		{
-			get 
-			{
-				return UnityEditorInternal.InternalEditorUtility.HasPro () ? 
+        public static UBSBuildBehavior BuildBehavior
+        {
+            get
+            {
+                return UnityEditorInternal.InternalEditorUtility.HasPro() ? 
 					UBSBuildBehavior.auto : UBSBuildBehavior.manual;
-			}
-		}
+            }
+        }
 
-		[SerializeField]
-		BuildConfiguration mCurrentBuildConfiguration;
-		BuildConfiguration CurrentBuildConfiguration
-		{
-			get {return mCurrentBuildConfiguration ;}
+        [SerializeField]
+        BuildConfiguration
+            mCurrentBuildConfiguration;
+        BuildConfiguration CurrentBuildConfiguration
+        {
+            get { return mCurrentBuildConfiguration;}
 
-		}
+        }
 
-		[SerializeField]
-		bool mBuildAndRun;
+        [SerializeField]
+        bool
+            mBuildAndRun;
 
-		[SerializeField]
-		bool mBatchMode;
-		public bool IsInBatchMode
-		{
-			get { return mBatchMode; }
-		}
+        [SerializeField]
+        bool
+            mBatchMode;
+        public bool IsInBatchMode
+        {
+            get { return mBatchMode; }
+        }
 
-		[SerializeField]
-		BuildCollection mCollection;
-		public BuildCollection BuildCollection
-		{
-			get { return mCollection; }
-		}
+        [SerializeField]
+        BuildCollection
+            mCollection;
+        public BuildCollection BuildCollection
+        {
+            get { return mCollection; }
+        }
 
-		[SerializeField]
-		List<BuildProcess>mSelectedProcesses;
+        [SerializeField]
+        List<BuildProcess>
+            mSelectedProcesses;
 
 
-		[SerializeField]
-		int mCurrentBuildProcessIndex;
+        [SerializeField]
+        int
+            mCurrentBuildProcessIndex;
 
-		[SerializeField]
-		int mCurrent;
+        [SerializeField]
+        int
+            mCurrent;
 
-		[SerializeField]
-		UBSState mCurrentState = UBSState.invalid;
+        [SerializeField]
+        UBSState
+            mCurrentState = UBSState.invalid;
 
-		[SerializeField]
-		UBSStepListWalker mPreStepWalker = new UBSStepListWalker();
+        [SerializeField]
+        UBSStepListWalker
+            mPreStepWalker = new UBSStepListWalker();
 
-		[SerializeField]
-		UBSStepListWalker mPostStepWalker = new UBSStepListWalker();
+        [SerializeField]
+        UBSStepListWalker
+            mPostStepWalker = new UBSStepListWalker();
 
-		public UBSState CurrentState
-		{
-			get { return mCurrentState; }
-		}
+        public UBSState CurrentState
+        {
+            get { return mCurrentState; }
+        }
 
-		public UBSStepListWalker SubPreWalker
-		{
-			get {
-				return mPreStepWalker;
-			}
-		}
+        public UBSStepListWalker SubPreWalker
+        {
+            get
+            {
+                return mPreStepWalker;
+            }
+        }
 
-		public UBSStepListWalker SubPostWalker
-		{
-			get {
-				return mPostStepWalker;
-			}
-		}
+        public UBSStepListWalker SubPostWalker
+        {
+            get
+            {
+                return mPostStepWalker;
+            }
+        }
 
-		public float Progress
-		{
-			get {
+        public float Progress
+        {
+            get
+            {
 
-				return ((SubPreWalker.Progress + SubPostWalker.Progress) / 2.0f
-					+ System.Math.Max(0, mCurrentBuildProcessIndex-1 )) / (float)mSelectedProcesses.Count;
-			}
-		}
+                return ((SubPreWalker.Progress + SubPostWalker.Progress) / 2.0f
+                    + System.Math.Max(0, mCurrentBuildProcessIndex - 1)) / (float)mSelectedProcesses.Count;
+            }
+        }
 
-		public string CurrentProcessName
-		{
-			get
-			{
-				if(CurrentProcess != null)
-					return CurrentProcess.mName;
-				return "N/A";
-			}
-		}
+        public string CurrentProcessName
+        {
+            get
+            {
+                if(CurrentProcess != null)
+                {
+                    return CurrentProcess.mName;
+                }
+                return "N/A";
+            }
+        }
 
-		BuildProcess CurrentProcess
-		{
-			get
-			{
-				if(mSelectedProcesses == null || mCurrentBuildProcessIndex >= mSelectedProcesses.Count)
-					return null;
-				return mSelectedProcesses[mCurrentBuildProcessIndex];
-			}
-		}
+        BuildProcess CurrentProcess
+        {
+            get
+            {
+                if(mSelectedProcesses == null || mCurrentBuildProcessIndex >= mSelectedProcesses.Count)
+                {
+                    return null;
+                }
+                return mSelectedProcesses[mCurrentBuildProcessIndex];
+            }
+        }
 
 		#endregion
 
 		#region public interface
 
-		public BuildProcess GetCurrentProcess()
-		{
-			return CurrentProcess;
-		}
+        public BuildProcess GetCurrentProcess()
+        {
+            return CurrentProcess;
+        }
 
-		public static string GetProcessPath()
-		{
-			return EditorPrefs.GetString(kProcessPathKey, kProcessPath);
-		}
-		/// <summary>
-		/// You can overwrite where to store the build process. 
-		/// </summary>
-		/// <param name="pPath">P path.</param>
-		public static void SetProcessPath(string pPath)
-		{
-			EditorPrefs.GetString(kProcessPathKey, kProcessPath);
-		}
+        public static string GetProcessPath()
+        {
+            return EditorPrefs.GetString(kProcessPathKey, kProcessPath);
+        }
+        /// <summary>
+        /// You can overwrite where to store the build process. 
+        /// </summary>
+        /// <param name="pPath">P path.</param>
+        public static void SetProcessPath(string pPath)
+        {
+            EditorPrefs.GetString(kProcessPathKey, kProcessPath);
+        }
 
 		#region command line options
 
-		/// <summary>
-		/// Builds a given build collection from command line. Call this method directly from the command line using Unity in headless mode. 
-		/// <https://docs.unity3d.com/Documentation/Manual/CommandLineArguments.html>
-		/// 
-		/// Provide `collection` parameter to your command line build to specify the collection you want to build. 
-		/// All selected build processes within the collection will be build. 
-		/// 
-		/// Example: -collection=Assets/New\ BuildCollection.asset
-		/// </summary>
-		public static void BuildFromCommandLine()
-		{
-			bool batchMode = false;
+        /// <summary>
+        /// Builds a given build collection from command line. Call this method directly from the command line using Unity in headless mode. 
+        /// <https://docs.unity3d.com/Documentation/Manual/CommandLineArguments.html>
+        /// 
+        /// Provide `collection` parameter to your command line build to specify the collection you want to build. 
+        /// All selected build processes within the collection will be build. 
+        /// 
+        /// Example: -collection=Assets/New\ BuildCollection.asset
+        /// </summary>
+        public static void BuildFromCommandLine()
+        {
+            bool batchMode = false;
 
-			string[] arguments = System.Environment.GetCommandLineArgs();
-			string[] availableArgs = {"-batchmode", "-collection=", "-android-sdk=", "-buildTag=", "-buildAll"};
+            string[] arguments = System.Environment.GetCommandLineArgs();
+            string[] availableArgs = {"-batchmode", "-collection=", "-android-sdk=", "-buildTag=", "-buildAll", "-commitID=", "-tagName="};
 			string collectionPath = "";
 			string androidSdkPath = "";
-			string buildTag = "";
+			string buildTag = "";            
+            string commitID = "" ;
+            string tagName = "";
 			bool buildAll = false;
 			foreach(var s in arguments)
 			{
@@ -189,6 +207,16 @@ namespace UBS
 					Debug.Log("Selection override: building whole collection!");
 				}
 				
+                if(s.StartsWith("-commitID="))
+                {
+                    commitID = s.Substring(availableArgs[5].Length);
+                    
+                }
+                
+                if(s.StartsWith("-tagName="))
+                {
+                    tagName = s.Substring(availableArgs[6].Length);
+                }
 			}
 			if(collectionPath == null)
 			{
@@ -201,6 +229,18 @@ namespace UBS
 				EditorPrefs.SetString("AndroidSdkRoot", androidSdkPath);
 				Debug.Log("Set Android SDK root to: " + androidSdkPath);
 			}
+            
+            if(!string.IsNullOrEmpty(commitID))
+            {
+                EditorPrefs.SetString("commitID", commitID);
+                Debug.Log("Set commitID to: " + commitID);
+            }
+            
+            if(!string.IsNullOrEmpty(tagName))
+            {
+                EditorPrefs.SetString("tagName", tagName);
+                Debug.Log("Set tagName to: " + tagName);
+            }
 
 			Debug.Log("Loading Build Collection: " + collectionPath);
 
