@@ -54,7 +54,8 @@ namespace UBS
 			Initialize();
 			if(!mInitialized)
 				return;
-
+			EditorWindow.FocusWindowIfItsOpen<UBSEditorWindow>();		
+				
 			GUILayout.BeginVertical();
 			mScrollPositions[0] = GUILayout.BeginScrollView(mScrollPositions[0]);
 
