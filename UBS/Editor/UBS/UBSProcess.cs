@@ -19,8 +19,7 @@ namespace UBS
         {
             get
             {
-                return UnityEditorInternal.InternalEditorUtility.HasPro() ? 
-					UBSBuildBehavior.auto : UBSBuildBehavior.manual;
+                return UBSBuildBehavior.auto;
             }
         }
 
