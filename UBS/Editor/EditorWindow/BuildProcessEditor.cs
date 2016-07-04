@@ -541,17 +541,20 @@ namespace UBS
 					return EditorUtility.SaveFolderPanel(kTitle, path, "WebGLDeployment");
 #endif
 
-#if UNITY_4_5 || UNITY_4_6 || UNITY_5
+				#if !UNITY_5_4_OR_NEWER
+				#if UNITY_4_5 || UNITY_4_6 || UNITY_5
 				case BuildTarget.BlackBerry:
-#else
-			case BuildTarget.BB10:
-#endif
+				#else
+				case BuildTarget.BB10:
+				#endif
 					return EditorUtility.SaveFolderPanel(kTitle, path, "BlackBerryDeployment");
+				#endif
 
 
+				#if !UNITY_5_4_OR_NEWER
 				case BuildTarget.WebPlayer:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "WebPlayerDeployment");
-				
+				#endif
 				
 				case BuildTarget.StandaloneOSXUniversal:
 				case BuildTarget.StandaloneOSXIntel64:

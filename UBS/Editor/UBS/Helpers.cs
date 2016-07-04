@@ -49,49 +49,54 @@ namespace UBS
 
 			switch (pTarget)
 			{
-				case BuildTarget.Android:
-					return BuildTargetGroup.Android;
-			
-#if !UNITY_5
-			case BuildTarget.iPhone: return BuildTargetGroup.iPhone;
-			case BuildTarget.NaCl: return BuildTargetGroup.NaCl;
-			case BuildTarget.MetroPlayer: return BuildTargetGroup.Metro;
-#else
+			case BuildTarget.Android:
+				return BuildTargetGroup.Android;
+
+				#if !UNITY_5
+				case BuildTarget.iPhone: return BuildTargetGroup.iPhone;
+				case BuildTarget.NaCl: return BuildTargetGroup.NaCl;
+				case BuildTarget.MetroPlayer: return BuildTargetGroup.Metro;
+				#else
 			case BuildTarget.iOS: return BuildTargetGroup.iOS;
 			case BuildTarget.WSAPlayer: return BuildTargetGroup.WSA;
 			case BuildTarget.WebGL: return BuildTargetGroup.WebGL;
 
-#endif
+				#endif
 
-#if UNITY_4_5 || UNITY_4_6 || UNITY_5
+				#if !UNITY_5_4_OR_NEWER
+				#if UNITY_4_5 || UNITY_4_6 || UNITY_5
 			case BuildTarget.BlackBerry: return BuildTargetGroup.BlackBerry;
-#else
-			case BuildTarget.BlackBerry: return BuildTargetGroup.BB10;
-#endif
+				#else
+				case BuildTarget.BlackBerry: return BuildTargetGroup.BB10;
+				#endif
+				#endif
 
-				case BuildTarget.PS3:
-					return BuildTargetGroup.PS3;
-				case BuildTarget.PS4:
-					return BuildTargetGroup.PS4;
-				case BuildTarget.StandaloneGLESEmu:
-				case BuildTarget.StandaloneLinux:
-				case BuildTarget.StandaloneLinux64:
-				case BuildTarget.StandaloneLinuxUniversal:
-				case BuildTarget.StandaloneOSXIntel:
-				case BuildTarget.StandaloneOSXIntel64:
-				case BuildTarget.StandaloneOSXUniversal:
-				case BuildTarget.StandaloneWindows:
-				case BuildTarget.StandaloneWindows64:
-					return BuildTargetGroup.Standalone;
-				case BuildTarget.Tizen:
-					return BuildTargetGroup.Tizen;
-				case BuildTarget.WebPlayer:
-				case BuildTarget.WebPlayerStreamed:
-					return BuildTargetGroup.WebPlayer;
-				case BuildTarget.WP8Player:
-					return BuildTargetGroup.WP8;
-				case BuildTarget.XBOX360:
-					return BuildTargetGroup.XBOX360;
+			case BuildTarget.PS3:
+				return BuildTargetGroup.PS3;
+			case BuildTarget.PS4:
+				return BuildTargetGroup.PS4;
+			case BuildTarget.StandaloneLinux:
+			case BuildTarget.StandaloneLinux64:
+			case BuildTarget.StandaloneLinuxUniversal:
+			case BuildTarget.StandaloneOSXIntel:
+			case BuildTarget.StandaloneOSXIntel64:
+			case BuildTarget.StandaloneOSXUniversal:
+			case BuildTarget.StandaloneWindows:
+			case BuildTarget.StandaloneWindows64:
+				return BuildTargetGroup.Standalone;
+			case BuildTarget.Tizen:
+				return BuildTargetGroup.Tizen;
+				#if !UNITY_5_4_OR_NEWER
+			case BuildTarget.WebPlayer:
+			case BuildTarget.WebPlayerStreamed:
+				return BuildTargetGroup.WebPlayer;
+				#endif
+				#if !UNITY_5_4_OR_NEWER
+			case BuildTarget.WP8Player:
+				return BuildTargetGroup.WP8;
+				#endif
+			case BuildTarget.XBOX360:
+				return BuildTargetGroup.XBOX360;
 			}
 			return BuildTargetGroup.Unknown;
 		}
@@ -108,7 +113,7 @@ namespace UBS
 		{
 			// Otherwise, the Uri will retain the Assets-relative fix
 			Uri projectUri = new Uri(new Uri(UnityEngine.Application.dataPath + "/../").ToString());
-            
+
 			// Use GetFullPath to resolve ../../ backreferences.
 			// Hint from http://softwareblog.alcedo.com/post/2010/02/24/Resolving-relative-paths-in-C.aspx
 			//

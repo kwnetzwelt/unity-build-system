@@ -19,8 +19,7 @@ namespace UBS
         {
             get
             {
-                return UnityEditorInternal.InternalEditorUtility.HasPro() ? 
-					UBSBuildBehavior.auto : UBSBuildBehavior.manual;
+                return UBSBuildBehavior.auto;
             }
         }
 
@@ -396,7 +395,9 @@ namespace UBS
 			if(!CheckOutputPath(CurrentProcess))
 				return;
 
-			EditorUserBuildSettings.SwitchActiveBuildTarget(CurrentProcess.mPlatform);
+			if (!EditorUserBuildSettings.SwitchActiveBuildTarget (CurrentProcess.mPlatform)) {
+				throw new Exception("Could not switch to build target: " + CurrentProcess.mPlatform);
+			}
 			
 			var scenes = new EditorBuildSettingsScene[CurrentProcess.mScenes.Count];
 			for(int i = 0;i< scenes.Length;i++)
