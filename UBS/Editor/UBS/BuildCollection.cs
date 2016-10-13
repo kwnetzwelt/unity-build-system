@@ -7,10 +7,9 @@ namespace UBS
 	[Serializable]
 	public class BuildCollection : ScriptableObject
 	{
-		public BuildCollection()
+		void OnEnable()
 		{
 			version = BuildVersion.Load();
-
 		}
 
 		public List<BuildProcess> mProcesses = new List<BuildProcess>();
@@ -34,6 +33,7 @@ namespace UBS
 		{
 			UnityEditor.PlayerSettings.Android.bundleVersionCode = int.Parse(versionCode);
 		}
-	}
+
+    }
 }
 
