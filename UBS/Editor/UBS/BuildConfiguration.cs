@@ -8,7 +8,7 @@ namespace UBS
 	[Serializable]
 	public class BuildConfiguration
 	{
-		public BuildConfiguration ()
+		public void Initialize ()
 		{
 			DirectoryInfo di = new DirectoryInfo( Application.dataPath );
 

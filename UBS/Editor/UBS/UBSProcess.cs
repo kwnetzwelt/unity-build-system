@@ -398,6 +398,8 @@ namespace UBS
 		void DoSetup()
 		{
 			mCurrentBuildConfiguration = new BuildConfiguration();
+            mCurrentBuildConfiguration.Initialize();
+
 			if(!CheckOutputPath(CurrentProcess))
 				return;
 
