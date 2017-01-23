@@ -27,10 +27,12 @@ namespace UBS
 		
 		protected virtual void OnGUI()
 		{
-			
-			GUI.color = new Color(1,1,1,0.3f);
-			GUI.DrawTexture( new Rect( position.width - 160, position.height - 160, 256, 256), bigLogo);
-			GUI.color = Color.white;
+            if (bigLogo != null)
+            {
+                GUI.color = new Color(1, 1, 1, 0.3f);
+                GUI.DrawTexture(new Rect(position.width - 160, position.height - 160, 256, 256), bigLogo);
+                GUI.color = Color.white;
+            }
 		}
 	}
 }
