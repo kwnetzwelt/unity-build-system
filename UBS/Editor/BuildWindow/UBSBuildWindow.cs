@@ -82,8 +82,11 @@ namespace UBS
 				return;
 			}
 
-			Repaint();
-			Focus();
+            if (mProcess != null && !mProcess.IsDone)
+            {
+                Repaint();
+                Focus();
+            }
 		}
 
 		void OnDestroy()
