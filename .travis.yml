@@ -10,7 +10,7 @@ env:
   matrix:
     - MONO_VERSION="3.5.0"
 before_install:
-    - "npm install unity-solution -g"
+    - "npm install unity-solution-2 -g"
     - "unitysolution ./UBS Standalone" # due to nuget restore
     #- mozroots --import --sync
     #- mv -f src/.nuget/NuGet.mono.targets src/.nuget/NuGet.targets
