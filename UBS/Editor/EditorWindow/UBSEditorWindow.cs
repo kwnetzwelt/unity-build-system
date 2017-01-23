@@ -27,7 +27,6 @@ namespace UBS
 
 		#region gui rendering
 		string mSearchContent = "";
-		string mStatusMessage = "Ready";
 		Vector2[] mScrollPositions;
 		BuildProcessEditor mEditor = new BuildProcessEditor();
 
@@ -150,7 +149,6 @@ namespace UBS
 			Styles.HorizontalLine();
 			RenderBuildVersion();
 			Styles.HorizontalLine();
-			RenderStatusBar();
 			
 			GUILayout.EndVertical();
 
@@ -177,16 +175,10 @@ namespace UBS
 
 		}
 
-		void RenderStatusBar()
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label(mStatusMessage, UBS.Styles.statusMessage);
-			GUILayout.EndHorizontal();
-		}
-
 		void RenderBuildVersion()
 		{
 			GUILayout.BeginHorizontal();
+            GUILayout.Label("UBS version " + UBSVersion.version.ToString(), EditorStyles.miniLabel);
 			GUILayout.FlexibleSpace();
 			GUILayout.Label("Build version:");
 
