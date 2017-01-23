@@ -31,7 +31,7 @@ namespace UBS {
 			mBuildOptions = pOther.mBuildOptions;
 			mSelected = false;
 			mScenes = new List<string>( pOther.mScenes.ToArray() );
-			mSceneAssets = new List<UnityEngine.Object>( pOther.mSceneAssets.ToArray() );
+			mSceneAssets = new List<SceneAsset>( pOther.mSceneAssets.ToArray() );
 		}
 
 		#region data
@@ -58,7 +58,7 @@ namespace UBS {
 		
 		public List<string> mScenes = new List<string>();
 
-		public List<UnityEngine.Object> mSceneAssets = new List<UnityEngine.Object>();
+		public List<SceneAsset> mSceneAssets = new List<SceneAsset>();
 		#endregion
 
 

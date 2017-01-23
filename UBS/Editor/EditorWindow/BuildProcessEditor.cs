@@ -297,10 +297,12 @@ namespace UBS
 		}
 
 
-		UnityEngine.Object SceneDrawer(UnityEngine.Rect pRect, UnityEngine.Object pScene)
+        SceneAsset SceneDrawer(UnityEngine.Rect pRect, SceneAsset pScene)
 		{
-
-			var selected = EditorGUI.ObjectField(pRect, "Scene", pScene, typeof(UnityEngine.Object), false);
+            
+			var selected = EditorGUI.ObjectField(pRect, "Scene", pScene, typeof(SceneAsset), false);
+            if (selected == null)
+                return pScene;
 
 			if (selected != null)
 			{
@@ -310,9 +312,11 @@ namespace UBS
 					return pScene;
 				}
 			}
-			if (selected != pScene)
-				Undo.RecordObject(mCollection, "Set Scene Entry");
-			return selected;
+			
+            if (selected != pScene)
+                Undo.RecordObject(mCollection, "Set Scene Entry");
+            
+			return selected as SceneAsset;
 
 		}
 
@@ -484,7 +488,8 @@ namespace UBS
 			{
 				try
 				{
-					mEditedBuildProcess.mSceneAssets.Add(AssetDatabase.LoadAssetAtPath(mEditedBuildProcess.mScenes [i], typeof(UnityEngine.Object)));
+                    var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(mEditedBuildProcess.mScenes[i]);
+					mEditedBuildProcess.mSceneAssets.Add(scene);
 				} catch (Exception e)
 				{
 					Debug.LogError("Could not find scene file at: " + mEditedBuildProcess.mScenes [i]);
@@ -540,16 +545,6 @@ namespace UBS
 				case BuildTarget.WebGL:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "WebGLDeployment");
 #endif
-
-				#if !UNITY_5_4_OR_NEWER
-				#if UNITY_4_5 || UNITY_4_6 || UNITY_5
-				case BuildTarget.BlackBerry:
-				#else
-				case BuildTarget.BB10:
-				#endif
-					return EditorUtility.SaveFolderPanel(kTitle, path, "BlackBerryDeployment");
-				#endif
-
 
 				#if !UNITY_5_4_OR_NEWER
 				case BuildTarget.WebPlayer:

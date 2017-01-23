@@ -61,18 +61,12 @@ namespace UBS
 			case BuildTarget.WSAPlayer: return BuildTargetGroup.WSA;
 			case BuildTarget.WebGL: return BuildTargetGroup.WebGL;
 
-				#endif
+#endif
 
-				#if !UNITY_5_4_OR_NEWER
-				#if UNITY_4_5 || UNITY_4_6 || UNITY_5
-			case BuildTarget.BlackBerry: return BuildTargetGroup.BlackBerry;
-				#else
-				case BuildTarget.BlackBerry: return BuildTargetGroup.BB10;
-				#endif
-				#endif
-
-			case BuildTarget.PS3:
+#if !UNITY_5_5_OR_NEWER
+                case BuildTarget.PS3:
 				return BuildTargetGroup.PS3;
+#endif
 			case BuildTarget.PS4:
 				return BuildTargetGroup.PS4;
 			case BuildTarget.StandaloneLinux:
@@ -86,17 +80,19 @@ namespace UBS
 				return BuildTargetGroup.Standalone;
 			case BuildTarget.Tizen:
 				return BuildTargetGroup.Tizen;
-				#if !UNITY_5_4_OR_NEWER
+#if !UNITY_5_4_OR_NEWER
 			case BuildTarget.WebPlayer:
 			case BuildTarget.WebPlayerStreamed:
 				return BuildTargetGroup.WebPlayer;
-				#endif
-				#if !UNITY_5_4_OR_NEWER
+#endif
+#if !UNITY_5_4_OR_NEWER
 			case BuildTarget.WP8Player:
 				return BuildTargetGroup.WP8;
-				#endif
+#endif
+#if !UNITY_5_5_OR_NEWER
 			case BuildTarget.XBOX360:
 				return BuildTargetGroup.XBOX360;
+#endif
 			}
 			return BuildTargetGroup.Unknown;
 		}

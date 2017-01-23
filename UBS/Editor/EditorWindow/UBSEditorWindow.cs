@@ -46,7 +46,7 @@ namespace UBS
 		void OnEnable()
 		{
 			Initialize();
-		}
+        }
 		protected override void OnGUI()
 		{
 			base.OnGUI ();
@@ -54,7 +54,6 @@ namespace UBS
 			Initialize();
 			if(!mInitialized)
 				return;
-			EditorWindow.FocusWindowIfItsOpen<UBSEditorWindow>();		
 				
 			GUILayout.BeginVertical();
 			mScrollPositions[0] = GUILayout.BeginScrollView(mScrollPositions[0]);
@@ -255,7 +254,9 @@ namespace UBS
 			mInitialized = true;
 
 			Undo.undoRedoPerformed += OnUndoRedoPerformed;
-		}
+
+            EditorWindow.FocusWindowIfItsOpen<UBSEditorWindow>();
+        }
 
 		void OnUndoRedoPerformed()
 		{
