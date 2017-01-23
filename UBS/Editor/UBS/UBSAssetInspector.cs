@@ -23,7 +23,10 @@ namespace UBS
 				"Build Processes at once. ", 
 			                EditorStyles.wordWrappedMiniLabel);
 
-			if(data.mProcesses.Count == 0)
+            GUILayout.Label("This asset can be accessed by hitting CTRL+SHIFT+C. ",
+                            EditorStyles.wordWrappedMiniLabel);
+
+            if (data.mProcesses.Count == 0)
 			{
 				GUI.color = Color.yellow;
 				GUILayout.Label("You should start by adding a Build Process. Hit \"Edit\" to do so. ", 
