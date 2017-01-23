@@ -17,7 +17,10 @@ namespace UBS
 		bool
 			mEmpty = false;
 
-		public static void Init(BuildCollection pData, BuildProcess pProcess, bool pBuildAndRun = false)
+        [SerializeField]
+        Vector2 scrollPosition01;
+
+        public static void Init(BuildCollection pData, BuildProcess pProcess, bool pBuildAndRun = false)
 		{
 			foreach (var p in pData.mProcesses) {
 				p.mSelected = (p == pProcess);
@@ -30,9 +33,9 @@ namespace UBS
 			
 			var window = EditorWindow.GetWindow<UBSBuildWindow>(true, "Build", true);
 			
-			window.position = new Rect(50, 50, 350, 360);
-			window.minSize = new Vector2(350, 360);
-			window.maxSize = new Vector2(350, 360);
+			window.position = new Rect(50, 50, 350, 460);
+			window.minSize = new Vector2(350, 460);
+			window.maxSize = new Vector2(350, 460);
 			return window;
 		}
 
@@ -40,11 +43,13 @@ namespace UBS
 		{
 			var window = CreateWindow();
 			window.Run(pData, pBuildAndRun);
-		}
+
+        }
 
 		public void Run(BuildCollection pCollection, bool pBuildAndRun)
-		{
-			UBSProcess.Create(pCollection, pBuildAndRun);
+        {
+            scrollPosition01 = Vector2.zero;
+            UBSProcess.Create(pCollection, pBuildAndRun);
 		}
 
 		void Initialize()
@@ -106,10 +111,49 @@ namespace UBS
 				return;
 			}
 
-			GUI.Box(new Rect(25, 25, 300, 310), "", Styles.buildProcessEditorBackground);
+            GUILayout.BeginArea(new Rect(25, 25, 300, 20));
+            {
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Build Processes", "BoldLabel");
+                    GUILayout.FlexibleSpace();
+
+                    if (GUILayout.Button("Select Build Collection"))
+                    {
+                        Selection.activeObject = mProcess.BuildCollection;
+                    }
+                }
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndArea();
+
+            GUILayout.BeginArea(new Rect(25, 50, 300, 125), EditorStyles.helpBox);
+            {
+                scrollPosition01 = GUILayout.BeginScrollView(scrollPosition01);
+                {
+                    GUILayout.BeginVertical();
+                    {
+                        for (int i = 0; i < mProcess.BuildCollection.mProcesses.Count; i++)
+                        {
+                            var p = mProcess.BuildCollection.mProcesses[i];
+                            bool odd = (i % 2) == 0;
+                                
+                            GUI.enabled = p.mSelected;
+                            UBSWindowBase.DrawBuildProcessEntry(mProcess.BuildCollection, p, odd, 0, false);
+                            
+                        }
+                        GUI.enabled = true;
+                    }
+                    GUILayout.EndVertical();
+                }
+                GUILayout.EndScrollView();
+            }
+            GUILayout.EndArea();
+
+            GUI.Box(new Rect(25, 205, 300, 230  ), "", EditorStyles.helpBox);
 
 
-			float fTop = 25;
+			float fTop = 205;
 			float fLeft = 30;
 			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
 			KeyValue("Collection:", mProcess.BuildCollection.name);
@@ -153,7 +197,9 @@ namespace UBS
 
 			fTop += kHeight;
 			GUILayout.BeginArea(new Rect(fLeft, fTop, 290, kHeight * 5));
-			if (UBSProcess.BuildBehavior == UBSBuildBehavior.manual && mProcess.CurrentState == UBSState.building) {
+
+            GUILayout.Space(5);
+            if (UBSProcess.BuildBehavior == UBSBuildBehavior.manual && mProcess.CurrentState == UBSState.building) {
 				GUILayout.BeginVertical();
 				EditorGUILayout.HelpBox("You use Unity free. Open build settings and press \"Build\" manually. ", MessageType.Info);
 				EditorGUILayout.HelpBox("Output path: " + mProcess.GetCurrentProcess().mOutputPath, MessageType.Info);
@@ -167,11 +213,15 @@ namespace UBS
 				}
 				GUILayout.EndVertical();
 			} else {
-				if(GUILayout.Button("Cancel")) {
-					mProcess.Cancel();
+                GUI.enabled = !mProcess.IsDone;
+                if (GUILayout.Button("Cancel")) {
+                    mProcess.Cancel();
 				}
-			}
-			GUILayout.EndArea();
+
+            }
+            
+
+            GUILayout.EndArea();
 		}
 
 		void KeyValue(string pKey, object pValue)
@@ -184,7 +234,7 @@ namespace UBS
 		void KeyProgress(string pKey, float pValue)
 		{
 			GUI.Label(new Rect(0, 0, 140, 25), pKey, Styles.boldKey);
-			EditorGUI.ProgressBar(new Rect(150, 5, 140, 15), pValue, Mathf.RoundToInt(pValue * 100).ToString() + "%");
+            EditorGUI.ProgressBar(new Rect(150, 5, 140, 15), pValue, Mathf.RoundToInt(pValue * 100).ToString() + "%");
 		}
 
 	}

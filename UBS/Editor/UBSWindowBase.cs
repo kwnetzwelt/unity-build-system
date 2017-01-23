@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.IO;
 
 namespace UBS
 {
@@ -34,5 +35,106 @@ namespace UBS
                 GUI.color = Color.white;
             }
 		}
-	}
+
+        public static int DrawBuildProcessEntry(BuildCollection data, BuildProcess e, bool odd, int selectedCount, bool editable)
+        {
+            GUILayout.BeginHorizontal(odd ? UBS.Styles.selectableListEntryOdd : UBS.Styles.selectableListEntry);
+            {
+                Texture2D platformIcon = GetPlatformIcon(e.mPlatform);
+                GUILayout.Box(platformIcon, UBS.Styles.icon);
+                GUILayout.Label(e.mName, odd ? UBS.Styles.selectableListEntryTextOdd : UBS.Styles.selectableListEntryText);
+                GUILayout.FlexibleSpace();
+                var sel = GUILayout.Toggle(e.mSelected, "");
+                if (editable && sel != e.mSelected)
+                {
+                    e.mSelected = sel;
+                    EditorUtility.SetDirty(data);
+                }
+                selectedCount += e.mSelected ? 1 : 0;
+            }
+            GUILayout.EndHorizontal();
+
+
+            if (Event.current.type == EventType.MouseDown && Event.current.button == 1)
+            {
+                Rect r = GUILayoutUtility.GetLastRect();
+                if (r.Contains(Event.current.mousePosition))
+                {
+                    GenericMenu menu = new GenericMenu();
+                    menu.AddItem(new GUIContent(e.mName), false, null);
+                    menu.AddSeparator("");
+                    menu.AddItem(new GUIContent("Open target folder"), false, () => {
+
+                        DirectoryInfo di = new DirectoryInfo(UBS.Helpers.GetAbsolutePathRelativeToProject(e.mOutputPath));
+
+                        string path;
+                        if ((di.Attributes & FileAttributes.Directory) != 0)
+                            path = di.FullName;
+                        else
+                            path = di.Parent.FullName;
+
+                        EditorUtility.RevealInFinder(path);
+                    });
+                    menu.AddSeparator("");
+                    menu.AddItem(new GUIContent("Build and run"), false, BuildAndRun, new BuildAndRunUserData(data, e));
+                    menu.AddItem(new GUIContent("Build"), false, Build, new BuildAndRunUserData(data, e));
+
+                    menu.ShowAsContext();
+                }
+
+            }
+
+
+            return selectedCount;
+        }
+
+        static Texture2D GetPlatformIcon(BuildTarget mPlatform)
+        {
+            switch (mPlatform)
+            {
+
+                case BuildTarget.iOS:
+                    return UBS.Styles.icoIOS;
+                case BuildTarget.Android:
+                    return UBS.Styles.icoAndroid;
+                case BuildTarget.StandaloneWindows:
+                    return UBS.Styles.icoWindows;
+                case BuildTarget.StandaloneWindows64:
+                    return UBS.Styles.icoWindows;
+                default:
+                    return new Texture2D(0, 0);
+            }
+        }
+
+        static void Build(object pProcess)
+        {
+            BuildAndRunUserData data = pProcess as BuildAndRunUserData;
+            UBSBuildWindow.Init(data.collection, data.process as BuildProcess, false);
+        }
+        static void BuildAndRun(object pProcess)
+        {
+            BuildAndRunUserData data = pProcess as BuildAndRunUserData;
+            UBSBuildWindow.Init(data.collection, data.process, true);
+        }
+
+        internal class BuildAndRunUserData
+        {
+            internal BuildCollection collection
+            {
+                get;
+                private set;
+            }
+            internal BuildProcess process
+            {
+                get;
+                private set;
+            }
+
+            internal BuildAndRunUserData(BuildCollection bCollection, BuildProcess bProcess)
+            {
+                process = bProcess;
+                collection = bCollection;
+            }
+        }
+    }
 }

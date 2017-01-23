@@ -132,9 +132,15 @@ namespace UBS
             }
         }
 
-		#endregion
+        public bool IsDone { get
+            {
+                return CurrentState == UBSState.done || CurrentState == UBSState.aborted;
+            }
+        }
 
-		#region public interface
+        #endregion
+
+        #region public interface
 
         public BuildProcess GetCurrentProcess()
         {
