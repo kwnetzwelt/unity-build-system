@@ -384,6 +384,14 @@ namespace UBS
 				// dont show anything!
 			}
 				break;
+            
+            case EBuildStepParameterType.Boolean:
+            {
+                bool value;
+                var succeeded = bool.TryParse(pStep.mParams, out value);
+                pStep.mParams = Convert.ToString(succeeded ? EditorGUI.Toggle(r4, value) : EditorGUI.Toggle(r4, false));
+            }
+                break;
 				
 			case EBuildStepParameterType.String:
 			{
