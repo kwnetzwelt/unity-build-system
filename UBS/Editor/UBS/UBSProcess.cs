@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace UBS
 {
@@ -176,13 +177,14 @@ namespace UBS
             bool batchMode = false;
 
             string[] arguments = System.Environment.GetCommandLineArgs();
-            string[] availableArgs = {"-batchmode", "-collection=", "-android-sdk=", "-buildTag=", "-buildAll", "-commitID=", "-tagName="};
+            string[] availableArgs = { "-batchmode", "-collection=", "-android-sdk=", "-buildTag=", "-buildAll", "-commitID=", "-tagName=", "-buildProcessByNames=" };
 			string collectionPath = "";
 			string androidSdkPath = "";
 			string buildTag = "";            
             string commitID = "" ;
             string tagName = "";
-			bool buildAll = false;
+            bool buildAll = false;
+            string startBuildProcessByNames = String.Empty;
 			foreach(var s in arguments)
 			{
 				if(s.StartsWith("-batchmode"))
@@ -222,6 +224,11 @@ namespace UBS
                 {
                     tagName = s.Substring(availableArgs[6].Length);
                 }
+
+                if (s.StartsWith("-buildProcessByNames="))
+                {
+                    startBuildProcessByNames = s.Substring(availableArgs[7].Length);
+                }
 			}
 			if(collectionPath == null)
 			{
@@ -252,7 +259,17 @@ namespace UBS
 			// Load Build Collection
 			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
 			// Run Create Command
-			Create(collection, false, batchMode, buildAll ,buildTag);
+
+            if (!String.IsNullOrEmpty(startBuildProcessByNames))
+            {
+                string[] buildProcessNameList = startBuildProcessByNames.Split(',');
+                var lowerCaseTrimmedBuildProcessNameList = buildProcessNameList.Select(x => x.ToLower()).Select(x => x.Trim()).ToArray();
+                Create(collection, false, lowerCaseTrimmedBuildProcessNameList, batchMode, buildTag);
+            }
+            else
+            {
+                Create(collection, false, buildAll, batchMode, buildTag);
+            }
 			
 			
 			UBSProcess process = LoadUBSProcess();
@@ -326,10 +343,42 @@ namespace UBS
 
 			AssetDatabase.CreateAsset( p, GetProcessPath());
 			AssetDatabase.SaveAssets();
-
-
-
 		}
+
+        /// <summary>
+        /// Builds a buildcollection by using an array of build process names (',' seperated!)
+        /// By using a list of build process names, we reconfigure and retarget the actual build collection.
+        /// </summary>
+        public static void Create(BuildCollection pCollection, bool pBuildAndRun, string[] toBeBuildedNames, bool pBatchMode = false, string pBuildTag = "")
+        {
+            UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
+            p.mBuildAndRun = pBuildAndRun;
+            p.mBatchMode = pBatchMode;
+            p.mCollection = pCollection;
+            if (toBeBuildedNames != null && toBeBuildedNames.Length > 0)
+            {
+                var selectedProcesses = p.mCollection.mProcesses
+                    .Where(buildProcess => toBeBuildedNames.Contains(buildProcess.mName.ToLower())).ToList();
+                p.mSelectedProcesses = selectedProcesses;
+            }
+            else
+            {
+                p.mSelectedProcesses = p.mCollection.mProcesses;
+            }
+            p.mCurrentState = UBSState.invalid;
+
+            if (!string.IsNullOrEmpty(pBuildTag))
+            {
+                foreach (var sp in p.mSelectedProcesses)
+                {
+                    sp.mOutputPath = AddBuildTag(sp.mOutputPath, pBuildTag);
+                }
+            }
+
+            AssetDatabase.CreateAsset(p, GetProcessPath());
+            AssetDatabase.SaveAssets();
+        }
+
 		public static bool IsUBSProcessRunning()
 		{
 			var asset = AssetDatabase.LoadAssetAtPath( GetProcessPath(), typeof(UBSProcess) );

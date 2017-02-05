@@ -1,5 +1,3 @@
-using UnityEngine;
-using System.Collections;
 using UnityEditor;
 
 namespace UBS.Android
@@ -13,7 +11,9 @@ namespace UBS.Android
 		
 		public void BuildStepStart (BuildConfiguration pConfiguration)
 		{
-			PlayerSettings.Android.keystoreName = pConfiguration.Params;
+		    var path = pConfiguration.Params.Replace("$PROJECTDIR", pConfiguration.ProjectDirectory);
+            path = path.Replace("$OUTDIR", path);
+            PlayerSettings.Android.keystoreName = path;
 		}
 		
 		public void BuildStepUpdate ()
