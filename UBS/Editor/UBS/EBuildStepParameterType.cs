@@ -3,10 +3,11 @@ namespace UBS
 {
 	public enum EBuildStepParameterType
 	{
-        None,
+		None,
         Boolean,
 		String,
-		Dropdown
+		Dropdown,
+        UnityObject
 	}
 }
 
