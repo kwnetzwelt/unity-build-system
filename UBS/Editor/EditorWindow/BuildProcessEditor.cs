@@ -11,34 +11,34 @@ namespace UBS
 {
 	internal class BuildStepProviderEntry
 	{
-		public BuildStepProviderEntry(System.Type pType)
+		public BuildStepProviderEntry(Type pType)
 		{
-			if (pType == null)
-			{
-				mName = "None";
-				return;
-			}
-			mType = pType;
-			mName = mType.Name;
-			mNamespace = mType.Namespace;
+            if (pType == null)
+            {
+                mName = "None";
+                return;
+            }
+            mType = pType;
+            mName = mType.Name;
+            mNamespace = mType.Namespace;
 
-			foreach (var a in mType.GetCustomAttributes(true))
-			{
-				if (a is BuildStepDescriptionAttribute)
-					mDescription = a as BuildStepDescriptionAttribute;
-				else if (a is BuildStepPlatformFilterAttribute)
-					mPlatformFilter = a as BuildStepPlatformFilterAttribute;
-				else if (a is BuildStepTypeFilterAttribute)
-					mTypeFilter = a as BuildStepTypeFilterAttribute;
-				else if(a is BuildStepParameterFilterAttribute)
-					mParameterFilter = a as BuildStepParameterFilterAttribute;
+            foreach (var a in mType.GetCustomAttributes(true))
+            {
+                if (a is BuildStepDescriptionAttribute)
+                    mDescription = a as BuildStepDescriptionAttribute;
+                else if (a is BuildStepPlatformFilterAttribute)
+                    mPlatformFilter = a as BuildStepPlatformFilterAttribute;
+                else if (a is BuildStepTypeFilterAttribute)
+                    mTypeFilter = a as BuildStepTypeFilterAttribute;
+                else if (a is BuildStepParameterFilterAttribute)
+                    mParameterFilter = a as BuildStepParameterFilterAttribute;
 
-			}
+            }
 		}
 		public string mName;
 		public string mNamespace;
 
-		public System.Type mType;
+		public Type mType;
 		public BuildStepDescriptionAttribute mDescription;
 		public BuildStepPlatformFilterAttribute mPlatformFilter;
 		public BuildStepTypeFilterAttribute mTypeFilter;
@@ -56,59 +56,59 @@ namespace UBS
 			return mNamespace.Replace(".","/") + "/" + mName;
 		}
 
-		public string GetDescription()
-		{
-			if (mDescription != null && mDescription.mDescription != null)
-				return mDescription.mDescription;
-			return "";
-		}
-
-		
-		public EBuildStepParameterType GetParameterType()
-		{
-			if(mParameterFilter != null)
-			{
-				return mParameterFilter.BuildParameterType;
-			}
-			else
-			{                
-				// this is the default behavior, since the former buildsteps were designed as string parameters
-				return EBuildStepParameterType.String;
-			} 
-		}
-		
-		public string[] GetParameterDropdownOptions()
-		{
-			if(mParameterFilter != null &&
-			   mParameterFilter.BuildParameterType == EBuildStepParameterType.Dropdown)
-			{
-				return mParameterFilter.DropdownOptions;
-			}
-			else
-			{
-				return null;
-			}
-		}
+        public string GetDescription()
+        {
+            if (mDescription != null && mDescription.mDescription != null)
+                return mDescription.mDescription;
+            return "";
+        }
 
 
-		public bool CheckFilters(EBuildStepType pDrawingBuildStepType, BuildTarget pPlatform)
-		{
-			if (mPlatformFilter != null)
-			{
-				if (mPlatformFilter.mBuildTarget != pPlatform)
-				{
-					return false;
-				}
-			}
-			if (mTypeFilter != null)
-			{
-				if (mTypeFilter.mBuildStepType != pDrawingBuildStepType)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
+        public EBuildStepParameterType GetParameterType()
+        {
+            if (mParameterFilter != null)
+            {
+                return mParameterFilter.BuildParameterType;
+            }
+            else
+            {
+                // this is the default behavior, since the former buildsteps were designed as string parameters
+                return EBuildStepParameterType.String;
+            }
+        }
+
+        public string[] GetParameterDropdownOptions()
+        {
+            if (mParameterFilter != null &&
+               mParameterFilter.BuildParameterType == EBuildStepParameterType.Dropdown)
+            {
+                return mParameterFilter.DropdownOptions;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+        public bool CheckFilters(EBuildStepType pDrawingBuildStepType, BuildTarget pPlatform)
+        {
+            if (mPlatformFilter != null)
+            {
+                if (mPlatformFilter.mBuildTarget != pPlatform)
+                {
+                    return false;
+                }
+            }
+            if (mTypeFilter != null)
+            {
+                if (mTypeFilter.mBuildStepType != pDrawingBuildStepType)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 	}
 
 	public class BuildProcessEditor
@@ -123,66 +123,64 @@ namespace UBS
 
 		public BuildProcessEditor()
 		{
-			//
-			// create list of available Build SteP Providers
-			//
-			mBuildStepProviders = UBS.Helpers.FindClassesImplementingInterface(typeof(IBuildStepProvider));
+            //
+            // create list of available Build SteP Providers
+            //
+            mBuildStepProviders = UBS.Helpers.FindClassesImplementingInterface(typeof(IBuildStepProvider));
 #if UBS_DEBUG
 			Debug.Log("Found " + mBuildStepProviders.Count + " BuildStepProviders");
 #endif
-			mSelectableBuildStepProviders = new BuildStepProviderEntry[mBuildStepProviders.Count + 1];
-			mSelectableBuildStepProviders [0] = new BuildStepProviderEntry(null);
-			for (int i = 0; i<mBuildStepProviders.Count; i++)
-			{
-				mSelectableBuildStepProviders [i + 1] = new BuildStepProviderEntry(mBuildStepProviders [i]);
+            mSelectableBuildStepProviders = new BuildStepProviderEntry[mBuildStepProviders.Count + 1];
+            mSelectableBuildStepProviders[0] = new BuildStepProviderEntry(null);
+            for (int i = 0; i < mBuildStepProviders.Count; i++)
+            {
+                mSelectableBuildStepProviders[i + 1] = new BuildStepProviderEntry(mBuildStepProviders[i]);
 
 #if UBS_DEBUG
 				Debug.Log(">" + mBuildStepProviders[i].Name);
 #endif
-			}
+            }
 
-			//
-			// create list of available build targets
-			//
-
-
+            //
+            // create list of available build targets
+            //
 
 
 		}
 
 		public void OnDestroy()
 		{
-			if (mEditedBuildProcess != null)
-				SaveScenesToStringList();
+            if (mEditedBuildProcess != null)
+                SaveScenesToStringList();
 
-			mEditedBuildProcess = null;
+            mEditedBuildProcess = null;
 		}
 		BuildOptions[] mBuildOptions;
 		string selectedOptionsString;
 		void OnEnable()
 		{
-			var names = System.Enum.GetNames(typeof(BuildOptions));
-			mBuildOptions = new BuildOptions[names.Length];
-			for (int i = 0; i<names.Length; i++)
-			{
-				mBuildOptions [i] = (BuildOptions)System.Enum.Parse(typeof(BuildOptions), names [i]);
-			}
-			UpdateSelectedOptions();
+            var names = Enum.GetNames(typeof(BuildOptions));
+            mBuildOptions = new BuildOptions[names.Length];
+            for (int i = 0; i < names.Length; i++)
+            {
+                mBuildOptions[i] = (BuildOptions)Enum.Parse(typeof(BuildOptions), names[i]);
+            }
+            UpdateSelectedOptions();
 		}
 
 		void UpdateSelectedOptions()
 		{
-			StringBuilder sb = new StringBuilder();
-			foreach (var buildOption in mBuildOptions)
-			{
-				if ((mEditedBuildProcess.mBuildOptions & buildOption) != 0)
-				{
-					sb.Append(buildOption.ToString() + ", ");
-				}
-			}
-			selectedOptionsString = sb.ToString();
-			if (selectedOptionsString.Length > 2)
-				selectedOptionsString = selectedOptionsString.Substring(0, selectedOptionsString.Length - 2);
+            StringBuilder sb = new StringBuilder();
+            foreach (var buildOption in mBuildOptions)
+            {
+                if ((mEditedBuildProcess.mBuildOptions & buildOption) != 0)
+                {
+                    sb.Append(buildOption.ToString() + ", ");
+                }
+            }
+            selectedOptionsString = sb.ToString();
+            if (selectedOptionsString.Length > 2)
+                selectedOptionsString = selectedOptionsString.Substring(0, selectedOptionsString.Length - 2);
 		}
 
 		public void OnGUI(BuildProcess pProcess, BuildCollection pCollection)
@@ -218,42 +216,43 @@ namespace UBS
 			pProcess.mName = EditorGUILayout.TextField("Name", mEditedBuildProcess.mName);
 
 
-			mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", mEditedBuildProcess.mPlatform);
+            mEditedBuildProcess.mPlatform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", mEditedBuildProcess.mPlatform);
 
-			mEditedBuildProcess.mPretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", "Will not trigger a unity build, but run everything else. "), mEditedBuildProcess.mPretend);
+            mEditedBuildProcess.mPretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", "Will not trigger a unity build, but run everything else. "), mEditedBuildProcess.mPretend);
 
-			GUILayout.Space(5);
-			mShowBuildOptions = EditorGUILayout.Foldout(mShowBuildOptions, "Build Options");
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(25);
+            GUILayout.Space(5);
+            mShowBuildOptions = EditorGUILayout.Foldout(mShowBuildOptions, "Build Options");
+            GUILayout.BeginHorizontal();
+            GUILayout.Space(25);
 
-			if (mShowBuildOptions)
-			{
-				GUILayout.BeginVertical();
+            if (mShowBuildOptions)
+            {
+                GUILayout.BeginVertical();
 
-				foreach (var buildOption in mBuildOptions)
-				{
-					bool selVal = (mEditedBuildProcess.mBuildOptions & buildOption) != 0;
-					{
-						bool resVal = EditorGUILayout.ToggleLeft(buildOption.ToString(), selVal);
-						if (resVal != selVal)
-						{
-							if (resVal)
-								mEditedBuildProcess.mBuildOptions = mEditedBuildProcess.mBuildOptions | buildOption;
-							else
-								mEditedBuildProcess.mBuildOptions = mEditedBuildProcess.mBuildOptions & ~buildOption;
-							UpdateSelectedOptions();
-						}
-					}
+                foreach (var buildOption in mBuildOptions)
+                {
+                    bool selVal = (mEditedBuildProcess.mBuildOptions & buildOption) != 0;
+                    {
+                        bool resVal = EditorGUILayout.ToggleLeft(buildOption.ToString(), selVal);
+                        if (resVal != selVal)
+                        {
+                            if (resVal)
+                                mEditedBuildProcess.mBuildOptions = mEditedBuildProcess.mBuildOptions | buildOption;
+                            else
+                                mEditedBuildProcess.mBuildOptions = mEditedBuildProcess.mBuildOptions & ~buildOption;
+                            UpdateSelectedOptions();
+                        }
+                    }
 
-				}
+                }
 
-				
-				GUILayout.EndVertical();
-			} else
-			{
-				GUILayout.Label(selectedOptionsString);
-			}
+
+                GUILayout.EndVertical();
+            }
+            else
+            {
+                GUILayout.Label(selectedOptionsString);
+            }
 
 
 			GUILayout.EndHorizontal();
@@ -296,31 +295,30 @@ namespace UBS
 
 		}
 
-
         SceneAsset SceneDrawer(UnityEngine.Rect pRect, SceneAsset pScene)
-		{
-            
-			var selected = EditorGUI.ObjectField(pRect, "Scene", pScene, typeof(SceneAsset), false);
+        {
+
+            var selected = EditorGUI.ObjectField(pRect, "Scene", pScene, typeof(SceneAsset), false);
             if (selected == null)
                 return pScene;
 
-			if (selected != null)
-			{
-				var assetPath = AssetDatabase.GetAssetPath(selected);
-				if (!assetPath.EndsWith(".unity"))
-				{
-					return pScene;
-				}
-			}
-			
+            if (selected != null)
+            {
+                var assetPath = AssetDatabase.GetAssetPath(selected);
+                if (!assetPath.EndsWith(".unity"))
+                {
+                    return pScene;
+                }
+            }
+
             if (selected != pScene)
                 Undo.RecordObject(mCollection, "Set Scene Entry");
-            
-			return selected as SceneAsset;
 
-		}
+            return selected as SceneAsset;
 
-		UBS.BuildStep StepDrawer(UnityEngine.Rect pRect, UBS.BuildStep pStep)
+        }
+
+		BuildStep StepDrawer(UnityEngine.Rect pRect, UBS.BuildStep pStep)
 		{
 
 			if (pStep == null)
@@ -384,20 +382,57 @@ namespace UBS
 				// dont show anything!
 			}
 				break;
-            
+
             case EBuildStepParameterType.Boolean:
-            {
-                bool value;
-                var succeeded = bool.TryParse(pStep.mParams, out value);
-                pStep.mParams = Convert.ToString(succeeded ? EditorGUI.Toggle(r4, value) : EditorGUI.Toggle(r4, false));
-            }
+			    {
+			        bool value;
+			        var succeeded = bool.TryParse(pStep.mParams, out value);
+			        if (succeeded)
+			        {
+			            pStep.mParams = Convert.ToString(EditorGUI.Toggle(r4, value));
+			        }
+			        else
+			        {
+			            pStep.mParams = Convert.ToString(EditorGUI.Toggle(r4, false));
+			        }
+                }
                 break;
-				
+
 			case EBuildStepParameterType.String:
 			{
 				pStep.mParams = EditorGUI.TextField(r4, pStep.mParams );
 			}
 				break;
+
+            case EBuildStepParameterType.UnityObject:
+			    {
+			        int objectId;
+			        UnityEngine.Object objectAssigned = null;
+			        if (!String.IsNullOrEmpty(pStep.mParams))
+			        {
+                        bool succeeded = int.TryParse(pStep.mParams, out objectId);
+                        if (succeeded)
+                        {
+                            objectAssigned = EditorUtility.InstanceIDToObject(objectId);
+                        }
+                        else
+                        {
+                            Debug.LogError("Object with identifier " + pStep.mParams + " has not been found. Please reassign the content");
+                        }    
+			        }
+			        
+
+                    var assignedObject = EditorGUI.ObjectField(r4, objectAssigned, typeof(UnityEngine.Object), false);
+			        if (assignedObject != null)
+			        {
+			            pStep.mParams = assignedObject.GetInstanceID().ToString();
+			        }
+			        else
+			        {
+			            pStep.mParams = String.Empty;
+			        }
+                }
+                break;
 				
 			case EBuildStepParameterType.Dropdown:
 			{
@@ -434,106 +469,106 @@ namespace UBS
 			return pStep;
 		}
 
-		GUIContent[] GetBuildStepProvidersFiltered()
-		{
-			List<GUIContent> outList = new List<GUIContent>();
-			foreach (var bsp in mSelectableBuildStepProviders)
-			{
-				if (bsp.mName == "None" || bsp.CheckFilters(mDrawingBuildStepType, mEditedBuildProcess.mPlatform))
-				{
-					string desc = bsp.GetDescription();
-					if (desc != null)
-						outList.Add(new GUIContent(bsp.ToMenuPath(), desc));
-					else
-						outList.Add(new GUIContent(bsp.ToMenuPath()));
-				}
-			}
-			return outList.ToArray();
-		}
+        GUIContent[] GetBuildStepProvidersFiltered()
+        {
+            List<GUIContent> outList = new List<GUIContent>();
+            foreach (var bsp in mSelectableBuildStepProviders)
+            {
+                if (bsp.mName == "None" || bsp.CheckFilters(mDrawingBuildStepType, mEditedBuildProcess.mPlatform))
+                {
+                    string desc = bsp.GetDescription();
+                    if (desc != null)
+                        outList.Add(new GUIContent(bsp.ToMenuPath(), desc));
+                    else
+                        outList.Add(new GUIContent(bsp.ToMenuPath()));
+                }
+            }
+            return outList.ToArray();
+        }
 
-		GUIContent[] GetBuildStepProvidersParameterOptions(BuildStepProviderEntry entry)
-		{
-			List<GUIContent> outList = new List<GUIContent>();
-			if(entry != null)
-			{
-				string[] entries = entry.GetParameterDropdownOptions();
-				foreach(var option in entries)
-				{
-					outList.Add(new GUIContent(option));
-				}
-			}
-			
-			return outList.ToArray();
-		}
+        GUIContent[] GetBuildStepProvidersParameterOptions(BuildStepProviderEntry entry)
+        {
+            List<GUIContent> outList = new List<GUIContent>();
+            if (entry != null)
+            {
+                string[] entries = entry.GetParameterDropdownOptions();
+                foreach (var option in entries)
+                {
+                    outList.Add(new GUIContent(option));
+                }
+            }
+
+            return outList.ToArray();
+        }
 
 #region data manipulation
 
-		void CopyScenesFromSettings()
-		{
-			mEditedBuildProcess.mScenes.Clear();
-			EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-			foreach (EditorBuildSettingsScene scene in scenes)
-			{
-				mEditedBuildProcess.mScenes.Add(scene.path);
-			}
-			LoadScenesFromStringList();
-		}
+        void CopyScenesFromSettings()
+        {
+            mEditedBuildProcess.mScenes.Clear();
+            EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
+            foreach (EditorBuildSettingsScene scene in scenes)
+            {
+                mEditedBuildProcess.mScenes.Add(scene.path);
+            }
+            LoadScenesFromStringList();
+        }
 
-		public void SaveScenesToStringList()
-		{
-			mEditedBuildProcess.mScenes.Clear();
+        public void SaveScenesToStringList()
+        {
+            mEditedBuildProcess.mScenes.Clear();
 
-			for (int i = 0; i < mEditedBuildProcess.mSceneAssets.Count; i++)
-			{
-				mEditedBuildProcess.mScenes.Add(AssetDatabase.GetAssetPath(mEditedBuildProcess.mSceneAssets [i]));
-			}
-		}
+            for (int i = 0; i < mEditedBuildProcess.mSceneAssets.Count; i++)
+            {
+                mEditedBuildProcess.mScenes.Add(AssetDatabase.GetAssetPath(mEditedBuildProcess.mSceneAssets[i]));
+            }
+        }
 
-		public void LoadScenesFromStringList()
-		{
-			mEditedBuildProcess.mSceneAssets.Clear();
-			for (int i = 0; i< mEditedBuildProcess.mScenes.Count; i++)
-			{
-				try
-				{
+        public void LoadScenesFromStringList()
+        {
+            mEditedBuildProcess.mSceneAssets.Clear();
+            for (int i = 0; i < mEditedBuildProcess.mScenes.Count; i++)
+            {
+                try
+                {
                     var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(mEditedBuildProcess.mScenes[i]);
-					mEditedBuildProcess.mSceneAssets.Add(scene);
-				} catch (Exception e)
-				{
-					Debug.LogError("Could not find scene file at: " + mEditedBuildProcess.mScenes [i]);
-					Debug.LogException(e);
-				}
-			}
-		}
-
+                    mEditedBuildProcess.mSceneAssets.Add(scene);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Could not find scene file at: " + mEditedBuildProcess.mScenes[i]);
+                    Debug.LogException(e);
+                }
+            }
+        }
 #endregion
 
 
 #region platform specific stuff
-		
-		
-		void DrawOutputPathSelector()
-		{
-			GUILayout.BeginHorizontal();
-			{
-				mEditedBuildProcess.mOutputPath = EditorGUILayout.TextField("Output Path", mEditedBuildProcess.mOutputPath);
-				if (GUILayout.Button("...", GUILayout.Width(40)))
-				{
-					mEditedBuildProcess.mOutputPath = UBS.Helpers.GetProjectRelativePath(OpenPlatformSpecificOutputSelector());
-				}
-			}
-			GUILayout.EndHorizontal();
-		}
-		string OpenPlatformSpecificOutputSelector()
-		{
-			const string kTitle = "Select Output Path";
-			string path = UBS.Helpers.GetAbsolutePathRelativeToProject(mEditedBuildProcess.mOutputPath);
+        
+        void DrawOutputPathSelector()
+        {
+            GUILayout.BeginHorizontal();
+            {
+                mEditedBuildProcess.mOutputPath = EditorGUILayout.TextField("Output Path", mEditedBuildProcess.mOutputPath);
+                if (GUILayout.Button("...", GUILayout.Width(40)))
+                {
+                    mEditedBuildProcess.mOutputPath = UBS.Helpers.GetProjectRelativePath(OpenPlatformSpecificOutputSelector());
+                }
+            }
+            GUILayout.EndHorizontal();
+        }
 
-			switch (mEditedBuildProcess.mPlatform)
-			{
-				
-				case BuildTarget.Android: 
-					return EditorUtility.SaveFilePanel(kTitle, path, "android", "apk");
+        string OpenPlatformSpecificOutputSelector()
+        {
+            const string kTitle = "Select Output Path";
+            string path = UBS.Helpers.GetAbsolutePathRelativeToProject(mEditedBuildProcess.mOutputPath);
+
+            switch (mEditedBuildProcess.mPlatform)
+            {
+
+                case BuildTarget.Android:
+                    return EditorUtility.SaveFilePanel(kTitle, path, "android", "apk");
 #if !UNITY_5
 				case BuildTarget.iPhone:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
@@ -544,58 +579,58 @@ namespace UBS
 				case BuildTarget.NaCl:
 					return EditorUtility.SaveFolderPanel(kTitle, path,"NativeClientDeployment");
 #else
-				case BuildTarget.iOS:
-					return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
-					
-				case BuildTarget.WSAPlayer:
-					return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
+                case BuildTarget.iOS:
+                    return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
 
-				case BuildTarget.WebGL:
-					return EditorUtility.SaveFolderPanel(kTitle, path, "WebGLDeployment");
+                case BuildTarget.WSAPlayer:
+                    return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
+
+                case BuildTarget.WebGL:
+                    return EditorUtility.SaveFolderPanel(kTitle, path, "WebGLDeployment");
 #endif
 
-				#if !UNITY_5_4_OR_NEWER
+#if !UNITY_5_4_OR_NEWER
 				case BuildTarget.WebPlayer:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "WebPlayerDeployment");
-				#endif
-				
-				case BuildTarget.StandaloneOSXUniversal:
-				case BuildTarget.StandaloneOSXIntel64:
-				case BuildTarget.StandaloneOSXIntel:
+#endif
 
-				//
-				// special handle .app folders for OSX
-				//
-					string suffix = "/" + PlayerSettings.productName + ".app";
+                case BuildTarget.StandaloneOSXUniversal:
+                case BuildTarget.StandaloneOSXIntel64:
+                case BuildTarget.StandaloneOSXIntel:
 
-					if (path.EndsWith(suffix))
-						path = path.Substring(0, path.Length - 4);
-					System.IO.DirectoryInfo fi = new System.IO.DirectoryInfo(path);
-					Debug.Log(fi.Parent.ToString());
+                    //
+                    // special handle .app folders for OSX
+                    //
+                    string suffix = "/" + PlayerSettings.productName + ".app";
 
-					string outString = EditorUtility.SaveFolderPanel(kTitle, fi.Parent.ToString(), "");
+                    if (path.EndsWith(suffix))
+                        path = path.Substring(0, path.Length - 4);
+                    System.IO.DirectoryInfo fi = new System.IO.DirectoryInfo(path);
+                    Debug.Log(fi.Parent.ToString());
 
-					if (!string.IsNullOrEmpty(outString))
-					{
-						if (!outString.EndsWith(suffix))
-						{
-							outString = outString + suffix;
-						}
-					}
+                    string outString = EditorUtility.SaveFolderPanel(kTitle, fi.Parent.ToString(), "");
 
-					return outString;
+                    if (!string.IsNullOrEmpty(outString))
+                    {
+                        if (!outString.EndsWith(suffix))
+                        {
+                            outString = outString + suffix;
+                        }
+                    }
 
-				case BuildTarget.StandaloneLinux:
-				case BuildTarget.StandaloneLinux64:
-				case BuildTarget.StandaloneLinuxUniversal:
-				
-				case BuildTarget.StandaloneWindows:
-				case BuildTarget.StandaloneWindows64:
-				
-					return EditorUtility.SaveFilePanel(kTitle, path, "StandaloneDeployment", "exe");
-			}
-			return "";
-		}
+                    return outString;
+
+                case BuildTarget.StandaloneLinux:
+                case BuildTarget.StandaloneLinux64:
+                case BuildTarget.StandaloneLinuxUniversal:
+
+                case BuildTarget.StandaloneWindows:
+                case BuildTarget.StandaloneWindows64:
+
+                    return EditorUtility.SaveFilePanel(kTitle, path, "StandaloneDeployment", "exe");
+            }
+            return "";
+        }
 
 #endregion
 
