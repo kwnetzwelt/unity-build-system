@@ -291,10 +291,7 @@ namespace UBS
 			GUILayout.Space(5);
 
 			DrawOutputPathSelector();
-            sceneList.DoLayoutList();
-            
-			//ReorderableListGUI.Title("Included Scenes");
-			//ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
+            DrawList(sceneList);
 
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
@@ -311,9 +308,7 @@ namespace UBS
 
 			mDrawingBuildStepType = EBuildStepType.PreBuildStep;
 
-            prebuildStepsList.DoLayoutList();
-            //ReorderableListGUI.Title("Pre Build Steps");
-			//ReorderableListGUI.ListField(mEditedBuildProcess.mPreBuildSteps, StepDrawer);
+            DrawList(prebuildStepsList);
 
 
 			Styles.HorizontalSeparator();
@@ -323,19 +318,33 @@ namespace UBS
 
 			mDrawingBuildStepType = EBuildStepType.PostBuildStep;
 
-            //ReorderableListGUI.Title("Post Build Steps");
-            //ReorderableListGUI.ListField(mEditedBuildProcess.mPostBuildSteps, StepDrawer);
-            postbuildStepsList.DoLayoutList();
+            DrawList(postbuildStepsList);
 			
 			GUILayout.EndVertical();
 
 		}
 
+        private void DrawList(ReorderableList list)
+        {
+            GUILayout.BeginHorizontal();
+            {
+                GUILayout.Space(4);
+                GUILayout.BeginVertical();
+                {
+                    list.DoLayoutList();
+                }
+                GUILayout.EndVertical();
+                GUILayout.Space(4);
+            }
+            GUILayout.EndHorizontal();
+        }
 
         void SceneDrawer(UnityEngine.Rect pRect, int index, bool isActive, bool isFocused)
         {
-            SceneAsset pScene = mEditedBuildProcess.mSceneAssets[index];
+            pRect.height = pRect.height - 4;
+            pRect.y = pRect.y + 2;
 
+            SceneAsset pScene = mEditedBuildProcess.mSceneAssets[index];
             var selected = EditorGUI.ObjectField(pRect, "Scene " + index, pScene, typeof(SceneAsset), false) as SceneAsset;
             
             if (selected != pScene)
@@ -360,7 +369,9 @@ namespace UBS
 
         UBS.BuildStep StepDrawer(Rect pRect, UBS.BuildStep pStep)
         {
-            
+            pRect.height = pRect.height - 4;
+            pRect.y = pRect.y + 2;
+
 
             if (pStep == null)
 				pStep = new BuildStep();
