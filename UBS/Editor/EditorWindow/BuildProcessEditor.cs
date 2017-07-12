@@ -157,7 +157,7 @@ namespace UBS
 
 			mEditedBuildProcess = null;
 		}
-		BuildOptions[] mBuildOptions;
+        List<BuildOptions> mBuildOptions;
 		string selectedOptionsString;
 
         private ReorderableList sceneList;
@@ -167,12 +167,26 @@ namespace UBS
         void OnEnable()
 		{
 			var names = System.Enum.GetNames(typeof(BuildOptions));
-			mBuildOptions = new BuildOptions[names.Length];
-			for (int i = 0; i<names.Length; i++)
-			{
-				mBuildOptions [i] = (BuildOptions)System.Enum.Parse(typeof(BuildOptions), names [i]);
-			}
-			UpdateSelectedOptions();
+			mBuildOptions = new List<BuildOptions>();
+
+            mBuildOptions.Add(BuildOptions.Development);
+            mBuildOptions.Add(BuildOptions.AutoRunPlayer);
+            mBuildOptions.Add(BuildOptions.ShowBuiltPlayer);
+            mBuildOptions.Add(BuildOptions.BuildAdditionalStreamedScenes);
+            mBuildOptions.Add(BuildOptions.AcceptExternalModificationsToPlayer);
+            mBuildOptions.Add(BuildOptions.ConnectWithProfiler);
+            mBuildOptions.Add(BuildOptions.AllowDebugging);
+            mBuildOptions.Add(BuildOptions.SymlinkLibraries);
+            mBuildOptions.Add(BuildOptions.UncompressedAssetBundle);
+            mBuildOptions.Add(BuildOptions.ConnectWithProfiler);
+            mBuildOptions.Add(BuildOptions.ConnectToHost);
+            mBuildOptions.Add(BuildOptions.EnableHeadlessMode);
+            mBuildOptions.Add(BuildOptions.BuildScriptsOnly);
+            mBuildOptions.Add(BuildOptions.ForceEnableAssertions);
+            mBuildOptions.Add(BuildOptions.CompressWithLz4);
+            mBuildOptions.Add(BuildOptions.StrictMode);
+            
+            UpdateSelectedOptions();
 
             sceneList = new ReorderableList(mEditedBuildProcess.mSceneAssets, typeof(SceneAsset));
             sceneList.drawHeaderCallback = SceneHeaderDrawer;
@@ -276,7 +290,6 @@ namespace UBS
 							UpdateSelectedOptions();
 						}
 					}
-
 				}
 
 				
