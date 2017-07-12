@@ -170,12 +170,14 @@ namespace UBS
             bool batchMode = false;
 
             string[] arguments = System.Environment.GetCommandLineArgs();
-            string[] availableArgs = { "-batchmode", "-collection=", "-android-sdk=", "-buildTag=", "-buildAll", "-commitID=", "-tagName=", "-buildProcessByNames=" };
+            string[] availableArgs = { "-batchmode", "-collection=", "-android-sdk=", "-android-ndk=", "-jdk-path=", "-buildTag=", "-buildAll", "-commitID=", "-tagName=", "-buildProcessByNames="};
 			string collectionPath = "";
 			string androidSdkPath = "";
 			string buildTag = "";            
             string commitID = "" ;
-            string tagName = "";
+			string tagName = "";
+			string androidNdkPath = "";
+			string jdkPath = "";
             bool buildAll = false;
             string startBuildProcessByNames = String.Empty;
 			foreach(var s in arguments)
@@ -196,9 +198,19 @@ namespace UBS
 					androidSdkPath = s.Substring(availableArgs[2].Length);
 				}
 
+                if (s.StartsWith("-android-ndk="))
+                {
+                    androidNdkPath = s.Substring(availableArgs[3].Length);
+                }
+
+                if (s.StartsWith("-jdk-path="))
+                {
+                    jdkPath = s.Substring(availableArgs[4].Length);
+                }
+
 				if(s.StartsWith("-buildTag="))
 				{
-					buildTag = s.Substring(availableArgs[3].Length);
+					buildTag = s.Substring(availableArgs[5].Length);
 				}
 
 				if(s.StartsWith("-buildAll"))
@@ -209,18 +221,18 @@ namespace UBS
 				
                 if(s.StartsWith("-commitID="))
                 {
-                    commitID = s.Substring(availableArgs[5].Length);
+                    commitID = s.Substring(availableArgs[7].Length);
                     
                 }
                 
                 if(s.StartsWith("-tagName="))
                 {
-                    tagName = s.Substring(availableArgs[6].Length);
+                    tagName = s.Substring(availableArgs[8].Length);
                 }
 
                 if (s.StartsWith("-buildProcessByNames="))
                 {
-                    startBuildProcessByNames = s.Substring(availableArgs[7].Length);
+                    startBuildProcessByNames = s.Substring(availableArgs[9].Length);
                 }
 			}
 			if(collectionPath == null)
@@ -234,6 +246,18 @@ namespace UBS
 				EditorPrefs.SetString("AndroidSdkRoot", androidSdkPath);
 				Debug.Log("Set Android SDK root to: " + androidSdkPath);
 			}
+
+            if (!string.IsNullOrEmpty(androidNdkPath))
+            {
+                EditorPrefs.SetString("AndroidNdkRoot", androidNdkPath);
+                Debug.Log("Set Android NDK root to: " + androidNdkPath);
+            }
+
+            if (!string.IsNullOrEmpty(jdkPath))
+            {
+                EditorPrefs.SetString("JdkPath", jdkPath);
+                Debug.Log("Set JDK-Path root to: " + jdkPath);
+            }
             
             if(!string.IsNullOrEmpty(commitID))
             {
