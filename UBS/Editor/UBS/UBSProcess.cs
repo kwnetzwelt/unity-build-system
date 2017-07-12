@@ -15,14 +15,7 @@ namespace UBS
 
 
 		#region data
-
-        public static UBSBuildBehavior BuildBehavior
-        {
-            get
-            {
-                return UBSBuildBehavior.auto;
-            }
-        }
+        
 
         [SerializeField]
         BuildConfiguration
@@ -453,6 +446,7 @@ namespace UBS
 				return;
 
 			if (!EditorUserBuildSettings.SwitchActiveBuildTarget (CurrentProcess.mPlatform)) {
+                Cancel();
 				throw new Exception("Could not switch to build target: " + CurrentProcess.mPlatform);
 			}
 			
@@ -490,22 +484,7 @@ namespace UBS
 
 		void DoBuilding()
 		{
-
-			if(BuildPipeline.isBuildingPlayer || BuildBehavior != UBSBuildBehavior.auto)
-				return;
-
-			if (BuildBehavior != UBSBuildBehavior.auto) 
-			{
-				/*
-				System.Reflection.Assembly asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
-				var M = asm
-					.GetType("UnityEditor.BuildPlayerWindow")
-					.GetMethod("ShowBuildPlayerWindow", System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
-				M.Invoke(null, null);
-				*/
-				return;
-			}
-
+            
 			List<string> scenes = new List<string>();
 
 			foreach(var scn in EditorBuildSettings.scenes)
@@ -534,29 +513,7 @@ namespace UBS
 			mCurrentState = UBSState.postSteps;
 			Save();
 		}
-
-		[UnityEditor.Callbacks.PostProcessBuild]
-		public static void OnPostProcessBuild(BuildTarget target, string buildPath)
-		{
-			if (BuildBehavior == UBSBuildBehavior.auto)
-				return;
-
-			buildPath = UBS.Helpers.GetProjectRelativePath (buildPath);
-			UBSProcess p = UBSProcess.LoadUBSProcess ();
-			if (p.mCurrentState == UBSState.building && target == p.CurrentProcess.mPlatform)
-			{
-				if (p.CurrentProcess.mOutputPath != buildPath) 
-				{
-					Debug.Log(
-						string.Format("Manually selected build path \"{0}\" differs from specified UBS build path \"{1}\" in process \"{2}\". Using manually selected one.",
-					    	buildPath, p.CurrentProcess.mOutputPath, p.CurrentProcessName)
-						);
-					p.CurrentProcess.mOutputPath = buildPath;
-				}
-				p.OnBuildDone();
-			}
-		}
-
+        
 		void DoPostSteps()
 		{
 			mPostStepWalker.MoveNext();
@@ -620,12 +577,7 @@ namespace UBS
 
 		}
 	}
-
-	public enum UBSBuildBehavior {
-		auto,
-		manual
-	}
-
+    
 	public enum UBSState
 	{
 		invalid,

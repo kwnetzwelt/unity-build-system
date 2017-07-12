@@ -193,7 +193,7 @@ namespace UBS
             sceneList.drawElementCallback = SceneDrawer;
 
             prebuildStepsList = new ReorderableList(mEditedBuildProcess.mPreBuildSteps, typeof(BuildStep));
-            prebuildStepsList.drawHeaderCallback = PostStepHeaderDrawer;
+            prebuildStepsList.drawHeaderCallback = PreStepHeaderDrawer;
             prebuildStepsList.drawElementCallback = PreStepDrawer;
             
             postbuildStepsList = new ReorderableList(mEditedBuildProcess.mPostBuildSteps, typeof(BuildStep));
@@ -377,7 +377,7 @@ namespace UBS
         {
             UBS.BuildStep step = mEditedBuildProcess.mPostBuildSteps[index];
             step = StepDrawer(pRect, step);
-            mEditedBuildProcess.mPreBuildSteps[index] = step;
+            mEditedBuildProcess.mPostBuildSteps[index] = step;
         }
 
         UBS.BuildStep StepDrawer(Rect pRect, UBS.BuildStep pStep)
