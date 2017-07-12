@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
-using Rotorz.ReorderableList;
+using UnityEditorInternal;
 using System.Collections.Generic;
 using UnityEditor.Graphs;
 using System.Linq;
@@ -159,7 +159,12 @@ namespace UBS
 		}
 		BuildOptions[] mBuildOptions;
 		string selectedOptionsString;
-		void OnEnable()
+
+        private ReorderableList sceneList;
+        private ReorderableList prebuildStepsList;
+        private ReorderableList postbuildStepsList;
+
+        void OnEnable()
 		{
 			var names = System.Enum.GetNames(typeof(BuildOptions));
 			mBuildOptions = new BuildOptions[names.Length];
@@ -168,9 +173,35 @@ namespace UBS
 				mBuildOptions [i] = (BuildOptions)System.Enum.Parse(typeof(BuildOptions), names [i]);
 			}
 			UpdateSelectedOptions();
-		}
 
-		void UpdateSelectedOptions()
+            sceneList = new ReorderableList(mEditedBuildProcess.mSceneAssets, typeof(SceneAsset));
+            sceneList.drawHeaderCallback = SceneHeaderDrawer;
+            sceneList.drawElementCallback = SceneDrawer;
+
+            prebuildStepsList = new ReorderableList(mEditedBuildProcess.mPreBuildSteps, typeof(BuildStep));
+            prebuildStepsList.drawHeaderCallback = PostStepHeaderDrawer;
+            prebuildStepsList.drawElementCallback = PreStepDrawer;
+            
+            postbuildStepsList = new ReorderableList(mEditedBuildProcess.mPostBuildSteps, typeof(BuildStep));
+            postbuildStepsList.drawHeaderCallback = PostStepHeaderDrawer;
+            postbuildStepsList.drawElementCallback = PostStepDrawer;
+
+
+        }
+        private void SceneHeaderDrawer(Rect rect)
+        {
+            GUI.Label(rect, "Selected Scenes");
+        }
+        private void PreStepHeaderDrawer(Rect rect)
+        {
+            GUI.Label(rect, "Pre Build Steps");
+        }
+        private void PostStepHeaderDrawer(Rect rect)
+        {
+            GUI.Label(rect, "Post Build Steps");
+        }
+
+        void UpdateSelectedOptions()
 		{
 			StringBuilder sb = new StringBuilder();
 			foreach (var buildOption in mBuildOptions)
@@ -260,9 +291,10 @@ namespace UBS
 			GUILayout.Space(5);
 
 			DrawOutputPathSelector();
-
-			ReorderableListGUI.Title("Included Scenes");
-			ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
+            sceneList.DoLayoutList();
+            
+			//ReorderableListGUI.Title("Included Scenes");
+			//ReorderableListGUI.ListField(mEditedBuildProcess.mSceneAssets, SceneDrawer);
 
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
@@ -278,8 +310,10 @@ namespace UBS
 			Styles.HorizontalSeparator();
 
 			mDrawingBuildStepType = EBuildStepType.PreBuildStep;
-			ReorderableListGUI.Title("Pre Build Steps");
-			ReorderableListGUI.ListField(mEditedBuildProcess.mPreBuildSteps, StepDrawer);
+
+            prebuildStepsList.DoLayoutList();
+            //ReorderableListGUI.Title("Pre Build Steps");
+			//ReorderableListGUI.ListField(mEditedBuildProcess.mPreBuildSteps, StepDrawer);
 
 
 			Styles.HorizontalSeparator();
@@ -288,42 +322,47 @@ namespace UBS
 
 
 			mDrawingBuildStepType = EBuildStepType.PostBuildStep;
-			ReorderableListGUI.Title("Post Build Steps");
-			ReorderableListGUI.ListField(mEditedBuildProcess.mPostBuildSteps, StepDrawer);
 
+            //ReorderableListGUI.Title("Post Build Steps");
+            //ReorderableListGUI.ListField(mEditedBuildProcess.mPostBuildSteps, StepDrawer);
+            postbuildStepsList.DoLayoutList();
 			
 			GUILayout.EndVertical();
 
 		}
 
 
-        SceneAsset SceneDrawer(UnityEngine.Rect pRect, SceneAsset pScene)
-		{
-            
-			var selected = EditorGUI.ObjectField(pRect, "Scene", pScene, typeof(SceneAsset), false);
-            if (selected == null)
-                return pScene;
+        void SceneDrawer(UnityEngine.Rect pRect, int index, bool isActive, bool isFocused)
+        {
+            SceneAsset pScene = mEditedBuildProcess.mSceneAssets[index];
 
-			if (selected != null)
-			{
-				var assetPath = AssetDatabase.GetAssetPath(selected);
-				if (!assetPath.EndsWith(".unity"))
-				{
-					return pScene;
-				}
-			}
-			
+            var selected = EditorGUI.ObjectField(pRect, "Scene " + index, pScene, typeof(SceneAsset), false) as SceneAsset;
+            
             if (selected != pScene)
                 Undo.RecordObject(mCollection, "Set Scene Entry");
-            
-			return selected as SceneAsset;
+
+            mEditedBuildProcess.mSceneAssets[index] = selected;
 
 		}
+        void PreStepDrawer(Rect pRect, int index, bool isActive, bool isFocused)
+        {
+            UBS.BuildStep step = mEditedBuildProcess.mPreBuildSteps[index];
+            step = StepDrawer(pRect, step);
+            mEditedBuildProcess.mPreBuildSteps[index] = step;
+        }
 
-		UBS.BuildStep StepDrawer(UnityEngine.Rect pRect, UBS.BuildStep pStep)
-		{
+        void PostStepDrawer(Rect pRect, int index, bool isActive, bool isFocused)
+        {
+            UBS.BuildStep step = mEditedBuildProcess.mPostBuildSteps[index];
+            step = StepDrawer(pRect, step);
+            mEditedBuildProcess.mPreBuildSteps[index] = step;
+        }
 
-			if (pStep == null)
+        UBS.BuildStep StepDrawer(Rect pRect, UBS.BuildStep pStep)
+        {
+            
+
+            if (pStep == null)
 				pStep = new BuildStep();
 
 			var filtered = new List<BuildStepProviderEntry>(mSelectableBuildStepProviders);
@@ -534,16 +573,7 @@ namespace UBS
 				
 				case BuildTarget.Android: 
 					return EditorUtility.SaveFilePanel(kTitle, path, "android", "apk");
-#if !UNITY_5
-				case BuildTarget.iPhone:
-					return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
-				
-				case BuildTarget.MetroPlayer:
-					return EditorUtility.SaveFolderPanel(kTitle, path, "MetroDeployment");
 
-				case BuildTarget.NaCl:
-					return EditorUtility.SaveFolderPanel(kTitle, path,"NativeClientDeployment");
-#else
 				case BuildTarget.iOS:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "iOSDeployment");
 					
@@ -552,12 +582,7 @@ namespace UBS
 
 				case BuildTarget.WebGL:
 					return EditorUtility.SaveFolderPanel(kTitle, path, "WebGLDeployment");
-#endif
 
-				#if !UNITY_5_4_OR_NEWER
-				case BuildTarget.WebPlayer:
-					return EditorUtility.SaveFolderPanel(kTitle, path, "WebPlayerDeployment");
-				#endif
 				
 				case BuildTarget.StandaloneOSXUniversal:
 				case BuildTarget.StandaloneOSXIntel64:

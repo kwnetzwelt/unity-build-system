@@ -19,10 +19,8 @@ namespace UBS
 			version.Save();
 			UnityEditor.PlayerSettings.Android.bundleVersionCode = version.revision;
 			UnityEditor.PlayerSettings.bundleVersion = version.ToString();
-			#if UNITY_5
+			#if UNITY_5 || UNITY_2017
 			UnityEditor.PlayerSettings.WSA.packageVersion = version;
-			#else
-			UnityEditor.PlayerSettings.Metro.packageVersion = version;
 			#endif
 		}
 

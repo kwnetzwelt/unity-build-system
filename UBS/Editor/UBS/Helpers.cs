@@ -52,16 +52,10 @@ namespace UBS
 			case BuildTarget.Android:
 				return BuildTargetGroup.Android;
 
-				#if !UNITY_5
-				case BuildTarget.iPhone: return BuildTargetGroup.iPhone;
-				case BuildTarget.NaCl: return BuildTargetGroup.NaCl;
-				case BuildTarget.MetroPlayer: return BuildTargetGroup.Metro;
-				#else
+				
 			case BuildTarget.iOS: return BuildTargetGroup.iOS;
 			case BuildTarget.WSAPlayer: return BuildTargetGroup.WSA;
 			case BuildTarget.WebGL: return BuildTargetGroup.WebGL;
-
-#endif
 
 #if !UNITY_5_5_OR_NEWER
                 case BuildTarget.PS3:
