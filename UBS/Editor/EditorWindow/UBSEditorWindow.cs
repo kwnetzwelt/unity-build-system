@@ -18,7 +18,6 @@ namespace UBS
 			var window = EditorWindow.GetWindow<UBSEditorWindow>("Build System",true);
 			window.mData = pCollection;
 			window.position = new Rect(50,50, kMinWidth + 50 + kListWidth,kMinHeight + 50);
-
 		}
 
 
@@ -29,18 +28,11 @@ namespace UBS
 		string mSearchContent = "";
 		Vector2[] mScrollPositions;
 		BuildProcessEditor mEditor = new BuildProcessEditor();
+        UnityEditor.IMGUI.Controls.SearchField msearchField;
 
-		void SearchField()
+        void SearchField()
 		{
-			GUILayout.BeginHorizontal( UBS.Styles.detailsGroup );
-			{
-				mSearchContent = GUILayout.TextField(mSearchContent,"SearchTextField");
-				if(GUILayout.Button("", string.IsNullOrEmpty(mSearchContent)? "SearchCancelButtonEmpty" : "SearchCancelButton"))
-				{
-					mSearchContent = "";
-				}
-			}
-			GUILayout.EndHorizontal();
+            mSearchContent = msearchField.OnGUI(mSearchContent);
 		}
 		void OnEnable()
 		{
@@ -64,6 +56,7 @@ namespace UBS
 			//
 			GUILayout.BeginVertical("GameViewBackground",GUILayout.MaxWidth(kListWidth));
 			SearchField();
+            GUILayout.Space(4);
 			mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1], GUILayout.ExpandWidth(true));
 			bool odd = true;
 			if(mData != null)
@@ -245,7 +238,8 @@ namespace UBS
 
 			mInitialized = true;
 
-			Undo.undoRedoPerformed += OnUndoRedoPerformed;
+            msearchField = new UnityEditor.IMGUI.Controls.SearchField();
+            Undo.undoRedoPerformed += OnUndoRedoPerformed;
 
             EditorWindow.FocusWindowIfItsOpen<UBSEditorWindow>();
         }
