@@ -28,13 +28,27 @@ namespace UBS
 		string mSearchContent = "";
 		Vector2[] mScrollPositions;
 		BuildProcessEditor mEditor = new BuildProcessEditor();
+#if UNITY_2017_1_OR_NEWER
         UnityEditor.IMGUI.Controls.SearchField msearchField;
-
+#endif
         void SearchField()
 		{
+#if UNITY_2017_1_OR_NEWER
             mSearchContent = msearchField.OnGUI(mSearchContent);
-		}
-		void OnEnable()
+#else
+            GUILayout.BeginHorizontal(UBS.Styles.detailsGroup);
+            {
+                mSearchContent = GUILayout.TextField(mSearchContent, "SearchTextField");
+                if (GUILayout.Button("", string.IsNullOrEmpty(mSearchContent) ? "SearchCancelButtonEmpty" : "SearchCancelButton"))
+                {
+                    mSearchContent = "";
+                }
+            }
+            GUILayout.EndHorizontal();
+
+#endif
+        }
+        void OnEnable()
 		{
 			Initialize();
         }
@@ -215,10 +229,10 @@ namespace UBS
 
 			GUILayout.EndHorizontal();
 		}
-		#endregion
+#endregion
 
 
-		#region data handling
+#region data handling
 		
 		[SerializeField]
 		BuildCollection mData;
@@ -269,6 +283,6 @@ namespace UBS
 			mInitialized = false;
 		}
 
-		#endregion
+#endregion
 	}
 }
