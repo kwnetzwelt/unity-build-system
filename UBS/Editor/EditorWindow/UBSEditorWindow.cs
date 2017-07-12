@@ -252,7 +252,9 @@ namespace UBS
 
 			mInitialized = true;
 
+#if UNITY_2017_1_OR_NEWER
             msearchField = new UnityEditor.IMGUI.Controls.SearchField();
+#endif
             Undo.undoRedoPerformed += OnUndoRedoPerformed;
 
             EditorWindow.FocusWindowIfItsOpen<UBSEditorWindow>();

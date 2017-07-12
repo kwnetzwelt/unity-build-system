@@ -183,7 +183,10 @@ namespace UBS
             mBuildOptions.Add(BuildOptions.EnableHeadlessMode);
             mBuildOptions.Add(BuildOptions.BuildScriptsOnly);
             mBuildOptions.Add(BuildOptions.ForceEnableAssertions);
+
+#if UNITY_2017_1_OR_NEWER
             mBuildOptions.Add(BuildOptions.CompressWithLz4);
+#endif
             mBuildOptions.Add(BuildOptions.StrictMode);
             
             UpdateSelectedOptions();
