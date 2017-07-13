@@ -12,7 +12,11 @@ namespace UBS.Shared
 		
 		public void BuildStepStart (BuildConfiguration pConfiguration)
 		{
-			PlayerSettings.bundleIdentifier = pConfiguration.Params;
+#if UNITY_5
+            PlayerSettings.bundleIdentifier = pConfiguration.Params;
+#else
+            PlayerSettings.applicationIdentifier = pConfiguration.Params;
+#endif
 		}
 		
 		public void BuildStepUpdate ()

@@ -32,10 +32,14 @@ namespace UBS.Android
 			scriptPath = di.FullName;
 
 			string versionCode = UnityEditor.PlayerSettings.Android.bundleVersionCode.ToString();
-			string packageName = UnityEditor.PlayerSettings.bundleIdentifier;
+#if UNITY_5
+            string packageName = UnityEditor.PlayerSettings.bundleIdentifier;
+#else
+            string packageName = UnityEditor.PlayerSettings.applicationIdentifier;
+#endif
 
 
-			FileInfo[] apks = workingDirectoryInfo.GetFiles("*.apk");
+            FileInfo[] apks = workingDirectoryInfo.GetFiles("*.apk");
 			FileInfo[] obbs = workingDirectoryInfo.GetFiles("*.obb");
 
 			FileInfo apk = null;
@@ -102,7 +106,7 @@ namespace UBS.Android
 			return true;
 		}
 
-        #endregion
+#endregion
 
 		public Process ShellProcess(string pArgs)
 		{

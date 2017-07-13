@@ -18,7 +18,6 @@ namespace UBS
 			var window = EditorWindow.GetWindow<UBSEditorWindow>("Build System",true);
 			window.mData = pCollection;
 			window.position = new Rect(50,50, kMinWidth + 50 + kListWidth,kMinHeight + 50);
-
 		}
 
 
@@ -29,20 +28,27 @@ namespace UBS
 		string mSearchContent = "";
 		Vector2[] mScrollPositions;
 		BuildProcessEditor mEditor = new BuildProcessEditor();
-
-		void SearchField()
+#if UNITY_2017_1_OR_NEWER
+        UnityEditor.IMGUI.Controls.SearchField msearchField;
+#endif
+        void SearchField()
 		{
-			GUILayout.BeginHorizontal( UBS.Styles.detailsGroup );
-			{
-				mSearchContent = GUILayout.TextField(mSearchContent,"SearchTextField");
-				if(GUILayout.Button("", string.IsNullOrEmpty(mSearchContent)? "SearchCancelButtonEmpty" : "SearchCancelButton"))
-				{
-					mSearchContent = "";
-				}
-			}
-			GUILayout.EndHorizontal();
-		}
-		void OnEnable()
+#if UNITY_2017_1_OR_NEWER
+            mSearchContent = msearchField.OnGUI(mSearchContent);
+#else
+            GUILayout.BeginHorizontal(UBS.Styles.detailsGroup);
+            {
+                mSearchContent = GUILayout.TextField(mSearchContent, "SearchTextField");
+                if (GUILayout.Button("", string.IsNullOrEmpty(mSearchContent) ? "SearchCancelButtonEmpty" : "SearchCancelButton"))
+                {
+                    mSearchContent = "";
+                }
+            }
+            GUILayout.EndHorizontal();
+
+#endif
+        }
+        void OnEnable()
 		{
 			Initialize();
         }
@@ -64,6 +70,7 @@ namespace UBS
 			//
 			GUILayout.BeginVertical("GameViewBackground",GUILayout.MaxWidth(kListWidth));
 			SearchField();
+            GUILayout.Space(4);
 			mScrollPositions[1] = GUILayout.BeginScrollView(mScrollPositions[1], GUILayout.ExpandWidth(true));
 			bool odd = true;
 			if(mData != null)
@@ -222,10 +229,10 @@ namespace UBS
 
 			GUILayout.EndHorizontal();
 		}
-		#endregion
+#endregion
 
 
-		#region data handling
+#region data handling
 		
 		[SerializeField]
 		BuildCollection mData;
@@ -245,7 +252,10 @@ namespace UBS
 
 			mInitialized = true;
 
-			Undo.undoRedoPerformed += OnUndoRedoPerformed;
+#if UNITY_2017_1_OR_NEWER
+            msearchField = new UnityEditor.IMGUI.Controls.SearchField();
+#endif
+            Undo.undoRedoPerformed += OnUndoRedoPerformed;
 
             EditorWindow.FocusWindowIfItsOpen<UBSEditorWindow>();
         }
@@ -275,6 +285,6 @@ namespace UBS
 			mInitialized = false;
 		}
 
-		#endregion
+#endregion
 	}
 }

@@ -15,9 +15,13 @@ namespace UBS
 			BuildProcess p = pConfiguration.GetCurrentBuildProcess();
 			FileInfo file = new FileInfo(p.mOutputPath);
 			string newFilename = string.Format("{0}/{1}_{2}_{3}.apk", file.DirectoryName,
-			                                   PlayerSettings.bundleIdentifier,
-			                                   PlayerSettings.bundleVersion,
-			                                   EditorUserBuildSettings.androidBuildSubtarget.ToString().ToLower());
+#if UNITY_5
+                                                PlayerSettings.bundleIdentifier,
+#else
+                                                PlayerSettings.applicationIdentifier,
+#endif
+                                                PlayerSettings.bundleVersion,
+                                                EditorUserBuildSettings.androidBuildSubtarget.ToString().ToLower());
 
 			// maybe pretend build was enabled before
 			if (file.Exists) {
@@ -35,7 +39,7 @@ namespace UBS
 		{
 			return true;
 		}
-		#endregion
+#endregion
 
 		void RenameOBB(string filePath)
 		{
@@ -46,8 +50,12 @@ namespace UBS
 				var version = PlayerSettings.bundleVersion.Replace(".", "");
 				string newFilename = string.Format("{0}/main.{1}_{2}_{3}.obb", file.DirectoryName,
 				                                   version,
-				                                   PlayerSettings.bundleIdentifier,
-				                                   EditorUserBuildSettings.androidBuildSubtarget.ToString().ToLower());
+#if UNITY_5
+                                        PlayerSettings.bundleIdentifier,
+#else
+                                        PlayerSettings.applicationIdentifier,
+#endif
+                                        EditorUserBuildSettings.androidBuildSubtarget.ToString().ToLower());
 				obbFile.MoveTo(newFilename);
 			}
 		}

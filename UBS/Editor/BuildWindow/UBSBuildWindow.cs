@@ -202,26 +202,12 @@ namespace UBS
 			GUILayout.BeginArea(new Rect(fLeft, fTop, 290, kHeight * 5));
 
             GUILayout.Space(5);
-            if (UBSProcess.BuildBehavior == UBSBuildBehavior.manual && mProcess.CurrentState == UBSState.building) {
-				GUILayout.BeginVertical();
-				EditorGUILayout.HelpBox("You use Unity free. Open build settings and press \"Build\" manually. ", MessageType.Info);
-				EditorGUILayout.HelpBox("Output path: " + mProcess.GetCurrentProcess().mOutputPath, MessageType.Info);
+            
+            GUI.enabled = !mProcess.IsDone;
+            if (GUILayout.Button("Cancel")) {
+                mProcess.Cancel();
+			}
 
-				if (GUILayout.Button("Open Build Settings")) {
-					System.Reflection.Assembly asm = System.Reflection.Assembly.GetAssembly(typeof(EditorWindow));
-					var M = asm
-						.GetType("UnityEditor.BuildPlayerWindow")
-						.GetMethod("ShowBuildPlayerWindow", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-					M.Invoke(null, null);
-				}
-				GUILayout.EndVertical();
-			} else {
-                GUI.enabled = !mProcess.IsDone;
-                if (GUILayout.Button("Cancel")) {
-                    mProcess.Cancel();
-				}
-
-            }
             
 
             GUILayout.EndArea();
