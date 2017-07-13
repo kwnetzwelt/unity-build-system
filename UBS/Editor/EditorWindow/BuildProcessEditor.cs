@@ -485,6 +485,36 @@ namespace UBS
 				pStep.mParams = options[returnedIndex];
 			}
 				break;
+				
+            case EBuildStepParameterType.UnityObject:
+                {
+                    int objectId;
+                    UnityEngine.Object objectAssigned = null;
+                    if (!String.IsNullOrEmpty(pStep.mParams))
+                    {
+                        bool succeeded = int.TryParse(pStep.mParams, out objectId);
+                        if (succeeded)
+                        {
+                            objectAssigned = EditorUtility.InstanceIDToObject(objectId);
+                        }
+                        else
+                        {
+                            Debug.LogError("Object with identifier " + pStep.mParams + " has not been found. Please reassign the content");
+                        }    
+                    }
+
+                    var assignedObject = EditorGUI.ObjectField(r4, objectAssigned, typeof(UnityEngine.Object), false);
+                    if (assignedObject != null)
+                    {
+                        pStep.mParams = assignedObject.GetInstanceID().ToString();
+                    }
+                    else
+                    {
+                        pStep.mParams = String.Empty;
+                    }
+                }
+                break;
+
 			}
 			
 			if(idx != selectedIndex)

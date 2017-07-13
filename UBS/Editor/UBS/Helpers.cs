@@ -110,6 +110,66 @@ namespace UBS
 			return Path.GetFullPath(new Uri(projectUri + relativePath).AbsolutePath);
 		}
 
+		public static bool TryParseEnumFromBuildConfigurationParameter<T>(BuildConfiguration config, out T result)
+        {
+            try
+            {
+                var succeeded = (Enum.IsDefined(typeof (T), config.Params));
+                if (succeeded)
+                {
+                    result = (T) Enum.Parse(typeof (T), config.Params, true);
+                    return true;
+                }
+                else
+                {
+                    //UnityEngine.Debug.LogError("Unable to convert " + config.Params + " to " + typeof(T).Name);
+                    result = default(T);
+                    return false;
+                }
+            }
+            catch
+            {
+                result = default(T);
+                return false;
+            }
+            
+        }
+
+
+        public static bool TryGetUnityObjectTypeFromBuildConfigurationParameter<T>(BuildConfiguration config, out T result) 
+            where T : UnityEngine.Object
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(config.Params))
+                {
+                    int objectId;
+                    UnityEngine.Object objectAssigned = null;
+                    bool objectIdParseSucceeded = int.TryParse(config.Params, out objectId);
+                    if (objectIdParseSucceeded)
+                    {
+                        objectAssigned = EditorUtility.InstanceIDToObject(objectId);
+                    }
+
+                    if (objectAssigned is T)
+                    {
+                        result = objectAssigned as T;
+                        return true;
+                    }
+                }
+
+                
+                result = default(T);
+                return false;
+            }
+            catch
+            {
+                result = default(T);
+                return false;
+            }
+        }
+
+
 	}
 }
 
