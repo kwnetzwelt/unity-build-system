@@ -166,7 +166,6 @@ namespace UBS
 
         void OnEnable()
 		{
-			var names = System.Enum.GetNames(typeof(BuildOptions));
 			mBuildOptions = new List<BuildOptions>();
 
             mBuildOptions.Add(BuildOptions.Development);
