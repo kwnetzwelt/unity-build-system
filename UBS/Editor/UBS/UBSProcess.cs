@@ -468,8 +468,8 @@ namespace UBS
 
 			if(!CheckOutputPath(CurrentProcess))
 				return;
-
-			if (!EditorUserBuildSettings.SwitchActiveBuildTarget (CurrentProcess.mPlatform)) {
+            
+			if (!EditorUserBuildSettings.SwitchActiveBuildTarget (Helpers.GroupFromBuildTarget(CurrentProcess.mPlatform), CurrentProcess.mPlatform)) {
                 Cancel();
 				throw new Exception("Could not switch to build target: " + CurrentProcess.mPlatform);
 			}
