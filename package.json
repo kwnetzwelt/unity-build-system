@@ -1,0 +1,14 @@
+{
+  "displayName": "Unity Build System",
+  "description": "Provides tooling to automate build processes inside the editor.",
+  "unity": "2021.3",
+  "name": "com.kwnetzwelt.ubs",
+  "version": "1.2.0",
+  "author": {
+    "name": "Kai Wegner",
+    "email": "kwnetzwelt@gmail.com",
+    "url": "https://kaiwegner.online"
+  },
+  "licensesUrl": "MIT",
+  "type": "library"
+}
