@@ -6,6 +6,11 @@ Provide an Editor Extension which allows adding multiple build targets and batch
 
 Each target corresponds to a unity deploy plattform and should allow adding custom scripts to the build process to pre- and post-process the build. 
 
+## Installation
+
+Add unity package to your package manager via git:
+`https://github.com/kwnetzwelt/unity-build-system.git`
+
 ## Thanks
 
 Thank you to all contributors: @malud @olaf.spiewok @fixed @ingo-hessling @flberger-work
