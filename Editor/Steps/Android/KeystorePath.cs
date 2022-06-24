@@ -11,7 +11,7 @@ namespace UBS.Android
 		
 		public void BuildStepStart (BuildConfiguration configuration)
 		{
-		    var path = configuration.Parameters.Replace("$PROJECTDIR", configuration.ProjectDirectory);
+		    var path = ((string)configuration.Parameters).Replace("$PROJECTDIR", configuration.ProjectDirectory);
             path = path.Replace("$OUTDIR", path);
             PlayerSettings.Android.keystoreName = path;
 		}

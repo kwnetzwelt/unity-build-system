@@ -13,7 +13,7 @@ namespace UBS.Version
 		public void BuildStepStart(BuildConfiguration configuration)
 		{
 			var collection = configuration.GetCurrentBuildCollection();
-			List<string> parameters = new List<string>(configuration.Parameters.Split(';'));
+			List<string> parameters = new List<string>(configuration.Parameters.ToString().Split(';'));
 
 			if(parameters.Contains("final"))
 				collection.version.type = BuildVersion.BuildType.final;

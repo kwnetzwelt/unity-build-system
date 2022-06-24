@@ -22,12 +22,12 @@ namespace UBS
 		/// Parameters can be set in the Build Collection editor for each build step. Your build step can read the parameters from the collection. 
 		/// </summary>
 		/// <value>The parameters.</value>
-		public string Parameters {
+		public BuildStep.BuildStepParameters Parameters {
 			get;
 			private set;
 		}
 
-		internal void SetParams(string parameters)
+		internal void SetParams(BuildStep.BuildStepParameters parameters)
 		{
 			Parameters = parameters;
 		}

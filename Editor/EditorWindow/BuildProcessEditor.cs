@@ -429,7 +429,7 @@ namespace UBS
 			Rect r2 = new Rect(r1.x + r1.width,pRect.y + 1, 220, pRect.height); // drop down list
 			Rect r3 = new Rect(r2.x + r2.width, pRect.y, 20, pRect.height); // gears
 			Rect r4 = new Rect(r3.x + r3.width, pRect.y, 70, pRect.height); // parameters label
-			Rect r5 = new Rect(r4.x + r4.width - 5, pRect.y, pRect.width - 230, pRect.height); // parameters input
+			Rect r5 = new Rect(r4.x + r4.width - 5, pRect.y, pRect.width - 330, pRect.height); // parameters input
 
             pStep.Enabled = EditorGUI.Toggle(r1, enabled);
 			int idx = EditorGUI.Popup(r2, selectedIndex, displayedProviders);
@@ -472,14 +472,14 @@ namespace UBS
             case BuildStepParameterType.Boolean:
             {
                 bool value;
-                var succeeded = bool.TryParse(pStep.Parameters, out value);
-                pStep.Parameters = Convert.ToString(succeeded ? EditorGUI.Toggle(r5, value) : EditorGUI.Toggle(r5, false));
+                bool succeeded = pStep.Parameters;
+                pStep.Parameters.boolParameter = EditorGUI.Toggle(r5, pStep.Parameters);
             }
                 break;
 				
 			case BuildStepParameterType.String:
 			{
-				pStep.Parameters = EditorGUI.TextField(r5, pStep.Parameters );
+				pStep.Parameters.stringParameter = EditorGUI.TextField(r5, pStep.Parameters );
 			}
 				break;
 				
@@ -500,36 +500,17 @@ namespace UBS
 				
 				// create popup control and assign selected index
 				int returnedIndex = EditorGUI.Popup(r5, selectedValue, GetBuildStepProvidersParameterOptions(buildStepProvider) );
-				pStep.Parameters = options[returnedIndex];
+				pStep.Parameters.stringParameter = options[returnedIndex];
 			}
 				break;
 				
             case BuildStepParameterType.UnityObject:
                 {
                     int objectId;
-                    UnityEngine.Object objectAssigned = null;
-                    if (!String.IsNullOrEmpty(pStep.Parameters))
-                    {
-                        bool succeeded = int.TryParse(pStep.Parameters, out objectId);
-                        if (succeeded)
-                        {
-                            objectAssigned = EditorUtility.InstanceIDToObject(objectId);
-                        }
-                        else
-                        {
-                            Debug.LogError("Object with identifier " + pStep.Parameters + " has not been found. Please reassign the content");
-                        }    
-                    }
-
+                    UnityEngine.Object objectAssigned = pStep.Parameters;
+                    
                     var assignedObject = EditorGUI.ObjectField(r5, objectAssigned, typeof(UnityEngine.Object), false);
-                    if (assignedObject != null)
-                    {
-                        pStep.Parameters = assignedObject.GetInstanceID().ToString();
-                    }
-                    else
-                    {
-                        pStep.Parameters = String.Empty;
-                    }
+	                pStep.Parameters.objectParameter = assignedObject;
                 }
                 break;
 

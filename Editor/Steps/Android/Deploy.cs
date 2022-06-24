@@ -22,7 +22,7 @@ namespace UBS.Android
         
 		public void BuildStepStart(BuildConfiguration configuration)
 		{
-			List<string> parameters = new List<string>(configuration.Parameters.Split(';'));
+			List<string> parameters = new List<string>(((string)configuration.Parameters).Split(';'));
 
 			FileInfo path = new FileInfo(configuration.GetCurrentBuildProcess().OutputPath);
 			DirectoryInfo workingDirectoryInfo = path.Directory;

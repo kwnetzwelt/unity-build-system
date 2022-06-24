@@ -9,6 +9,35 @@ namespace UBS
 	[Serializable]
 	public class BuildStep {
 
+		[Serializable]
+		public class BuildStepParameters
+		{
+			public bool boolParameter;
+			public string stringParameter;
+			public UnityEngine.Object objectParameter;
+			public int intParameter;
+			public static implicit operator string(BuildStepParameters p)
+			{
+				return p.stringParameter;
+			}
+			public static implicit operator int(BuildStepParameters p)
+			{
+				return p.intParameter;
+			}
+			public static implicit operator UnityEngine.Object(BuildStepParameters p)
+			{
+				return p.objectParameter;
+			}
+			public static implicit operator bool(BuildStepParameters p)
+			{
+				return p.boolParameter;
+			}
+
+			public T Cast<T>() where T : UnityEngine.Object
+			{
+				return (T) objectParameter;
+			}
+		}
 		public BuildStep()
 		{
 
@@ -28,7 +57,7 @@ namespace UBS
 
         [field: FormerlySerializedAs("mParams")]
         [field: SerializeField()]
-        public string Parameters { get; set; } = "";
+        public BuildStepParameters Parameters { get; set; } = new BuildStepParameters();
 
         [field: FormerlySerializedAs("mTypeName")]
         [field: SerializeField()]
