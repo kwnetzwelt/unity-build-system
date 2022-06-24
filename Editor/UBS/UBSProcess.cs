@@ -641,12 +641,14 @@ namespace UBS
 				return;
             
             // skips disabled steps
-            while (Index < Steps.Count-1)
+            while (Index < Steps.Count)
             {
                 if (Steps[Index].Enabled)
                     break;
                 Index++;
             }
+            if(Index > Steps.Count-1)
+	            return;
             
 			Steps[Index].InferType();
 
