@@ -1,5 +1,7 @@
 # Unity Build System
 
+[![openupm](https://img.shields.io/npm/v/com.kwnetzwelt.ubs?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.kwnetzwelt.ubs/)
+
 ## Goal
 
 Provide an Editor Extension which allows adding multiple build targets and batch building all, one or a subset of these targets. 
