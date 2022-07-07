@@ -397,6 +397,7 @@ namespace UBS
 		public void Cancel()
 		{
 			_currentState = UBSState.aborted;
+			Save();
 			_preStepWalker.Clear();
 			_postStepWalker.Clear();
 			Save();
@@ -609,6 +610,10 @@ namespace UBS
 		}
 		public void Clear()
 		{
+			if (_currentStep != null)
+			{
+				_currentStep.BuildStepUpdate(); // call update one last time, to let the step know we are done. 
+			}
 			Index = 0;
 			Steps = null;
 			Configuration = null;
