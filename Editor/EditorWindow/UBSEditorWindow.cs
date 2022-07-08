@@ -166,6 +166,9 @@ namespace UBS
 			    if(selected)
 			    {
 				    DoSelectBuildProcess( pProcess );
+				    GUIUtility.ExitGUI();
+				    Repaint();
+				    Focus();
 			    }
 			}
 
@@ -265,7 +268,7 @@ namespace UBS
         {
             _selectedBuildProcessIndex = data.Processes.IndexOf(process);
 			_selectedBuildProcess = process;
-		}
+        }
 
 		void OnDestroy()
 		{
