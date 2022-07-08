@@ -208,6 +208,13 @@ namespace UBS
             _sceneList = new ReorderableList(_editedBuildProcess.SceneAssets, typeof(SceneAsset));
             _sceneList.drawHeaderCallback = SceneHeaderDrawer;
             _sceneList.drawElementCallback = SceneDrawer;
+            _sceneList.onAddCallback = delegate(ReorderableList list)
+            {
+	            if(list.selectedIndices.Count > 0)
+		            _editedBuildProcess.SceneAssets.Insert(list.selectedIndices[0]+1,null);
+	            else
+		            _editedBuildProcess.SceneAssets.Add(null);
+            };
 
             _prebuildStepsList = new ReorderableList(_editedBuildProcess.PreBuildSteps, typeof(BuildStep));
             _prebuildStepsList.drawHeaderCallback = PreStepHeaderDrawer;
@@ -323,11 +330,15 @@ namespace UBS
 			GUILayout.Space(5);
 
 			DrawOutputPathSelector();
+			GUILayout.Space(5);
+			
             DrawList(_sceneList);
 
 			GUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
 
+			
+			
 			if (GUILayout.Button("Copy scenes from settings"))
 				CopyScenesFromSettings();
 
