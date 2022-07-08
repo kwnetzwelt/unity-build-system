@@ -85,7 +85,6 @@ namespace UBS
             if (mProcess != null && !mProcess.IsDone)
             {
                 Repaint();
-                Focus();
             }
 		}
 
