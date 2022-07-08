@@ -111,6 +111,7 @@ namespace UBS
 							Undo.RecordObject(data, "Sort Build Processes");
 							data.Processes.Remove(_selectedBuildProcess);
 							data.Processes.Insert(idx-1,_selectedBuildProcess);
+							DoSelectBuildProcess(data.Processes[idx-1]);
 						}
 					}
 				}
@@ -124,6 +125,7 @@ namespace UBS
 							Undo.RecordObject(data, "Sort Build Processes");
 							data.Processes.Remove(_selectedBuildProcess);
 							data.Processes.Insert(idx+1,_selectedBuildProcess);
+							DoSelectBuildProcess(data.Processes[idx+1]);
 						}
 					}
 				}
