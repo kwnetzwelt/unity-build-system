@@ -48,6 +48,7 @@ namespace UBS
             Enabled = other.Enabled;
 			StepType = other.StepType;
 			TypeName = other.TypeName;
+			AssemblyName = other.AssemblyName;
 			Parameters = other.Parameters;
 		}
 
