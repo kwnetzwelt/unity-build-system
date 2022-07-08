@@ -128,6 +128,7 @@ namespace UBS
 		BuildStepProviderEntry[] _selectableBuildStepProviders;
 
 		bool _showBuildOptions;
+		private bool _showScenesList;
 		BuildProcess _editedBuildProcess;
 		BuildCollection collection;
 
@@ -184,37 +185,21 @@ namespace UBS
                 if(o != 0)
                     _buildOptions.Add(option);
             }
-            /*
-            _buildOptions.Add(BuildOptions.Development);
-            _buildOptions.Add(BuildOptions.AutoRunPlayer);
-            _buildOptions.Add(BuildOptions.ShowBuiltPlayer);
-            _buildOptions.Add(BuildOptions.BuildAdditionalStreamedScenes);
-            _buildOptions.Add(BuildOptions.AcceptExternalModificationsToPlayer);
-            _buildOptions.Add(BuildOptions.ConnectWithProfiler);
-            _buildOptions.Add(BuildOptions.AllowDebugging);
-            _buildOptions.Add(BuildOptions.SymlinkSources);
-            _buildOptions.Add(BuildOptions.UncompressedAssetBundle);
-            _buildOptions.Add(BuildOptions.ConnectWithProfiler);
-            _buildOptions.Add(BuildOptions.ConnectToHost);
-            _buildOptions.Add(BuildOptions.EnableHeadlessMode);
-            _buildOptions.Add(BuildOptions.BuildScriptsOnly);
-            _buildOptions.Add(BuildOptions.ForceEnableAssertions);
-
-            _buildOptions.Add(BuildOptions.CompressWithLz4);
-            _buildOptions.Add(BuildOptions.StrictMode);
-            */
+            
             UpdateSelectedOptions();
+            
 
             _sceneList = new ReorderableList(_editedBuildProcess.SceneAssets, typeof(SceneAsset));
             _sceneList.drawHeaderCallback = SceneHeaderDrawer;
             _sceneList.drawElementCallback = SceneDrawer;
             _sceneList.onAddCallback = delegate(ReorderableList list)
             {
-	            if(list.selectedIndices.Count > 0)
-		            _editedBuildProcess.SceneAssets.Insert(list.selectedIndices[0]+1,null);
+	            if (list.selectedIndices.Count > 0)
+		            _editedBuildProcess.SceneAssets.Insert(list.selectedIndices[0] + 1, null);
 	            else
 		            _editedBuildProcess.SceneAssets.Add(null);
             };
+        
 
             _prebuildStepsList = new ReorderableList(_editedBuildProcess.PreBuildSteps, typeof(BuildStep));
             _prebuildStepsList.drawHeaderCallback = PreStepHeaderDrawer;
@@ -331,22 +316,25 @@ namespace UBS
 
 			DrawOutputPathSelector();
 			GUILayout.Space(5);
+			_showScenesList = EditorGUILayout.Foldout(_showScenesList, "Scenes (" + _sceneList.count + ")");
+			if (_showScenesList)
+			{
+				DrawList(_sceneList);
 			
-            DrawList(_sceneList);
 
-			GUILayout.BeginHorizontal();
-			GUILayout.FlexibleSpace();
+				GUILayout.BeginHorizontal();
+				GUILayout.FlexibleSpace();
 
-			
-			
-			if (GUILayout.Button("Copy scenes from settings"))
-				CopyScenesFromSettings();
+				
+				
+				if (GUILayout.Button("Copy scenes from settings"))
+					CopyScenesFromSettings();
 
-			if (GUILayout.Button("Clear scenes"))
-				_editedBuildProcess.SceneAssets.Clear();
+				if (GUILayout.Button("Clear scenes"))
+					_editedBuildProcess.SceneAssets.Clear();
 
-			GUILayout.EndHorizontal();
-
+				GUILayout.EndHorizontal();
+			}
 			Styles.HorizontalSeparator();
 
 			_drawingBuildStepType = BuildStepType.PreBuildStep;
