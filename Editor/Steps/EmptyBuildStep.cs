@@ -14,7 +14,7 @@ namespace UBS
 
 		public void BuildStepUpdate ()
 		{
-
+			Debug.Log(UBSProcess.LoadUBSProcess().CurrentState == UBSState.aborted);
 		}
 
 		public bool IsBuildStepDone ()
