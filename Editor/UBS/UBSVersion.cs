@@ -7,6 +7,6 @@ namespace UBS
 {
     public static class UBSVersion
     {
-        public static readonly System.Version version = new System.Version(1, 2, 5);
+        public static readonly System.Version version = new System.Version(1, 2, 6);
     }
 }
