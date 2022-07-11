@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor.Build.Reporting;
 using UnityEngine.Serialization;
 
 namespace UBS
@@ -380,6 +381,7 @@ namespace UBS
 				case UBSState.preSteps: DoPreSteps(); break;
 				case UBSState.building: DoBuilding(); break;
 				case UBSState.postSteps: DoPostSteps(); break;
+				case UBSState.aborted: 
 				case UBSState.invalid: NextBuild(); break;
 				case UBSState.done: OnDone(); break;
 			}
@@ -486,11 +488,18 @@ namespace UBS
 
 			if(!CurrentProcess.Pretend)
 			{
-				BuildPipeline.BuildPlayer(
+				BuildReport report = BuildPipeline.BuildPlayer(
 					scenes.ToArray(),
 					CurrentProcess.OutputPath,
 					CurrentProcess.Platform,
 					bo );
+				UnityEngine.Debug.Log("Playerbuild Result: " + report.summary.result);
+				if (report.summary.result != BuildResult.Succeeded)
+				{
+					_currentState = UBSState.aborted;
+					Save();
+					return;
+				}
 			}
 
 			OnBuildDone ();
@@ -655,8 +664,10 @@ namespace UBS
             if(Index > Steps.Count-1)
 	            return;
             
-			Steps[Index].InferType();
+			bool result = Steps[Index].TryInferType();
 
+			if (!result)
+				return;
 			if (Steps [Index].StepType != null) 
 			{
 				_currentStep = System.Activator.CreateInstance( Steps[Index].StepType ) as IBuildStepProvider;

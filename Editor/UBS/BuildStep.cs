@@ -70,8 +70,12 @@ namespace UBS
 
         public Type StepType { get; set; }
 
-        public void InferType()
+        public bool TryInferType(bool logError = true)
         {
+	        try
+	        {
+
+	        
             if (!string.IsNullOrEmpty(AssemblyName))
             {
                 Assembly a = Assembly.Load(AssemblyName);
@@ -81,6 +85,16 @@ namespace UBS
             {
                 StepType = Type.GetType(TypeName);
             }
+	        }
+	        catch (Exception e)
+	        {
+		        if(logError)
+					UnityEngine.Debug.LogError($"Could not infer type from {AssemblyName} -> {TypeName}");
+		        StepType = null;
+		        return false;
+	        }
+
+	        return true;
         }
 
 		public void SetStepType(System.Type stepType)

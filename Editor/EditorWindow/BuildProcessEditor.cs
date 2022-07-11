@@ -417,12 +417,21 @@ namespace UBS
 			int selectedIndex = 0; 
 			int listIndex = 0;
             bool enabled = pStep.Enabled;
+            bool couldInferType = true;
 			if (pStep.TypeName != null)
 			{
-				pStep.InferType();
-				listIndex = filtered.FindIndex( (obj) => {return obj.StepType == pStep.StepType;});
-				selectedIndex =  listIndex+1;
+				couldInferType = pStep.TryInferType(false);
+				if (couldInferType)
+				{
+					listIndex = filtered.FindIndex((obj) => { return obj.StepType == pStep.StepType; });
+					selectedIndex = listIndex + 1;
+				}
+				else
+				{
+					GUI.color = Color.red;
+				}
 			}
+			
 			GUIContent[] displayedProviders = GetBuildStepProvidersFiltered();
             Rect r1 = new Rect(pRect.x, pRect.y + 1, 20, pRect.height);
 			Rect r2 = new Rect(r1.x + r1.width,pRect.y + 1, 220, pRect.height); // drop down list
