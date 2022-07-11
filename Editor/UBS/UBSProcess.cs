@@ -381,8 +381,8 @@ namespace UBS
 				case UBSState.preSteps: DoPreSteps(); break;
 				case UBSState.building: DoBuilding(); break;
 				case UBSState.postSteps: DoPostSteps(); break;
-				case UBSState.aborted: 
 				case UBSState.invalid: NextBuild(); break;
+				case UBSState.aborted: 
 				case UBSState.done: OnDone(); break;
 			}
 		}
@@ -496,8 +496,7 @@ namespace UBS
 				UnityEngine.Debug.Log("Playerbuild Result: " + report.summary.result);
 				if (report.summary.result != BuildResult.Succeeded)
 				{
-					_currentState = UBSState.aborted;
-					Save();
+					Cancel("Build failed with result: " + report.summary.result);
 					return;
 				}
 			}
