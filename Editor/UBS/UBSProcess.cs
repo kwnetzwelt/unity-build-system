@@ -165,14 +165,18 @@ namespace UBS
         /// Provide `collection` parameter to your command line build to specify the collection you want to build. 
         /// All selected build processes within the collection will be build. 
         /// 
-        /// Example: -collection=Assets/New\ BuildCollection.asset
+        /// Example: -collection "Assets/New\ BuildCollection.asset"
         /// </summary>
         public static void BuildFromCommandLine()
         {
             
             string[] arguments = System.Environment.GetCommandLineArgs();
             CommandLineArgsParser parser = new CommandLineArgsParser(arguments);
-            
+            foreach (var argument in parser.Collection.Arguments)
+            {
+	            UnityEngine.Debug.Log(argument.Name + " -> " + argument.Value);  
+            } 
+
             string[] availableArgs = { 
                 "-batchmode", 
                 "-collection=", 
@@ -411,11 +415,11 @@ namespace UBS
 		#region build process state handling
 		void OnDone()
 		{
-
+			_currentState = UBSState.done;
+			Save();
 		}
 		void NextBuild()
 		{
-
 			if(_currentBuildProcessIndex >= _selectedProcesses.Count)
 			{
 				_currentState = UBSState.done;

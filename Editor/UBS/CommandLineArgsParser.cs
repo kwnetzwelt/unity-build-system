@@ -2,9 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using UnityEditor;
 
 namespace UBS
 {
+    public static class CLAP
+    {
+        [MenuItem("UBS/TestArgs")]
+        public static void MenuItem()
+        {
+            var clap = new CommandLineArgsParser(null);
+        }
+    }
     public class CommandLineArgsParser
     {
         private enum Context
@@ -20,51 +29,45 @@ namespace UBS
             private set;
         }
         
-        public CommandLineArgsParser(string[] arguments)
+        public CommandLineArgsParser(params string[] arguments)
         {
-            /*arguments = new[]
-            {
-                "--myArg1:'value1'",
-                "-myArg2:'value2'",
-                "--myArg3:\"value3\"",
-                "-myArg4:\"value4\"",
-                "-myArg5:value5",
-                "myArg6:value6",
-
-                "--myArg7='value7'",
-                "-myArg8='value8'",
-                "--myArg9=\"value9\"",
-                "-myArg10=\"value10\"",
-                "-myArg11=value11",
-                "myArg12=value12",
-
-                "--myArg13 'value13'",
-                "-myArg14 'value14'",
-                "--myArg15 \"value15\"",
-                "-myArg16 \"value16\"",
-                "-myArg17 value17",
-                "-myArg18", // no value
-                
-                "-myArg19 \"foo=bar\"", // "=" should be allowed as part of the value
-
-                // "-" separated arg titles
-                "-my-arg20",
-                "--my-arg21",
-                
-            };
-            */
+            
             
             Collection = new ArgsCollection();
-            Parse(string.Join(' ', arguments));
+            Parse(arguments);
         }
 
         private static readonly char[] argSeparators = {'-'};
         private static readonly char[] valueSeparators = new[] {':', '=', ' '};
         private static readonly char[] quotes = new[] {'\"', '\'', '´', '`'};
         private static readonly char[] whitespace = new[] {' ', '\t'};
+
+        void Parse(string[] arguments)
+        {
+            
+            foreach (var argument in arguments)
+            {
+                if( Array.IndexOf(argSeparators, argument[0]) != -1)
+                    ParseAsArgument(argument);
+                else
+                    ParseAsValue(argument);
+            }
+        }
+
+        void ParseAsArgument(string argumentSection)
+        {
+            Collection.Next();
+            Collection.Last.Name = argumentSection.TrimStart(argSeparators);
+        }
+
+        void ParseAsValue(string argumentSection)
+        {
+            Collection.Last.Value = argumentSection;
+        }
+        
         void Parse(string arguments)
         {
-            arguments = arguments.TrimEnd() + " ";
+            
             int n;
             char c;
             char? parserContextInQuotes = null;
