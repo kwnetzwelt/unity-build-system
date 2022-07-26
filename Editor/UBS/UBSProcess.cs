@@ -438,11 +438,6 @@ namespace UBS
 
 			if(!CheckOutputPath(CurrentProcess))
 				return;
-            
-			if (!EditorUserBuildSettings.SwitchActiveBuildTarget (Helpers.GroupFromBuildTarget(CurrentProcess.Platform), CurrentProcess.Platform)) {
-                Cancel();
-				throw new Exception("Could not switch to build target: " + CurrentProcess.Platform);
-			}
 
 			_preStepWalker.Init( CurrentProcess.PreBuildSteps, mCurrentBuildConfiguration );
 
@@ -471,16 +466,19 @@ namespace UBS
 		{
             
 			BuildOptions bo = CurrentProcess.Options;
-			if(_buildAndRun)
-				bo = bo | BuildOptions.AutoRunPlayer;
+			if (_buildAndRun)
+				bo |= BuildOptions.AutoRunPlayer;
 
-			if(!CurrentProcess.Pretend)
+			if (!CurrentProcess.Pretend)
 			{
-				BuildReport report = BuildPipeline.BuildPlayer(
-					CurrentProcess.Scenes.ToArray(),
-					CurrentProcess.OutputPath,
-					CurrentProcess.Platform,
-					bo );
+				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
+				{
+					scenes = CurrentProcess.Scenes.ToArray(),
+					locationPathName = CurrentProcess.OutputPath,
+					target = CurrentProcess.Platform,
+					options = bo
+				};
+				BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 				UnityEngine.Debug.Log("Playerbuild Result: " + report.summary.result);
 				if (report.summary.result != BuildResult.Succeeded)
 				{
