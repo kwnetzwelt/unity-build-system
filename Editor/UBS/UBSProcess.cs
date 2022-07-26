@@ -443,15 +443,6 @@ namespace UBS
                 Cancel();
 				throw new Exception("Could not switch to build target: " + CurrentProcess.Platform);
 			}
-			
-			var scenes = new EditorBuildSettingsScene[CurrentProcess.Scenes.Count];
-			for(int i = 0;i< scenes.Length;i++)
-			{
-				EditorBuildSettingsScene ebss = new EditorBuildSettingsScene( CurrentProcess.Scenes[i] ,true );
-				scenes[i] = ebss;
-			}
-			EditorBuildSettings.scenes = scenes;
-
 
 			_preStepWalker.Init( CurrentProcess.PreBuildSteps, mCurrentBuildConfiguration );
 
@@ -479,13 +470,6 @@ namespace UBS
 		void DoBuilding()
 		{
             
-			List<string> scenes = new List<string>();
-
-			foreach(var scn in EditorBuildSettings.scenes)
-			{
-				if(scn.enabled)
-					scenes.Add(scn.path);
-			}
 			BuildOptions bo = CurrentProcess.Options;
 			if(_buildAndRun)
 				bo = bo | BuildOptions.AutoRunPlayer;
@@ -493,7 +477,7 @@ namespace UBS
 			if(!CurrentProcess.Pretend)
 			{
 				BuildReport report = BuildPipeline.BuildPlayer(
-					scenes.ToArray(),
+					CurrentProcess.Scenes.ToArray(),
 					CurrentProcess.OutputPath,
 					CurrentProcess.Platform,
 					bo );
