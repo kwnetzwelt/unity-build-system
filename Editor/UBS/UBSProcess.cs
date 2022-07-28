@@ -471,9 +471,14 @@ namespace UBS
 
 			if (!CurrentProcess.Pretend)
 			{
+				var scenePaths = new string[CurrentProcess.Scenes.Count];
+				for (var index = 0; index < CurrentProcess.Scenes.Count; index++)
+				{
+					scenePaths[index] = AssetDatabase.GUIDToAssetPath(CurrentProcess.Scenes[index]);
+				}
 				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
 				{
-					scenes = CurrentProcess.Scenes.ToArray(),
+					scenes = scenePaths,
 					locationPathName = CurrentProcess.OutputPath,
 					target = CurrentProcess.Platform,
 					options = bo
