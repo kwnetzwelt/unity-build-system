@@ -163,9 +163,6 @@ namespace UBS
 
 		public void OnDestroy()
 		{
-			if (_editedBuildProcess != null)
-				SaveScenesToStringList();
-
 			_editedBuildProcess = null;
 		}
         List<BuildOptions> _buildOptions;
@@ -247,13 +244,9 @@ namespace UBS
 
 			if (pProcess != _editedBuildProcess)
 			{
-				if (_editedBuildProcess != null)
-					SaveScenesToStringList();
-
 				_editedBuildProcess = pProcess;
 				collection = pCollection;
 
-				LoadScenesFromStringList();
 				OnEnable();
 				
 				// after switching to another process, we want to make sure to unfocus all possible controls
@@ -573,13 +566,10 @@ namespace UBS
 
 		private void CopyScenesFromSettings()
 		{
-			_editedBuildProcess.Scenes.Clear();
 			_editedBuildProcess.SceneAssets.Clear();
 			var scenes = EditorBuildSettings.scenes;
 			foreach (var scene in scenes)
 			{
-				var sceneGuid = scene.guid.ToString();
-				_editedBuildProcess.Scenes.Add(sceneGuid);
 				var scenePath = scene.path;
 				AddSceneAssetFromScenePath(scenePath);
 			}
@@ -616,27 +606,6 @@ namespace UBS
 			{
 				Debug.LogError($"Error adding scene with GUID {sceneGuid}");
 				Debug.LogException(exception);
-			}
-		}
-
-		private void SaveScenesToStringList()
-		{
-			_editedBuildProcess.Scenes.Clear();
-
-			foreach (var t in _editedBuildProcess.SceneAssets)
-			{
-				var scenePath = AssetDatabase.GetAssetPath(t);
-				var sceneGuid = AssetDatabase.AssetPathToGUID(scenePath);
-				_editedBuildProcess.Scenes.Add(sceneGuid);
-			}
-		}
-
-		private void LoadScenesFromStringList()
-		{
-			_editedBuildProcess.SceneAssets.Clear();
-			foreach (var sceneGuid in _editedBuildProcess.Scenes)
-			{
-				AddSceneAssetFromSceneGuid(sceneGuid);
 			}
 		}
 

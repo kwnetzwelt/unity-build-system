@@ -31,7 +31,6 @@ namespace UBS {
 			Platform = other.Platform;
 			Options = other.Options;
 			Selected = false;
-			Scenes = new List<string>( other.Scenes );
 			SceneAssets = new List<SceneAsset>( other.SceneAssets );
 		}
 
@@ -72,10 +71,6 @@ namespace UBS {
         [field: FormerlySerializedAs("mSelected")]
         [field:SerializeField()]
         public bool Selected { get; set; }
-
-        [field: FormerlySerializedAs("mScenes")]
-        [field:SerializeField()]
-        public List<string> Scenes { get; private set; } = new List<string>();
 
         [field: FormerlySerializedAs("mSceneAssets")]
         [field:SerializeField()]
