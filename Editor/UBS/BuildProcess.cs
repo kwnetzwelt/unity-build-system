@@ -31,8 +31,8 @@ namespace UBS {
 			Platform = other.Platform;
 			Options = other.Options;
 			Selected = false;
-			Scenes = new List<string>( other.Scenes.ToArray() );
-			SceneAssets = new List<SceneAsset>( other.SceneAssets.ToArray() );
+			Scenes = new List<string>( other.Scenes );
+			SceneAssets = new List<SceneAsset>( other.SceneAssets );
 		}
 
 		#region data
