@@ -438,20 +438,6 @@ namespace UBS
 
 			if(!CheckOutputPath(CurrentProcess))
 				return;
-            
-			if (!EditorUserBuildSettings.SwitchActiveBuildTarget (Helpers.GroupFromBuildTarget(CurrentProcess.Platform), CurrentProcess.Platform)) {
-                Cancel();
-				throw new Exception("Could not switch to build target: " + CurrentProcess.Platform);
-			}
-			
-			var scenes = new EditorBuildSettingsScene[CurrentProcess.Scenes.Count];
-			for(int i = 0;i< scenes.Length;i++)
-			{
-				EditorBuildSettingsScene ebss = new EditorBuildSettingsScene( CurrentProcess.Scenes[i] ,true );
-				scenes[i] = ebss;
-			}
-			EditorBuildSettings.scenes = scenes;
-
 
 			_preStepWalker.Init( CurrentProcess.PreBuildSteps, mCurrentBuildConfiguration );
 
@@ -479,24 +465,30 @@ namespace UBS
 		void DoBuilding()
 		{
             
-			List<string> scenes = new List<string>();
-
-			foreach(var scn in EditorBuildSettings.scenes)
-			{
-				if(scn.enabled)
-					scenes.Add(scn.path);
-			}
 			BuildOptions bo = CurrentProcess.Options;
-			if(_buildAndRun)
-				bo = bo | BuildOptions.AutoRunPlayer;
+			if (_buildAndRun)
+				bo |= BuildOptions.AutoRunPlayer;
 
-			if(!CurrentProcess.Pretend)
+			if (!CurrentProcess.Pretend)
 			{
-				BuildReport report = BuildPipeline.BuildPlayer(
-					scenes.ToArray(),
-					CurrentProcess.OutputPath,
-					CurrentProcess.Platform,
-					bo );
+				var scenePaths = new List<string>();
+				foreach (var sceneAsset in CurrentProcess.SceneAssets)
+				{
+					if (ReferenceEquals(null, sceneAsset))
+						continue;
+					var scenePath = AssetDatabase.GetAssetPath(sceneAsset);
+					if (string.IsNullOrEmpty(scenePath))
+						continue;
+					scenePaths.Add(scenePath);
+				}
+				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
+				{
+					scenes = scenePaths.ToArray(),
+					locationPathName = CurrentProcess.OutputPath,
+					target = CurrentProcess.Platform,
+					options = bo
+				};
+				BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 				UnityEngine.Debug.Log("Playerbuild Result: " + report.summary.result);
 				if (report.summary.result != BuildResult.Succeeded)
 				{

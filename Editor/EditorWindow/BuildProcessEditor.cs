@@ -163,9 +163,6 @@ namespace UBS
 
 		public void OnDestroy()
 		{
-			if (_editedBuildProcess != null)
-				SaveScenesToStringList();
-
 			_editedBuildProcess = null;
 		}
         List<BuildOptions> _buildOptions;
@@ -247,13 +244,9 @@ namespace UBS
 
 			if (pProcess != _editedBuildProcess)
 			{
-				if (_editedBuildProcess != null)
-					SaveScenesToStringList();
-
 				_editedBuildProcess = pProcess;
 				collection = pCollection;
 
-				LoadScenesFromStringList();
 				OnEnable();
 				
 				// after switching to another process, we want to make sure to unfocus all possible controls
@@ -571,41 +564,48 @@ namespace UBS
 
 #region data manipulation
 
-		void CopyScenesFromSettings()
-		{
-			_editedBuildProcess.Scenes.Clear();
-			EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-			foreach (EditorBuildSettingsScene scene in scenes)
-			{
-				_editedBuildProcess.Scenes.Add(scene.path);
-			}
-			LoadScenesFromStringList();
-		}
-
-		public void SaveScenesToStringList()
-		{
-			_editedBuildProcess.Scenes.Clear();
-
-			for (int i = 0; i < _editedBuildProcess.SceneAssets.Count; i++)
-			{
-				_editedBuildProcess.Scenes.Add(AssetDatabase.GetAssetPath(_editedBuildProcess.SceneAssets [i]));
-			}
-		}
-
-		public void LoadScenesFromStringList()
+		private void CopyScenesFromSettings()
 		{
 			_editedBuildProcess.SceneAssets.Clear();
-			for (int i = 0; i< _editedBuildProcess.Scenes.Count; i++)
+			var scenes = EditorBuildSettings.scenes;
+			foreach (var scene in scenes)
 			{
-				try
-				{
-                    var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(_editedBuildProcess.Scenes[i]);
-					_editedBuildProcess.SceneAssets.Add(scene);
-				} catch (Exception e)
-				{
-					Debug.LogError("Could not find scene file at: " + _editedBuildProcess.Scenes [i]);
-					Debug.LogException(e);
-				}
+				var scenePath = scene.path;
+				AddSceneAssetFromScenePath(scenePath);
+			}
+		}
+
+		private void AddSceneAssetFromScenePath(string scenePath)
+		{
+			try
+			{
+				var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+				if (ReferenceEquals(null, sceneAsset))
+					Debug.LogError($"Scene asset file not found at path {scenePath}");
+				else
+					_editedBuildProcess.SceneAssets.Add(sceneAsset);
+			}
+			catch (Exception exception)
+			{
+				Debug.LogError($"Error adding scene with path {scenePath}");
+				Debug.LogException(exception);
+			}
+		}
+		
+		private void AddSceneAssetFromSceneGuid(string sceneGuid)
+		{
+			try
+			{
+				var scenePath = AssetDatabase.GUIDToAssetPath(sceneGuid);
+				if (string.IsNullOrEmpty(scenePath))
+					Debug.LogError($"Scene asset file not found with GUID {sceneGuid}");
+				else
+					AddSceneAssetFromScenePath(scenePath);
+			}
+			catch (Exception exception)
+			{
+				Debug.LogError($"Error adding scene with GUID {sceneGuid}");
+				Debug.LogException(exception);
 			}
 		}
 
