@@ -191,7 +191,7 @@ namespace UBS
             _sceneList.drawElementCallback = SceneDrawer;
             _sceneList.onAddCallback = delegate(ReorderableList list)
             {
-	            if (list.selectedIndices.Count > 0)
+	            if (list.selectedIndices.Count > 0 && _editedBuildProcess.SceneAssets.Count > 0)
 		            _editedBuildProcess.SceneAssets.Insert(list.selectedIndices[0] + 1, null);
 	            else
 		            _editedBuildProcess.SceneAssets.Add(null);
