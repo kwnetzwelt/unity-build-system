@@ -5,8 +5,46 @@ using UnityEditor;
 
 namespace UBS
 {
+	[InitializeOnLoad]
 	internal static class Styles
 	{
+
+		static Styles()
+		{
+			_list = null;
+			_textures = new Dictionary<long, Texture2D>();
+			_boldKey = null;
+			_buildProcessEditorBackground = null;
+			_gear = null;
+			_iconIOS = null;
+			_iconAndroid = null;
+			_iconWindows = null;
+			_icon = null;
+			_normalValue = null;
+			_selectableListEntry = null;
+			_selectedListEntry = null;
+			_selectableListEntryOdd = null;
+			_selectableListEntryText = null;
+			_selectableListEntryTextOdd = null;
+			_toggle = null;
+			_bigHint = null;
+			_detailsDescription = null;
+			_detailsGizmo = null;
+			_detailsGroup = null;
+			_detailsTitle = null;
+			_dirtySetting = null;
+			_hLine = null;
+			_hSeparator = null;
+			_infoGroup = null;
+			_mediumHint = null;
+			_progressBar = null;
+			_settingsDescription = null;
+			_statusMessage = null;
+			_toolButton = null;
+			_vLine = null;
+			_buildProcessEditorBackground = null;
+		}
+		
 		public const string _imagePath = "Packages/com.kwnetzwelt.ubs/Editor/images/";
 
 		static Dictionary<long,Texture2D>_textures = new Dictionary<long, Texture2D>();
