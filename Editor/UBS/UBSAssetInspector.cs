@@ -23,8 +23,16 @@ namespace UBS
 				"Build Processes at once. ", 
 			                EditorStyles.wordWrappedMiniLabel);
 
-            GUILayout.Label("This asset can be accessed by hitting CTRL+SHIFT+C. ",
-                            EditorStyles.wordWrappedMiniLabel);
+			if(Application.platform == RuntimePlatform.WindowsEditor)
+				GUILayout.Label("This asset can be accessed by hitting WIN+F11. ",
+	                            EditorStyles.wordWrappedMiniLabel);
+			else if(Application.platform == RuntimePlatform.OSXEditor)
+				GUILayout.Label("This asset can be accessed by hitting CMD+F11. ",
+					EditorStyles.wordWrappedMiniLabel);
+			else
+				GUILayout.Label("This asset can be accessed by hitting SUPER+F11. ",
+					EditorStyles.wordWrappedMiniLabel);
+			
 
             if (data.Processes.Count == 0)
 			{

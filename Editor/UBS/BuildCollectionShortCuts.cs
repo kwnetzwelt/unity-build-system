@@ -9,13 +9,29 @@ namespace UBS
     public class BuildCollectionShortCuts
     {
 
-        [MenuItem("Window/UBS/Select Last Build Collection #%C", true)]
-        static bool BuildCollectionAvailable()
+        [MenuItem("Window/UBS/Edit Last Build Collection %F11", true)]
+        static bool EditBuildCollectionAvailable()
         {
             return GetLastBuildCollection() != null;
         }
 
-        [MenuItem("Window/UBS/Select Last Build Collection #%C")]
+        [MenuItem("Window/UBS/Edit Last Build Collection %F11")]
+        public static void EditLastBuildCollection()
+        {
+            BuildCollection lastBuildcollection = GetLastBuildCollection();
+            EditorGUIUtility.PingObject(lastBuildcollection);
+            Selection.activeObject = lastBuildcollection;
+            
+            UBSEditorWindow.Init(lastBuildcollection);
+        }
+        
+        [MenuItem("Window/UBS/Select Last Build Collection &%F11", true)]
+        static bool SelectBuildCollectionAvailable()
+        {
+            return GetLastBuildCollection() != null;
+        }
+
+        [MenuItem("Window/UBS/Select Last Build Collection &%F11")]
         public static void ShowLastBuildCollection()
         {
             BuildCollection lastBuildcollection = GetLastBuildCollection();
