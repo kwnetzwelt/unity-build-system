@@ -12,8 +12,8 @@ namespace UBS
     [Serializable]
     public class UBSProcess : ScriptableObject
     {
-        const string processPath = "Assets/UBSProcess.asset";
-        const string processPathKey = "UBSProcessPath";
+        const string ProcessPath = "Assets/UBSProcess.asset";
+        const string ProcessPathKey = "UBSProcessPath";
 
 
 		#region data
@@ -21,10 +21,10 @@ namespace UBS
 
         [SerializeField]
         BuildConfiguration
-            mCurrentBuildConfiguration;
+            currentBuildConfiguration;
         BuildConfiguration CurrentBuildConfiguration
         {
-            get { return mCurrentBuildConfiguration;}
+            get { return currentBuildConfiguration;}
 
         }
 
@@ -145,7 +145,7 @@ namespace UBS
 
         public static string GetProcessPath()
         {
-            return EditorPrefs.GetString(processPathKey, processPath);
+            return EditorPrefs.GetString(ProcessPathKey, ProcessPath);
         }
         /// <summary>
         /// You can overwrite where to store the build process. 
@@ -153,7 +153,7 @@ namespace UBS
         /// <param name="pPath">P path.</param>
         public static void SetProcessPath(string pPath)
         {
-            EditorPrefs.GetString(processPathKey, processPath);
+            EditorPrefs.GetString(ProcessPathKey, ProcessPath);
         }
 
 		#region command line options
@@ -433,15 +433,15 @@ namespace UBS
 
 		void DoSetup()
 		{
-			mCurrentBuildConfiguration = new BuildConfiguration();
-            mCurrentBuildConfiguration.Initialize();
+			currentBuildConfiguration = new BuildConfiguration();
+            currentBuildConfiguration.Initialize();
 
 			if(!CheckOutputPath(CurrentProcess))
 				return;
 
-			_preStepWalker.Init( CurrentProcess.PreBuildSteps, mCurrentBuildConfiguration );
+			_preStepWalker.Init( CurrentProcess.PreBuildSteps, currentBuildConfiguration );
 
-			_postStepWalker.Init(CurrentProcess.PostBuildSteps, mCurrentBuildConfiguration );
+			_postStepWalker.Init(CurrentProcess.PostBuildSteps, currentBuildConfiguration );
 
 			_currentState = UBSState.preSteps;
 			

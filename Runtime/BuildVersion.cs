@@ -15,8 +15,8 @@ namespace UBS
             beta,
             final
         }
-        const string kFileName = "Assets/Resources/buildVersion.txt";
-        const string kPlainFileName = "Assets/Resources/buildVersionPlain.txt";
+        const string FileName = "Assets/Resources/buildVersion.txt";
+        const string PlainFileName = "Assets/Resources/buildVersionPlain.txt";
         public int major = 1;
         public int minor = 0;
         public int build = 0;
@@ -52,12 +52,12 @@ namespace UBS
         {
             string content = null;
 			
-            if(!File.Exists(kFileName))
+            if(!File.Exists(FileName))
             {
                 var bv = new BuildVersion();
                 bv.Save();
             }
-            content = File.ReadAllText(kFileName);
+            content = File.ReadAllText(FileName);
 			
             return Serializer.Load<BuildVersion>(content);
         }
@@ -66,21 +66,21 @@ namespace UBS
         {
             // Save XML serialization
             var content = Serializer.Save(this);
-            FileInfo fi = new FileInfo(kFileName);
+            FileInfo fi = new FileInfo(FileName);
             if(!fi.Directory.Exists)
             {
                 fi.Directory.Create();
             }
-            File.WriteAllText(kFileName, content);
+            File.WriteAllText(FileName, content);
             #if UNITY_EDITOR
-            AssetDatabase.ImportAsset(kFileName);
+            AssetDatabase.ImportAsset(FileName);
             #endif
 
             // While we're at it, write version as a string to a plain text file.
             // Useful for continuous integration tools etc.
-            File.WriteAllText(kPlainFileName, ToLabelString());
+            File.WriteAllText(PlainFileName, ToLabelString());
             #if UNITY_EDITOR
-            AssetDatabase.ImportAsset(kPlainFileName);
+            AssetDatabase.ImportAsset(PlainFileName);
             #endif
         }
 		#else

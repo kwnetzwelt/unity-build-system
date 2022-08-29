@@ -260,15 +260,18 @@ namespace UBS
 			GUILayout.Label("Build Process", Styles.DetailsTitle);
 
 			Styles.HorizontalSeparator();
-			
+
 			Undo.RecordObject(collection, "Edit Build Process Details");
-			pProcess.Name = EditorGUILayout.TextField("Name", _editedBuildProcess.Name);
-
-
-			_editedBuildProcess.Platform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", _editedBuildProcess.Platform);
 
 			_editedBuildProcess.Pretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", "Will not trigger a unity build, but run everything else. "), _editedBuildProcess.Pretend);
-
+			pProcess.Name = EditorGUILayout.TextField("Name", _editedBuildProcess.Name);
+			_editedBuildProcess.Platform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", _editedBuildProcess.Platform);
+			DrawOutputPathSelector();
+			_editedBuildProcess.UseEditorScenes = EditorGUILayout.Toggle(
+				new GUIContent("Use Scenes from EditorBuildSettings", 
+					"Instead of using its own Scene Collection, the Build Process will use whichever scenes are set in the " +
+					"EditorBuildSettings when it runs. "), _editedBuildProcess.UseEditorScenes);
+			
 			GUILayout.Space(5);
 			_showBuildOptions = EditorGUILayout.Foldout(_showBuildOptions, "Build Options");
 			GUILayout.BeginHorizontal();
@@ -300,20 +303,15 @@ namespace UBS
 				GUILayout.EndVertical();
 			} else
 			{
-				GUILayout.Label(_selectedOptionsString);
+				if(!string.IsNullOrEmpty(_selectedOptionsString))
+					GUILayout.Label(_selectedOptionsString);
 			}
 
 
 			GUILayout.EndHorizontal();
 			GUILayout.Space(5);
 
-			DrawOutputPathSelector();
-			GUILayout.Space(5);
 			
-			_editedBuildProcess.UseEditorScenes = EditorGUILayout.Toggle(
-				new GUIContent("Use Scenes from EditorBuildSettings", 
-					"Instead of using its own Scene Collection, the Build Process will use whichever scenes are set in the " +
-					"EditorBuildSettings when it runs. "), _editedBuildProcess.UseEditorScenes);
 			
 			GUI.enabled = !_editedBuildProcess.UseEditorScenes;
 			_showScenesList = EditorGUILayout.Foldout(_showScenesList, "Scene Collection (" + _sceneList.count + ")");
