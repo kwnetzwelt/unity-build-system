@@ -5,6 +5,7 @@ namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the build version of the project to a given value. ")]
 	[BuildStepParameterFilterAttribute(BuildStepParameterType.String)]
+	[BuildStepToggle("Save to PlayerSettings")]
 	public class SetBuild : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
@@ -17,7 +18,7 @@ namespace UBS.Version
 			if(int.TryParse(configuration.Parameters, out build))
 			{
 				collection.version.build = build;
-				collection.SaveVersion();
+				collection.SaveVersion(configuration.ToggleValue);
 			}else
 			{
 				Debug.LogError("Could not parse parameter: " + configuration.Parameters);

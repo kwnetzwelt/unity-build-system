@@ -277,6 +277,23 @@ namespace UBS
             }
         }
         
+        private static GUIStyle _toggleSelected;
+
+        public static GUIStyle ToggleSelected
+        {
+	        get
+	        {
+		        if (_toggleSelected == null)
+		        {
+			        _toggleSelected = new GUIStyle(Toggle);
+			        _toggleSelected.normal.scaledBackgrounds = _toggleSelected.active.scaledBackgrounds;
+		        }
+
+		        return _toggleSelected;
+	        }
+        }
+
+        
 		static GUIStyle _selectableListEntry;
 		public static GUIStyle SelectableListEntry
 		{

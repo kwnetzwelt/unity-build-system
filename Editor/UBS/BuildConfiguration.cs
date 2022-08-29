@@ -26,6 +26,8 @@ namespace UBS
 			get;
 			private set;
 		}
+		
+		public bool ToggleValue { get; private set; }
 
 		internal void SetParams(BuildStep.BuildStepParameters parameters)
 		{
@@ -42,7 +44,8 @@ namespace UBS
         public string ProjectDirectory { get; set; }
 
 
-		public BuildProcess GetCurrentBuildProcess()
+
+        public BuildProcess GetCurrentBuildProcess()
 		{
 			
 			UBSProcess ubs = UBSProcess.LoadUBSProcess();

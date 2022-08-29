@@ -17,11 +17,15 @@ namespace UBS
         [field:SerializeField()]
         public List<BuildProcess> Processes { get; private set; } = new List<BuildProcess>();
 
-        public void SaveVersion()
+        public void SaveVersion(bool writeToPlayerSettings)
 		{
 			version.Save();
-            UnityEditor.PlayerSettings.Android.bundleVersionCode = version.revision;
-			UnityEditor.PlayerSettings.bundleVersion = version.ToString();
+			if (writeToPlayerSettings)
+			{
+				UnityEditor.PlayerSettings.Android.bundleVersionCode = version.revision;
+				UnityEditor.PlayerSettings.iOS.buildNumber = version.revision.ToString();
+				UnityEditor.PlayerSettings.bundleVersion = version.ToShortString();
+			}
 		}
 
 		public BuildVersion version = null;
@@ -32,6 +36,10 @@ namespace UBS
 			UnityEditor.PlayerSettings.Android.bundleVersionCode = int.Parse(versionCode);
 		}
 
-    }
+		public void LoadVersionFromSettings()
+		{
+			version.ParseFromBundleVersion(UnityEditor.PlayerSettings.bundleVersion);
+		}
+	}
 }
 

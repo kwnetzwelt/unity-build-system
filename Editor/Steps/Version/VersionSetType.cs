@@ -6,6 +6,7 @@ namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the Version type to final or beta. Provide a parameter 'final' to set the version type to final. ")]
 	[BuildStepParameterFilterAttribute(BuildStepParameterType.String)]
+	[BuildStepToggle("Save to PlayerSettings")]
 	public class SetType : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
@@ -20,7 +21,7 @@ namespace UBS.Version
 			else
 				collection.version.type = BuildVersion.BuildType.beta;
 
-			collection.SaveVersion();
+			collection.SaveVersion(configuration.ToggleValue);
 		}
 
 		public void BuildStepUpdate()

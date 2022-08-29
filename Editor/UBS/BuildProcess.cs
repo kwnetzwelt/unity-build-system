@@ -39,6 +39,7 @@ namespace UBS {
 		/// <summary>
 		/// If true, uses scene collection set in EditorBuildSettings instead of custom scene collection in the process
 		/// </summary>
+		[field:SerializeField()]
 		public bool UseEditorScenes { get; set; } = false;
 
 		

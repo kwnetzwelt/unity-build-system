@@ -5,6 +5,7 @@ namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Sets the minor version of the project to a given value. ")]
 	[BuildStepParameterFilterAttribute(BuildStepParameterType.String)]
+	[BuildStepToggle("Save to PlayerSettings")]
 	public class SetMinor : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
@@ -17,7 +18,7 @@ namespace UBS.Version
 			if(int.TryParse(configuration.Parameters, out minor))
 			{
 				collection.version.minor = minor;
-				collection.SaveVersion();
+				collection.SaveVersion(configuration.ToggleValue);
 			}else
 			{
 				Debug.LogError("Could not parse parameter: " + configuration.Parameters);

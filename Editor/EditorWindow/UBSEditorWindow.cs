@@ -190,28 +190,28 @@ namespace UBS
 			if(v != data.version.major)
 			{
 				data.version.major = v;
-				data.SaveVersion();
+				data.SaveVersion(false);
 			}
 
 			v = EditorGUILayout.IntField( data.version.minor, GUILayout.Width(50));
 			if(v != data.version.minor)
 			{
 				data.version.minor = v;
-				data.SaveVersion();
+				data.SaveVersion(false);
 			}
 
 			v = EditorGUILayout.IntField( data.version.build, GUILayout.Width(50));
 			if(v != data.version.build)
 			{
 				data.version.build = v;
-				data.SaveVersion();
+				data.SaveVersion(false);
 			}
 
 			BuildVersion.BuildType type = (BuildVersion.BuildType)EditorGUILayout.EnumPopup( data.version.type, GUILayout.Width(50));
 			if(type != data.version.type)
 			{
 				data.version.type = type;
-				data.SaveVersion();
+				data.SaveVersion(false);
 			}
 
 			GUILayout.Label("Revision:");
@@ -219,10 +219,29 @@ namespace UBS
 			if(v != data.version.revision)
 			{
 				data.version.revision = v;
-				data.SaveVersion();
+				data.SaveVersion(false);
 			}
 
+			bool pressed = EditorGUILayout.DropdownButton(new GUIContent(""), FocusType.Passive, UnityEditor.EditorStyles.miniPullDown);
+			if (pressed)
+			{
+				var menu = new GenericMenu();
+				menu.AddItem(new GUIContent("Load from PlayerSettings"), false, LoadVersionFromPlayerSettings);
+				menu.AddItem(new GUIContent("Store in PlayerSettings"), false, StoreVersionInPlayerSettings);
+				menu.ShowAsContext();
+			}
 			GUILayout.EndHorizontal();
+		}
+
+		void LoadVersionFromPlayerSettings()
+		{
+			data.LoadVersionFromSettings();
+			data.SaveVersion(false);
+		}
+
+		void StoreVersionInPlayerSettings()
+		{
+			data.SaveVersion(true);
 		}
 #endregion
 

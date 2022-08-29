@@ -10,6 +10,7 @@ namespace UBS.Version
 {
     [BuildStepDescriptionAttribute("If no Parameter is given it used the last EditorPrefs.string(commitID)(added by jenkins), must be called after all version steps")]
     [BuildStepParameterFilterAttribute(BuildStepParameterType.String)]
+    [BuildStepToggle("Save to PlayerSettings")]
     public class SetCommitID : IBuildStepProvider
     {
 		#region IBuildStepProvider implementation
@@ -23,7 +24,7 @@ namespace UBS.Version
             UnityEngine.Debug.Log("Set CommitID Step: " + commitID);
            
             collection.version.commitID = commitID;
-            collection.SaveVersion();
+            collection.SaveVersion(configuration.ToggleValue);
         }
 		
         public void BuildStepUpdate()

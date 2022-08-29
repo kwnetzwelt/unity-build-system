@@ -10,6 +10,7 @@ namespace UBS.Version
 {
     [BuildStepDescriptionAttribute("If no Parameter is given it used the last EditorPrefs.string(tagName)(added by jenkins), must be called after all version steps")]
     [BuildStepParameterFilterAttribute(BuildStepParameterType.None)]
+    [BuildStepToggle("Save to PlayerSettings")]
     public class SetTagName : IBuildStepProvider
     {
 		#region IBuildStepProvider implementation
@@ -27,7 +28,7 @@ namespace UBS.Version
             UnityEngine.Debug.Log("Set TagName Step: " + tagName);
             
             collection.version.tagName = tagName;
-            collection.SaveVersion();
+            collection.SaveVersion(configuration.ToggleValue);
         }
 		
         public void BuildStepUpdate()

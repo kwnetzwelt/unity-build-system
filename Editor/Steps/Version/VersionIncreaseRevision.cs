@@ -10,6 +10,7 @@ namespace UBS.Version
 {
 	[BuildStepDescriptionAttribute("Increases the build revision by one. ")]
 	[BuildStepParameterFilterAttribute(BuildStepParameterType.None)]
+	[BuildStepToggle("Save to PlayerSettings")]
 	public class IncreaseRevision : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
@@ -20,7 +21,7 @@ namespace UBS.Version
 
 			collection.version.Increase();
 
-			collection.SaveVersion();
+			collection.SaveVersion(configuration.ToggleValue);
 
 		}
 		

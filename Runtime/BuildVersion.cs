@@ -94,13 +94,39 @@ namespace UBS
         {
             return new System.Version(pVersion.major, pVersion.minor, pVersion.build, pVersion.revision);
         }
+
         public override string ToString()
         {
-            return ((System.Version)this).ToString();
+            return ((System.Version) this).ToString();
+        }
+        public string ToShortString()
+        {
+            return String.Format("{0}.{1}.{2}", major, minor, build);
         }
         public string ToLabelString()
         {
             return String.Format("{0}.{1}.{2}{3}{4}", major, minor, build, (type == BuildType.beta) ? "b" : "f", revision);
+        }
+
+        public void ParseFromBundleVersion(string bundleVersion)
+        {
+            try
+            {
+                var segments = bundleVersion.Split(".");
+                if (segments.Length >= 3)
+                {
+                    major = int.Parse(segments[0]);
+                    minor = int.Parse(segments[1]);
+                    build = int.Parse(segments[2]);
+                    if (segments.Length > 3)
+                        revision = int.Parse(segments[3]);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new FormatException("Input string was not in the expected format {0}.{1}.{2}",e);
+            }
+                
         }
     }
 }

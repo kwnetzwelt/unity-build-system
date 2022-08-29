@@ -34,11 +34,13 @@ namespace UBS
 					TypeFilterAttribute = a as BuildStepTypeFilterAttribute;
 				else if(a is BuildStepParameterFilterAttribute)
 					ParameterFilterAttribute = a as BuildStepParameterFilterAttribute;
-
+				else if (a is BuildStepToggleAttribute)
+					ToggleAttribute = a as BuildStepToggleAttribute;
 			}
 		}
 
-        public string Name { get; }
+		
+		public string Name { get; }
         /// <summary>
         /// Namespace
         /// </summary>
@@ -50,6 +52,7 @@ namespace UBS
         public BuildStepPlatformFilterAttribute PlatformFilterAttribute { get; }
         public BuildStepTypeFilterAttribute TypeFilterAttribute { get; }
         public BuildStepParameterFilterAttribute ParameterFilterAttribute { get; }
+        public BuildStepToggleAttribute ToggleAttribute { get; }
 
         public override string ToString()
 		{
@@ -263,14 +266,16 @@ namespace UBS
 
 			Undo.RecordObject(collection, "Edit Build Process Details");
 
-			_editedBuildProcess.Pretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", "Will not trigger a unity build, but run everything else. "), _editedBuildProcess.Pretend);
+			_editedBuildProcess.Pretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", 
+				"Will not trigger a unity build, but run everything else. "), _editedBuildProcess.Pretend);
 			pProcess.Name = EditorGUILayout.TextField("Name", _editedBuildProcess.Name);
-			_editedBuildProcess.Platform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", _editedBuildProcess.Platform);
-			DrawOutputPathSelector();
+			_editedBuildProcess.Platform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", 
+				_editedBuildProcess.Platform);
+			DrawOutputPathSelector(); 
 			_editedBuildProcess.UseEditorScenes = EditorGUILayout.Toggle(
-				new GUIContent("Use Scenes from EditorBuildSettings", 
-					"Instead of using its own Scene Collection, the Build Process will use whichever scenes are set in the " +
-					"EditorBuildSettings when it runs. "), _editedBuildProcess.UseEditorScenes);
+				new GUIContent("Use Scenes from Editor", 
+					"Instead of using its own Scene Collection, the Build Process will use whichever " +
+					"scenes are set in the EditorBuildSettings when it runs. "), _editedBuildProcess.UseEditorScenes);
 			
 			GUILayout.Space(5);
 			_showBuildOptions = EditorGUILayout.Foldout(_showBuildOptions, "Build Options");
@@ -432,13 +437,28 @@ namespace UBS
 				}
 			}
 			
+			BuildStepParameterType parametersToDisplay = BuildStepParameterType.None;
+			BuildStepProviderEntry buildStepProvider = null;
+			if(listIndex >= 0 && listIndex < filtered.Count())
+			{                
+				buildStepProvider = filtered[listIndex];
+				parametersToDisplay = buildStepProvider.GetParameterType();
+			}
+			bool needsToggle = buildStepProvider?.ToggleAttribute != null;
+
+
+			
 			GUIContent[] displayedProviders = GetBuildStepProvidersFiltered();
             Rect r1 = new Rect(pRect.x, pRect.y + 1, 20, pRect.height);
 			Rect r2 = new Rect(r1.x + r1.width,pRect.y + 1, 220, pRect.height); // drop down list
-			Rect r3 = new Rect(r2.x + r2.width, pRect.y, 20, pRect.height); // gears
-			Rect r4 = new Rect(r3.x + r3.width, pRect.y, 70, pRect.height); // parameters label
-			Rect r5 = new Rect(r4.x + r4.width - 5, pRect.y, pRect.width - 330, pRect.height); // parameters input
+			Rect r3 = new Rect(r2.x + r2.width, pRect.y, 30, pRect.height); // gears
+			Rect r4 = new Rect(r3.x + r3.width - 5, pRect.y, 70, pRect.height); // parameters input
+			Rect r5 = new Rect(r4.x + r4.width - 5, pRect.y, pRect.width - 345, pRect.height); // parameters input
+			Rect r6 = new Rect(r5.x + r5.width + 3, pRect.y, 17, pRect.height); // parameters label
 
+			if (!needsToggle)
+				r5.width += r6.width;
+			
             pStep.Enabled = EditorGUI.Toggle(r1, enabled);
 			int idx = EditorGUI.Popup(r2, selectedIndex, displayedProviders);
 			if (!EditorGUIUtility.isProSkin)
@@ -456,18 +476,16 @@ namespace UBS
 			}
 			GUI.color = Color.white;
 			//r.x += r.width;
-			GUI.Label(r4, "Parameters", EditorStyles.miniLabel);
+			
+			
 			
 			//r.x += r.width;
 
 			// search for buildstepprovider
-			BuildStepParameterType parametersToDisplay = BuildStepParameterType.None;
-			BuildStepProviderEntry buildStepProvider = null;
-			if(listIndex >= 0 && listIndex < filtered.Count())
-			{                
-				buildStepProvider = filtered[listIndex];
-				parametersToDisplay = buildStepProvider.GetParameterType();
-			}
+			
+			
+			GUI.Label(r4, "Parameters", EditorStyles.miniLabel);
+
 			
 			switch(parametersToDisplay)
 			{
@@ -523,7 +541,13 @@ namespace UBS
                 break;
 
 			}
-			
+
+			if (needsToggle)
+			{
+				pStep.ToggleValue = GUI.Toggle(r6,
+					pStep.ToggleValue, new GUIContent("", buildStepProvider.ToggleAttribute.Tooltip));
+			}
+
 			if(idx != selectedIndex)
 			{
 				Undo.RecordObject(collection, "Set Build Step Class Reference");

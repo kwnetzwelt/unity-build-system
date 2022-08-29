@@ -59,6 +59,8 @@ namespace UBS
         [field: FormerlySerializedAs("mParams")]
         [field: SerializeField()]
         public BuildStepParameters Parameters { get; set; } = new BuildStepParameters();
+        [field: SerializeField()]
+        public bool ToggleValue { get; set; }
 
         [field: FormerlySerializedAs("mTypeName")]
         [field: SerializeField()]
