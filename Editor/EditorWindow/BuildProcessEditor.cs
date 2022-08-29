@@ -309,7 +309,14 @@ namespace UBS
 
 			DrawOutputPathSelector();
 			GUILayout.Space(5);
-			_showScenesList = EditorGUILayout.Foldout(_showScenesList, "Scenes (" + _sceneList.count + ")");
+			
+			_editedBuildProcess.UseEditorScenes = EditorGUILayout.Toggle(
+				new GUIContent("Use Scenes from EditorBuildSettings", 
+					"Instead of using its own Scene Collection, the Build Process will use whichever scenes are set in the " +
+					"EditorBuildSettings when it runs. "), _editedBuildProcess.UseEditorScenes);
+			
+			GUI.enabled = !_editedBuildProcess.UseEditorScenes;
+			_showScenesList = EditorGUILayout.Foldout(_showScenesList, "Scene Collection (" + _sceneList.count + ")");
 			if (_showScenesList)
 			{
 				DrawList(_sceneList);
@@ -328,6 +335,8 @@ namespace UBS
 
 				GUILayout.EndHorizontal();
 			}
+
+			GUI.enabled = true;
 			Styles.HorizontalSeparator();
 
 			_drawingBuildStepType = BuildStepType.PreBuildStep;

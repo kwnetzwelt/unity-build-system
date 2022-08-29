@@ -471,16 +471,8 @@ namespace UBS
 
 			if (!CurrentProcess.Pretend)
 			{
-				var scenePaths = new List<string>();
-				foreach (var sceneAsset in CurrentProcess.SceneAssets)
-				{
-					if (ReferenceEquals(null, sceneAsset))
-						continue;
-					var scenePath = AssetDatabase.GetAssetPath(sceneAsset);
-					if (string.IsNullOrEmpty(scenePath))
-						continue;
-					scenePaths.Add(scenePath);
-				}
+				var scenePaths = GetScenePaths();
+				
 				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
 				{
 					scenes = scenePaths.ToArray(),
@@ -498,6 +490,39 @@ namespace UBS
 			}
 
 			OnBuildDone ();
+		}
+
+		private List<string> GetScenePaths()
+		{
+			var output = new List<string>();
+			if (CurrentProcess.UseEditorScenes)
+			{
+				foreach (var sceneAsset in EditorBuildSettings.scenes)
+				{
+					if(!sceneAsset.enabled)
+						continue;
+					if (ReferenceEquals(null, sceneAsset.path))
+						continue;
+					if (string.IsNullOrEmpty(sceneAsset.path))
+						continue;
+					output.Add(sceneAsset.path);
+				}
+			}
+			else
+			{
+				foreach (var sceneAsset in CurrentProcess.SceneAssets)
+				{
+					if (ReferenceEquals(null, sceneAsset))
+						continue;
+					var scenePath = AssetDatabase.GetAssetPath(sceneAsset);
+					if (string.IsNullOrEmpty(scenePath))
+						continue;
+					output.Add(scenePath);
+				}
+			}
+
+			return output;
+
 		}
 
 		void OnBuildDone() 

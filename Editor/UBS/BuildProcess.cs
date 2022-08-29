@@ -36,6 +36,12 @@ namespace UBS {
 
 		#region data
 
+		/// <summary>
+		/// If true, uses scene collection set in EditorBuildSettings instead of custom scene collection in the process
+		/// </summary>
+		public bool UseEditorScenes { get; set; } = false;
+
+		
         [field: FormerlySerializedAs("mPreBuildSteps")]
         [field:SerializeField()]
         public List<BuildStep> PreBuildSteps { get; private set; } = new List<BuildStep>();
