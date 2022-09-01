@@ -115,11 +115,9 @@ namespace UBS
 			if (!mInit) {
 				Initialize();
 			}
-
-			var window = GetWindow<UBSBuildWindow>();
-			_width = window.position.width;
+			_width = position.width;
 			_elementWidth = _width - 2 * kMargin;
-			_buildProcessListHeight = window.position.height - 335;
+			_buildProcessListHeight = position.height - 335;
 			if (mEmpty) {
 				// still no process existing?
 				GUILayout.Label("Nothing to build", Styles.BigHint);
