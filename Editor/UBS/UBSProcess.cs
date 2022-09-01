@@ -402,32 +402,38 @@ namespace UBS
 
 		public void Cancel()
 		{
-			_currentState = UBSState.aborted;
-			Save();
+			SetState(UBSState.aborted);
 			_preStepWalker.Clear();
 			_postStepWalker.Clear();
-			Save();
 		}
 
 		#endregion
 
 
 		#region build process state handling
+
+		void SetState(UBSState newState)
+		{
+			
+			if (_currentState != newState)
+			{
+				_currentState = newState;
+				Save();
+			}
+		}
+		
 		void OnDone()
 		{
-			_currentState = UBSState.done;
-			Save();
+			SetState(UBSState.done);
 		}
 		void NextBuild()
 		{
 			if(_currentBuildProcessIndex >= _selectedProcesses.Count)
 			{
-				_currentState = UBSState.done;
-				Save();
+				SetState(UBSState.done);
 			}else
 			{
-				_currentState = UBSState.setup;
-				Save ();
+				SetState(UBSState.setup);
 			}
 		}
 
@@ -443,9 +449,7 @@ namespace UBS
 
 			_postStepWalker.Init(CurrentProcess.PostBuildSteps, currentBuildConfiguration );
 
-			_currentState = UBSState.preSteps;
-			
-			Save();
+			SetState(UBSState.preSteps);
 		}
 
 		void DoPreSteps()
@@ -457,7 +461,7 @@ namespace UBS
 
 			if(_preStepWalker.IsDone())
 			{
-				_currentState = UBSState.building;
+				SetState(UBSState.building);
 			}
 			Save();
 		}
@@ -527,8 +531,7 @@ namespace UBS
 
 		void OnBuildDone() 
 		{
-			_currentState = UBSState.postSteps;
-			Save();
+			SetState(UBSState.postSteps);
 		}
         
 		void DoPostSteps()
@@ -540,7 +543,7 @@ namespace UBS
 
 			if(_postStepWalker.IsDone())
 			{
-				_currentState = UBSState.invalid;
+				SetState(UBSState.invalid);
 				_currentBuildProcessIndex++;
 			}
 			Save();

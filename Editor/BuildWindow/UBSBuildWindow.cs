@@ -58,7 +58,7 @@ namespace UBS
 			if (mProcess == null) {
 				mEmpty = true;
 				mInit = true;
-			} else {
+			} else if(!mProcess.IsDone) {
 				EditorApplication.update -= OnUpdate;
 				EditorApplication.update += OnUpdate;
 			}
@@ -73,7 +73,6 @@ namespace UBS
 				mEmpty = true;
 			}
 
-
 			try {
 				mProcess.MoveNext();
 			} catch (Exception e) {
@@ -86,6 +85,10 @@ namespace UBS
             {
                 Repaint();
             }
+            
+            
+            if(mProcess.IsDone)
+	            EditorApplication.update -= OnUpdate;
 		}
 
 		void OnDestroy()
