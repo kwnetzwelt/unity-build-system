@@ -6,6 +6,8 @@ namespace UBS
 {
 	internal class UBSBuildWindow : UBSWindowBase
 	{
+		private const float kWdith = 500;
+		private const float kMargin = 25; 
 		const float kHeight = 25;
 		[NonSerialized]
 		UBSProcess
@@ -20,6 +22,9 @@ namespace UBS
         [SerializeField]
         Vector2 scrollPosition01;
 
+        private float _elementWidth;
+        private float _width;
+
         public static void Init(BuildCollection pData, BuildProcess pProcess, bool pBuildAndRun = false)
 		{
 			foreach (var p in pData.Processes) {
@@ -33,9 +38,9 @@ namespace UBS
 			
 			var window = EditorWindow.GetWindow<UBSBuildWindow>(true, "Build", true);
 			
-			window.position = new Rect(50, 50, 350, 460);
-			window.minSize = new Vector2(350, 460);
-			window.maxSize = new Vector2(350, 460);
+			window.position = new Rect(50, 50, kWdith + 2*kMargin, 460);
+			window.minSize = new Vector2(kWdith + 2*kMargin, 460);
+			//window.maxSize = new Vector2(550, 460);
 			return window;
 		}
 
@@ -110,13 +115,17 @@ namespace UBS
 				Initialize();
 			}
 
+			var window = GetWindow<UBSBuildWindow>();
+			_width = window.position.width;
+			_elementWidth = _width - 2 * kMargin;
+			
 			if (mEmpty) {
 				// still no process existing?
 				GUILayout.Label("Nothing to build", Styles.BigHint);
 				return;
 			}
 
-            GUILayout.BeginArea(new Rect(25, 25, 300, 20));
+            GUILayout.BeginArea(new Rect(kMargin, kMargin, _elementWidth, 20));
             {
                 GUILayout.BeginHorizontal();
                 {
@@ -132,7 +141,7 @@ namespace UBS
             }
             GUILayout.EndArea();
 
-            GUILayout.BeginArea(new Rect(25, 50, 300, 125), EditorStyles.helpBox);
+            GUILayout.BeginArea(new Rect(kMargin, 50, _elementWidth, 125), EditorStyles.helpBox);
             {
                 int selectedCount = 0;
                 bool selected = false;
@@ -157,53 +166,53 @@ namespace UBS
             }
             GUILayout.EndArea();
 
-            GUI.Box(new Rect(25, 205, 300, 230  ), "", EditorStyles.helpBox);
+            GUI.Box(new Rect(kMargin, 205, _elementWidth, 230  ), "", EditorStyles.helpBox);
 
 
 			float fTop = 205;
 			float fLeft = 30;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
 			KeyValue("Collection:", mProcess.BuildCollection.name);
 			GUI.EndGroup();
 
 			fTop += kHeight;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
 			KeyValue("CurrentProcess: ", mProcess.CurrentProcessName);
 			GUI.EndGroup();
 
 			fTop += kHeight;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
 			KeyValue("CurrentState: ", mProcess.CurrentState);
 			GUI.EndGroup();
 
 
 			fTop += kHeight;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
-			KeyProgress("Pre Steps Progress: ", mProcess.SubPreWalker.Progress);
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
+			KeyProgress("Pre Steps Progress: ", mProcess.SubPreWalker);
 			GUI.EndGroup();
 
 			fTop += kHeight;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
-			KeyValue("Pre Step Current: ", mProcess.SubPreWalker.Step);
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
+			KeyValue("Pre Step Current: ", mProcess.SubPreWalker.CurrentStep);
 			GUI.EndGroup();
 			
 			fTop += kHeight;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
-			KeyProgress("Post Steps Progress: ", mProcess.SubPostWalker.Progress);
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
+			KeyProgress("Post Steps Progress: ", mProcess.SubPostWalker);
 			GUI.EndGroup();
 			
 			fTop += kHeight;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
-			KeyValue("Post Step Current: ", mProcess.SubPostWalker.Step);
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
+			KeyValue("Post Step Current: ", mProcess.SubPostWalker.CurrentStep);
 			GUI.EndGroup();
 
 			fTop += kHeight;
-			GUI.BeginGroup(new Rect(fLeft, fTop, 300, kHeight));
+			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
 			KeyProgress("Progress: ", mProcess.Progress);
 			GUI.EndGroup();
 
 			fTop += kHeight;
-			GUILayout.BeginArea(new Rect(fLeft, fTop, 290, kHeight * 5));
+			GUILayout.BeginArea(new Rect(fLeft, fTop, _elementWidth-10, kHeight * 5));
 
             GUILayout.Space(5);
             
@@ -220,16 +229,21 @@ namespace UBS
 		void KeyValue(string pKey, object pValue)
 		{
 			GUI.Label(new Rect(0, 0, 140, 25), pKey, Styles.BoldKey);
-			GUI.Label(new Rect(150, 0, 140, 25), pValue.ToString(), Styles.NormalValue);
+			GUI.Label(new Rect(150, 0, _elementWidth-160, 25), pValue.ToString(), Styles.NormalValue);
 
 		}
 
 		void KeyProgress(string pKey, float pValue)
 		{
 			GUI.Label(new Rect(0, 0, 140, 25), pKey, Styles.BoldKey);
-            EditorGUI.ProgressBar(new Rect(150, 5, 140, 15), pValue, Mathf.RoundToInt(pValue * 100).ToString() + "%");
+            EditorGUI.ProgressBar(new Rect(150, 5, _elementWidth-160, 15), pValue, Mathf.RoundToInt(pValue * 100).ToString() + "%");
 		}
 
+		void KeyProgress(string pKey, UBSStepListWalker walker)
+		{
+			GUI.Label(new Rect(0, 0, 140, 25), pKey, Styles.BoldKey);
+			EditorGUI.ProgressBar(new Rect(150, 5, _elementWidth-160, 15), walker.Progress, $"{walker.Index} / {walker.Count}");
+		}
 	}
 }
 

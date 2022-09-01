@@ -624,6 +624,7 @@ namespace UBS
 
 
         IBuildStepProvider _currentStep;
+        private BuildStepProviderEntry _currentStepEntry;
 
         [field: FormerlySerializedAs("mConfiguration")]
         [field: SerializeField]
@@ -694,6 +695,7 @@ namespace UBS
 			if (Steps [Index].StepType != null) 
 			{
 				_currentStep = System.Activator.CreateInstance( Steps[Index].StepType ) as IBuildStepProvider;
+				_currentStepEntry = new BuildStepProviderEntry(Steps[Index].StepType);
 				Configuration.SetParams( Steps[Index].Parameters );
 			} 
 			else 
@@ -730,14 +732,13 @@ namespace UBS
 				return Index / Count;
 			}
 		}
-		public string Step
+		public string CurrentStep
 		{
 			get
 			{
-				if(Steps == null || Index >= Steps.Count)
+				if(_currentStepEntry == null || Steps == null || Index >= Steps.Count)
 					return "N/A";
-
-				return Steps[Index].TypeName;
+				return _currentStepEntry.ToMenuPath();
 			}
 		}
 	}
