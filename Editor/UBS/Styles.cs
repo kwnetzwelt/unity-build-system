@@ -303,6 +303,7 @@ namespace UBS
 				{
 					_selectableListEntry = new GUIStyle(List);
 					_selectableListEntry.stretchHeight = false;
+					_selectableListEntry.fixedHeight = 35;
 					_selectableListEntry.normal.textColor = GetColor(0xb5b5b5ff);
 					_selectableListEntry.fontStyle = FontStyle.Bold;
 					_selectableListEntry.padding = new RectOffset(20, 20, 10, 9);
@@ -363,6 +364,8 @@ namespace UBS
 					_selectedListEntry.fontStyle = FontStyle.Bold;
 					_selectedListEntry.padding = new RectOffset(20, 20, 10, 9);
 					_selectedListEntry.border = new RectOffset(0, 0, 0, 1);
+					_selectedListEntry.stretchHeight = false;
+					_selectedListEntry.fixedHeight = 35;
 				}
 				return _selectedListEntry;
 			}

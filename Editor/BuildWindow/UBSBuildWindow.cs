@@ -24,6 +24,7 @@ namespace UBS
 
         private float _elementWidth;
         private float _width;
+        private float _buildProcessListHeight;
 
         public static void Init(BuildCollection pData, BuildProcess pProcess, bool pBuildAndRun = false)
 		{
@@ -118,7 +119,7 @@ namespace UBS
 			var window = GetWindow<UBSBuildWindow>();
 			_width = window.position.width;
 			_elementWidth = _width - 2 * kMargin;
-			
+			_buildProcessListHeight = window.position.height - 335;
 			if (mEmpty) {
 				// still no process existing?
 				GUILayout.Label("Nothing to build", Styles.BigHint);
@@ -141,7 +142,7 @@ namespace UBS
             }
             GUILayout.EndArea();
 
-            GUILayout.BeginArea(new Rect(kMargin, 50, _elementWidth, 125), EditorStyles.helpBox);
+            GUILayout.BeginArea(new Rect(kMargin, 50, _elementWidth, _buildProcessListHeight), EditorStyles.helpBox);
             {
                 int selectedCount = 0;
                 bool selected = false;
@@ -166,10 +167,10 @@ namespace UBS
             }
             GUILayout.EndArea();
 
-            GUI.Box(new Rect(kMargin, 205, _elementWidth, 230  ), "", EditorStyles.helpBox);
+			float fTop = 85 + _buildProcessListHeight;
+            GUI.Box(new Rect(kMargin, fTop , _elementWidth, 230  ), "", EditorStyles.helpBox);
 
 
-			float fTop = 205;
 			float fLeft = 30;
 			GUI.BeginGroup(new Rect(fLeft, fTop, _elementWidth, kHeight));
 			KeyValue("Collection:", mProcess.BuildCollection.name);
