@@ -353,7 +353,8 @@ namespace UBS
 
 				GUILayout.EndHorizontal();
 			}
-			
+			GUI.enabled = true;
+
 			GUILayout.Space(5);
 
 			_showExtraScriptingDefines = EditorGUILayout.Foldout(_showExtraScriptingDefines, "Extra Scripting Defines (" + _extraScriptingDefinesList.count + ")");
@@ -375,7 +376,6 @@ namespace UBS
 				GUILayout.EndHorizontal();
 			}
 
-			GUI.enabled = true;
 			Styles.HorizontalSeparator();
 
 			_drawingBuildStepType = BuildStepType.PreBuildStep;
