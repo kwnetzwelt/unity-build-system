@@ -135,6 +135,9 @@ namespace UBS
 		BuildProcess _editedBuildProcess;
 		BuildCollection collection;
 
+		private bool _showExtraScriptingDefines;
+
+		
 		public BuildProcessEditor()
 		{
 			//
@@ -172,6 +175,7 @@ namespace UBS
 		string _selectedOptionsString;
 
         private ReorderableList _sceneList;
+        private ReorderableList _extraScriptingDefinesList;
         private ReorderableList _prebuildStepsList;
         private ReorderableList _postbuildStepsList;
 
@@ -199,7 +203,12 @@ namespace UBS
 	            else
 		            _editedBuildProcess.SceneAssets.Add(null);
             };
-        
+
+            _extraScriptingDefinesList = new ReorderableList(_editedBuildProcess.ScriptingDefines.ToList(), typeof(string))
+	            {
+		            drawHeaderCallback = ExtraScriptingDefinesHeaderDrawer,
+		            drawElementCallback = ExtraScriptingDefinesDrawer
+	            };
 
             _prebuildStepsList = new ReorderableList(_editedBuildProcess.PreBuildSteps, typeof(BuildStep));
             _prebuildStepsList.drawHeaderCallback = PreStepHeaderDrawer;
@@ -211,6 +220,12 @@ namespace UBS
 
 
         }
+
+        private void ExtraScriptingDefinesHeaderDrawer(Rect rect)
+        {
+	        GUI.Label(rect, "Extra Scripting Defines");
+        }
+
         private void SceneHeaderDrawer(Rect rect)
         {
             GUI.Label(rect, "Selected Scenes");
@@ -338,6 +353,27 @@ namespace UBS
 
 				GUILayout.EndHorizontal();
 			}
+			
+			GUILayout.Space(5);
+
+			_showExtraScriptingDefines = EditorGUILayout.Foldout(_showExtraScriptingDefines, "Extra Scripting Defines (" + _extraScriptingDefinesList.count + ")");
+			if (_showExtraScriptingDefines)
+			{
+				DrawList(_extraScriptingDefinesList);
+			
+				GUILayout.BeginHorizontal();
+				GUILayout.FlexibleSpace();
+
+				const string clearExtraScriptingDefines = "Clear Extra Scripting Defines";
+				if (GUILayout.Button(clearExtraScriptingDefines))
+				{
+					Undo.RecordObject(collection, clearExtraScriptingDefines);
+					_editedBuildProcess.ScriptingDefines.Clear();
+					_extraScriptingDefinesList.list.Clear();
+				}
+
+				GUILayout.EndHorizontal();
+			}
 
 			GUI.enabled = true;
 			Styles.HorizontalSeparator();
@@ -389,6 +425,26 @@ namespace UBS
             _editedBuildProcess.SceneAssets[index] = selected;
 
 		}
+        
+        
+        
+        private void ExtraScriptingDefinesDrawer(Rect pRect, int index, bool isActive, bool isFocused)
+        {
+	        while (index >= _editedBuildProcess.ScriptingDefines.Count)
+	        {
+		        _editedBuildProcess.ScriptingDefines.Add($"NEW_SCRIPTING_DEFINE_{_editedBuildProcess.ScriptingDefines.Count}");
+	        }
+		        
+	        pRect.height -= 4;
+	        pRect.y += 2;
+	        var currentScriptingDefineAtIndex = _editedBuildProcess.ScriptingDefines[index];
+	        var newScriptingDefineAtIndex = EditorGUI.TextField(pRect, currentScriptingDefineAtIndex);
+
+	        if (string.Equals(currentScriptingDefineAtIndex, newScriptingDefineAtIndex)) return;
+	        Undo.RecordObject(collection, $"Update Scripting Define at index {index}");
+	        _editedBuildProcess.ScriptingDefines[index] = newScriptingDefineAtIndex;
+        }
+        
         void PreStepDrawer(Rect pRect, int index, bool isActive, bool isFocused)
         {
             UBS.BuildStep step = _editedBuildProcess.PreBuildSteps[index];

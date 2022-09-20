@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine.Serialization;
@@ -31,6 +30,7 @@ namespace UBS {
 			Platform = other.Platform;
 			Options = other.Options;
 			Selected = false;
+			ScriptingDefines = other.ScriptingDefines;
 			SceneAssets = new List<SceneAsset>( other.SceneAssets );
 		}
 
@@ -83,9 +83,9 @@ namespace UBS {
         [field:SerializeField()]
         public List<SceneAsset> SceneAssets { get; private set;} = new List<SceneAsset>();
 
+        [field:SerializeField] 
+        public List<string> ScriptingDefines { get; protected set; } = new();
+
         #endregion
-
-
-
 	}
 }
