@@ -264,8 +264,6 @@ namespace UBS
 				while(true)
 				{
 					process.MoveNext();
-					Debug.Log("Wait..");
-					Debug.Log ("Process state: " + process.CurrentState);
 					if(process.CurrentState == UBSState.done)
 					{
 						return;
@@ -701,8 +699,14 @@ namespace UBS
 			else 
 			{
 				_currentStep = new EmptyBuildStep();
-			}			
+			}
 
+			if (_currentStep == null)
+			{
+				return;
+			}
+			
+			Debug.Log("Starting Build Step: " + _currentStep.GetType().ToString());
 			_currentStep.BuildStepStart(Configuration);			
 		}
 
