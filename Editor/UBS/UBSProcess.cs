@@ -480,7 +480,8 @@ namespace UBS
 					scenes = scenePaths.ToArray(),
 					locationPathName = CurrentProcess.OutputPath,
 					target = CurrentProcess.Platform,
-					options = bo
+					options = bo,
+					extraScriptingDefines = CurrentProcess.ScriptingDefines.ToArray()
 				};
 				BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 				UnityEngine.Debug.Log("Playerbuild Result: " + report.summary.result);
