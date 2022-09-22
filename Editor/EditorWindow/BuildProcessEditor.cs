@@ -208,7 +208,8 @@ namespace UBS
             _extraScriptingDefinesList = new ReorderableList(_editedBuildProcess.ScriptingDefines.ToList(), typeof(string))
 	            {
 		            drawHeaderCallback = ExtraScriptingDefinesHeaderDrawer,
-		            drawElementCallback = ExtraScriptingDefinesDrawer
+		            drawElementCallback = ExtraScriptingDefinesDrawer,
+		            onReorderCallback = ExtraScriptingDefinesReorder
 	            };
 
             _prebuildStepsList = new ReorderableList(_editedBuildProcess.PreBuildSteps, typeof(BuildStep));
@@ -221,7 +222,15 @@ namespace UBS
 
 
         }
-        
+
+        private void ExtraScriptingDefinesReorder(ReorderableList list)
+        {
+	        for (var index = 0; index < list.count; index++)
+	        {
+		        _editedBuildProcess.ScriptingDefines[index] = list.list[index] as string;
+	        }
+        }
+
         // https://stackoverflow.com/a/44811113
         public static bool IsObsolete(Enum value)
         {  
@@ -442,7 +451,9 @@ namespace UBS
         {
 	        while (index >= _editedBuildProcess.ScriptingDefines.Count)
 	        {
-		        _editedBuildProcess.ScriptingDefines.Add($"NEW_SCRIPTING_DEFINE_{_editedBuildProcess.ScriptingDefines.Count}");
+		        var placeholder = $"NEW_SCRIPTING_DEFINE_{_editedBuildProcess.ScriptingDefines.Count}";
+		        _editedBuildProcess.ScriptingDefines.Add(placeholder);
+		        _extraScriptingDefinesList.list[index] = placeholder;
 	        }
 		        
 	        pRect.height -= 4;
@@ -453,6 +464,7 @@ namespace UBS
 	        if (string.Equals(currentScriptingDefineAtIndex, newScriptingDefineAtIndex)) return;
 	        Undo.RecordObject(collection, $"Update Scripting Define at index {index}");
 	        _editedBuildProcess.ScriptingDefines[index] = newScriptingDefineAtIndex;
+	        _extraScriptingDefinesList.list[index] = newScriptingDefineAtIndex;
         }
         
         void PreStepDrawer(Rect pRect, int index, bool isActive, bool isFocused)
