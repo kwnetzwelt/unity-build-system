@@ -67,6 +67,7 @@ namespace UBS
 			// selectable Build Processes
 			//
 			GUILayout.BeginVertical("GameViewBackground",GUILayout.MaxWidth(kListWidth));
+			BuildCollectionDropdownSwitcher();
 			SearchField();
             GUILayout.Space(4);
 			_scrollPositions[1] = GUILayout.BeginScrollView(_scrollPositions[1], GUILayout.ExpandWidth(true));
@@ -162,6 +163,29 @@ namespace UBS
 
 			GUILayout.EndScrollView();
 
+		}
+		
+		private void BuildCollectionDropdownSwitcher()
+		{
+			var newIndex = EditorGUILayout.Popup(_currentBuildCollectionIndex, _buildCollectionsNames);
+			if (newIndex == _currentBuildCollectionIndex)
+			{
+				return;
+			}
+			_currentBuildCollectionIndex = newIndex;
+			data = _buildCollections[_currentBuildCollectionIndex];
+			Repaint();
+		}
+
+		private BuildCollection[] GetAllBuildCollections()
+		{
+			var guids = AssetDatabase.FindAssets($"t:{nameof(BuildCollection)}");
+			return Array.ConvertAll(guids,
+				guid =>
+				{
+					var path = AssetDatabase.GUIDToAssetPath(guid);
+					return AssetDatabase.LoadAssetAtPath<BuildCollection>(path);
+				});
 		}
 
 		void RenderSelectableBuildProcess (BuildProcess pProcess, bool pOdd)
@@ -274,6 +298,10 @@ namespace UBS
         [System.NonSerialized]
         private int _selectedCount;
 
+        private BuildCollection[] _buildCollections;
+        private string[] _buildCollectionsNames;
+        private int _currentBuildCollectionIndex;
+	        
         void Initialize()
 		{
 			if(_initialized || data == null)
@@ -284,6 +312,19 @@ namespace UBS
 			_initialized = true;
 
             _searchField = new UnityEditor.IMGUI.Controls.SearchField();
+
+            _buildCollections = GetAllBuildCollections();
+            var length = _buildCollections.Length;
+            _buildCollectionsNames = new string[length];
+            for (var index = 0; index < length; index++)
+            {
+	            var buildCollection = _buildCollections[index];
+	            _buildCollectionsNames[index] = buildCollection.name;
+	            if (data == buildCollection)
+	            {
+		            _currentBuildCollectionIndex = index;
+	            }
+            }
             
             Undo.undoRedoPerformed += OnUndoRedoPerformed;
 
