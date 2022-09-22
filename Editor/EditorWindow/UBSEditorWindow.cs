@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 using UBS;
+using UnityEditor.Callbacks;
 using UnityEngine.Serialization;
 
 namespace UBS
@@ -23,6 +24,15 @@ namespace UBS
 			window.position = new Rect(50,50, kMinWidth + 50 + kListWidth,kMinHeight + 50);
 		}
 
+		[OnOpenAsset]
+		public static bool OpenEditor(int instanceId)
+		{
+			var buildCollection = EditorUtility.InstanceIDToObject(instanceId) as BuildCollection;
+			if (!buildCollection) return false;
+			Init(buildCollection);
+			return true;
+		}
+		
 
 		#endregion
 
