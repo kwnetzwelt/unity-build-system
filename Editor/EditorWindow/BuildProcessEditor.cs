@@ -185,6 +185,7 @@ namespace UBS
             var options = (BuildOptions[])Enum.GetValues(typeof(BuildOptions));
             foreach (var option in options)
             {
+	            if (IsObsolete(option)) continue;
                 int o = (int) option;
                 if(o != 0)
                     _buildOptions.Add(option);
@@ -219,6 +220,15 @@ namespace UBS
             _postbuildStepsList.drawElementCallback = PostStepDrawer;
 
 
+        }
+        
+        // https://stackoverflow.com/a/44811113
+        public static bool IsObsolete(Enum value)
+        {  
+	        var enumType = value.GetType();
+	        var enumName = enumType.GetEnumName(value);
+	        var fieldInfo = enumType.GetField(enumName);
+	        return Attribute.IsDefined(fieldInfo, typeof(ObsoleteAttribute));
         }
 
         private void ExtraScriptingDefinesHeaderDrawer(Rect rect)
