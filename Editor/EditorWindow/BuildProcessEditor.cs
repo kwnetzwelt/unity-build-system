@@ -610,7 +610,6 @@ namespace UBS
 				
             case BuildStepParameterType.UnityObject:
                 {
-                    int objectId;
                     UnityEngine.Object objectAssigned = pStep.Parameters;
                     
                     var assignedObject = EditorGUI.ObjectField(r5, objectAssigned, typeof(UnityEngine.Object), false);
