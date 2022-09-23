@@ -209,7 +209,9 @@ namespace UBS
 	            {
 		            drawHeaderCallback = ExtraScriptingDefinesHeaderDrawer,
 		            drawElementCallback = ExtraScriptingDefinesDrawer,
-		            onReorderCallback = ExtraScriptingDefinesReorder
+		            onReorderCallback = ExtraScriptingDefinesReorder,
+		            onAddCallback = ExtraScriptingDefinesAddCallback,
+		            onRemoveCallback = ExtraScriptingDefinesRemoveCallback
 	            };
 
             _prebuildStepsList = new ReorderableList(_editedBuildProcess.PreBuildSteps, typeof(BuildStep));
@@ -221,6 +223,32 @@ namespace UBS
             _postbuildStepsList.drawElementCallback = PostStepDrawer;
 
 
+        }
+
+        private void ExtraScriptingDefinesRemoveCallback(ReorderableList list)
+        {
+	        if (list.selectedIndices.Count < 1)
+	        {
+		        var indexToRemove = list.count - 1;
+		        _editedBuildProcess.ScriptingDefines.RemoveAt(indexToRemove);
+		        list.list.RemoveAt(indexToRemove);
+	        }
+	        else
+	        {
+		        foreach (var indexToRemove in list.selectedIndices)
+		        {
+			        _editedBuildProcess.ScriptingDefines.RemoveAt(indexToRemove);
+			        list.list.RemoveAt(indexToRemove);
+		        }
+	        }
+        }
+
+        private void ExtraScriptingDefinesAddCallback(ReorderableList list)
+        {
+	        var newItemIndex = _editedBuildProcess.ScriptingDefines.Count;
+	        var placeholder = $"NEW_SCRIPTING_DEFINE_{newItemIndex}";
+	        _editedBuildProcess.ScriptingDefines.Add(placeholder);
+	        list.list.Add(placeholder);
         }
 
         private void ExtraScriptingDefinesReorder(ReorderableList list)
@@ -449,13 +477,6 @@ namespace UBS
         
         private void ExtraScriptingDefinesDrawer(Rect pRect, int index, bool isActive, bool isFocused)
         {
-	        while (index >= _editedBuildProcess.ScriptingDefines.Count)
-	        {
-		        var placeholder = $"NEW_SCRIPTING_DEFINE_{_editedBuildProcess.ScriptingDefines.Count}";
-		        _editedBuildProcess.ScriptingDefines.Add(placeholder);
-		        _extraScriptingDefinesList.list[index] = placeholder;
-	        }
-		        
 	        pRect.height -= 4;
 	        pRect.y += 2;
 	        var currentScriptingDefineAtIndex = _editedBuildProcess.ScriptingDefines[index];
