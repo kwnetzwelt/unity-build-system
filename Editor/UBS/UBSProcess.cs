@@ -636,6 +636,7 @@ namespace UBS
 
 		public void Init ( List<BuildStep> steps, BuildConfiguration configuration)
 		{
+			_currentStep = null;
 			Index = 0;
 			Steps = steps;
 			Configuration = configuration;
@@ -646,6 +647,8 @@ namespace UBS
 			{
 				_currentStep.BuildStepUpdate(); // call update one last time, to let the step know we are done. 
 			}
+
+			_currentStep = null;
 			Index = 0;
 			Steps = null;
 			Configuration = null;
@@ -693,13 +696,13 @@ namespace UBS
 				return;
 			if (Steps [Index].StepType != null) 
 			{
-				_currentStep = System.Activator.CreateInstance( Steps[Index].StepType ) as IBuildStepProvider;
+				_currentStep = Activator.CreateInstance(Steps[Index].StepType) as IBuildStepProvider;
 				_currentStepEntry = new BuildStepProviderEntry(Steps[Index].StepType);
 				Configuration.SetParams( Steps[Index].Parameters );
-			} 
+			}
 			else 
 			{
-				_currentStep = new EmptyBuildStep();
+				_currentStep = new SkipBuildStepEntry();
 			}
 
 			if (_currentStep == null)
@@ -748,7 +751,24 @@ namespace UBS
 		}
 	}
 
+	[BuildStepTypeFilter(BuildStepType.invalid)]
+	public class SkipBuildStepEntry : IBuildStepProvider
+	{
+		public void BuildStepStart(BuildConfiguration configuration)
+		{
+			
+		}
 
+		public void BuildStepUpdate()
+		{
+			
+		}
+
+		public bool IsBuildStepDone()
+		{
+			return true;
+		}
+	}
 
 }
 
