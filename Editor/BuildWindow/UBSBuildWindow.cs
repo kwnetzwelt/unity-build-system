@@ -91,9 +91,9 @@ namespace UBS
             {
                 Repaint();
             }
-            
-            
-            if(mProcess.IsDone)
+
+
+            if (mProcess.IsDone)
 	            EditorApplication.update -= OnUpdate;
 		}
 

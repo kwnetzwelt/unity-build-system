@@ -3,13 +3,13 @@ using UnityEditor;
 using UnityEngine;
 using UBS;
 using System.IO;
+using UnityEditorInternal;
 
 namespace UBS
 {
 	[CustomEditor(typeof(BuildCollection))]
 	public class UBSAssetInspector : Editor
 	{
-
 		public override void OnInspectorGUI()
 		{
 			var data = target as BuildCollection;
@@ -59,6 +59,12 @@ namespace UBS
 				}
 			}
 			GUILayout.EndVertical();
+			
+			serializedObject.Update();
+			var logtypes= serializedObject.FindPropertyByAutoPropertyName("LogTypes");
+			EditorGUILayout.PropertyField(logtypes, new GUIContent("Logging Configuration"), true);
+			serializedObject.ApplyModifiedProperties();
+			
 			GUILayout.BeginHorizontal();
 			{
 				if (GUILayout.Button("Edit"))
@@ -87,6 +93,8 @@ namespace UBS
 				}
 			}
 			GUILayout.EndHorizontal(); 
+			
+			
 		}
 
         

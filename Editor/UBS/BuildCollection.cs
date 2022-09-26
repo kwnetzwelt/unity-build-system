@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -13,7 +14,10 @@ namespace UBS
 			version = BuildVersion.Load();
 		}
 
-        [field: FormerlySerializedAs("mProcesses")]
+		[field:SerializeField()]
+		public List<UBSLogType> LogTypes { get; private set; } = new List<UBSLogType>();
+
+		[field: FormerlySerializedAs("mProcesses")]
         [field:SerializeField()]
         public List<BuildProcess> Processes { get; private set; } = new List<BuildProcess>();
 
@@ -39,6 +43,24 @@ namespace UBS
 		public void LoadVersionFromSettings()
 		{
 			version.ParseFromBundleVersion(UnityEditor.PlayerSettings.bundleVersion);
+		}
+
+		public void ActivateLogTypes()
+		{
+			foreach (var logType in LogTypes)
+			{
+				if(Application.isBatchMode && logType.UseInBatchMode || !Application.isBatchMode && logType.UseInEditMode)
+					Application.SetStackTraceLogType(logType.LogType, logType.StackTrace);
+			}
+		}
+
+		public void RestoreLogTypes()
+		{
+			foreach (var logType in LogTypes)
+			{
+				if(Application.isBatchMode && logType.UseInBatchMode || !Application.isBatchMode && logType.UseInEditMode)
+					Application.SetStackTraceLogType(logType.LogType, logType.StackTrackToRestore);
+			}
 		}
 	}
 }

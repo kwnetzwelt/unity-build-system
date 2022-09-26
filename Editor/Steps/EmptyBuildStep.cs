@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 namespace UBS
 {
-	[BuildStepParameterFilterAttribute(BuildStepParameterType.UnityObject)]
+	[BuildStepParameterFilterAttribute(BuildStepParameterType.String)]
 	public class EmptyBuildStep : IBuildStepProvider
 	{
 		#region IBuildStepProvider implementation
@@ -10,6 +11,10 @@ namespace UBS
 		{
 			//example
 			//Texture2D tex = configuration.Parameters.Cast<Texture2D>();
+			//if(Application.isBatchMode)
+			//	Console.WriteLine(configuration.GetCurrentBuildProcess().Platform + " " + configuration.Parameters.stringParameter);
+			//else
+				Debug.Log(configuration.GetCurrentBuildProcess().Platform + " " + configuration.Parameters.stringParameter);
 		}
 
 		public void BuildStepUpdate ()
