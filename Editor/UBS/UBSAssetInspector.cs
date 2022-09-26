@@ -74,7 +74,7 @@ namespace UBS
 				GUILayout.Space(5);
 				GUI.enabled = selectedCount >= 1;
 
-				if (GUILayout.Button("Run selected builds"))
+				if (GUILayout.Button($"Build selected ({selectedCount})"))
 				{
 					UBSBuildWindow.Init(data);
 				}

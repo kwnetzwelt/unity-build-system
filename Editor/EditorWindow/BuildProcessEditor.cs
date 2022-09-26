@@ -185,6 +185,7 @@ namespace UBS
             var options = (BuildOptions[])Enum.GetValues(typeof(BuildOptions));
             foreach (var option in options)
             {
+	            if (IsObsolete(option)) continue;
                 int o = (int) option;
                 if(o != 0)
                     _buildOptions.Add(option);
@@ -207,7 +208,10 @@ namespace UBS
             _extraScriptingDefinesList = new ReorderableList(_editedBuildProcess.ScriptingDefines.ToList(), typeof(string))
 	            {
 		            drawHeaderCallback = ExtraScriptingDefinesHeaderDrawer,
-		            drawElementCallback = ExtraScriptingDefinesDrawer
+		            drawElementCallback = ExtraScriptingDefinesDrawer,
+		            onReorderCallback = ExtraScriptingDefinesReorder,
+		            onAddCallback = ExtraScriptingDefinesAddCallback,
+		            onRemoveCallback = ExtraScriptingDefinesRemoveCallback
 	            };
 
             _prebuildStepsList = new ReorderableList(_editedBuildProcess.PreBuildSteps, typeof(BuildStep));
@@ -219,6 +223,49 @@ namespace UBS
             _postbuildStepsList.drawElementCallback = PostStepDrawer;
 
 
+        }
+
+        private void ExtraScriptingDefinesRemoveCallback(ReorderableList list)
+        {
+	        if (list.selectedIndices.Count < 1)
+	        {
+		        var indexToRemove = list.count - 1;
+		        _editedBuildProcess.ScriptingDefines.RemoveAt(indexToRemove);
+		        list.list.RemoveAt(indexToRemove);
+	        }
+	        else
+	        {
+		        foreach (var indexToRemove in list.selectedIndices)
+		        {
+			        _editedBuildProcess.ScriptingDefines.RemoveAt(indexToRemove);
+			        list.list.RemoveAt(indexToRemove);
+		        }
+	        }
+        }
+
+        private void ExtraScriptingDefinesAddCallback(ReorderableList list)
+        {
+	        var newItemIndex = _editedBuildProcess.ScriptingDefines.Count;
+	        var placeholder = $"NEW_SCRIPTING_DEFINE_{newItemIndex}";
+	        _editedBuildProcess.ScriptingDefines.Add(placeholder);
+	        list.list.Add(placeholder);
+        }
+
+        private void ExtraScriptingDefinesReorder(ReorderableList list)
+        {
+	        for (var index = 0; index < list.count; index++)
+	        {
+		        _editedBuildProcess.ScriptingDefines[index] = list.list[index] as string;
+	        }
+        }
+
+        // https://stackoverflow.com/a/44811113
+        public static bool IsObsolete(Enum value)
+        {  
+	        var enumType = value.GetType();
+	        var enumName = enumType.GetEnumName(value);
+	        var fieldInfo = enumType.GetField(enumName);
+	        return Attribute.IsDefined(fieldInfo, typeof(ObsoleteAttribute));
         }
 
         private void ExtraScriptingDefinesHeaderDrawer(Rect rect)
@@ -430,11 +477,6 @@ namespace UBS
         
         private void ExtraScriptingDefinesDrawer(Rect pRect, int index, bool isActive, bool isFocused)
         {
-	        while (index >= _editedBuildProcess.ScriptingDefines.Count)
-	        {
-		        _editedBuildProcess.ScriptingDefines.Add($"NEW_SCRIPTING_DEFINE_{_editedBuildProcess.ScriptingDefines.Count}");
-	        }
-		        
 	        pRect.height -= 4;
 	        pRect.y += 2;
 	        var currentScriptingDefineAtIndex = _editedBuildProcess.ScriptingDefines[index];
@@ -443,6 +485,7 @@ namespace UBS
 	        if (string.Equals(currentScriptingDefineAtIndex, newScriptingDefineAtIndex)) return;
 	        Undo.RecordObject(collection, $"Update Scripting Define at index {index}");
 	        _editedBuildProcess.ScriptingDefines[index] = newScriptingDefineAtIndex;
+	        _extraScriptingDefinesList.list[index] = newScriptingDefineAtIndex;
         }
         
         void PreStepDrawer(Rect pRect, int index, bool isActive, bool isFocused)
