@@ -88,10 +88,10 @@ namespace UBS
                 StepType = Type.GetType(TypeName);
             }
 	        }
-	        catch (Exception e)
+	        catch
 	        {
 		        if(logError)
-					UnityEngine.Debug.LogError($"Could not infer type from {AssemblyName} -> {TypeName}");
+					Debug.LogError($"Could not infer type from {AssemblyName} -> {TypeName}");
 		        StepType = null;
 		        return false;
 	        }

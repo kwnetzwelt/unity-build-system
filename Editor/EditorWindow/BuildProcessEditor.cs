@@ -553,8 +553,6 @@ namespace UBS
             
             case BuildStepParameterType.Boolean:
             {
-                bool value;
-                bool succeeded = pStep.Parameters;
                 pStep.Parameters.boolParameter = EditorGUI.Toggle(r5, pStep.Parameters);
             }
                 break;
@@ -588,7 +586,6 @@ namespace UBS
 				
             case BuildStepParameterType.UnityObject:
                 {
-                    int objectId;
                     UnityEngine.Object objectAssigned = pStep.Parameters;
                     
                     var assignedObject = EditorGUI.ObjectField(r5, objectAssigned, typeof(UnityEngine.Object), false);
@@ -736,8 +733,6 @@ namespace UBS
 
 				
 				case BuildTarget.StandaloneOSX:
-				case BuildTarget.StandaloneOSXIntel64:
-				case BuildTarget.StandaloneOSXIntel:
 
 				//
 				// special handle .app folders for OSX
@@ -761,10 +756,7 @@ namespace UBS
 
 					return outString;
 
-				case BuildTarget.StandaloneLinux:
 				case BuildTarget.StandaloneLinux64:
-				case BuildTarget.StandaloneLinuxUniversal:
-				
 				case BuildTarget.StandaloneWindows:
 				case BuildTarget.StandaloneWindows64:
 				

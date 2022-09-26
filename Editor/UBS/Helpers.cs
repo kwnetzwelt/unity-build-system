@@ -58,17 +58,11 @@ namespace UBS
 			case BuildTarget.WebGL: return BuildTargetGroup.WebGL;
             case BuildTarget.PS4:
 				return BuildTargetGroup.PS4;
-			case BuildTarget.StandaloneLinux:
 			case BuildTarget.StandaloneLinux64:
-			case BuildTarget.StandaloneLinuxUniversal:
-			case BuildTarget.StandaloneOSXIntel:
-			case BuildTarget.StandaloneOSXIntel64:
 			case BuildTarget.StandaloneOSX:
 			case BuildTarget.StandaloneWindows:
 			case BuildTarget.StandaloneWindows64:
 				return BuildTargetGroup.Standalone;
-			case BuildTarget.Tizen:
-				return BuildTargetGroup.Tizen;
 			}
 			return BuildTargetGroup.Unknown;
 		}
