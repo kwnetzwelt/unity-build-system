@@ -397,6 +397,7 @@ namespace UBS
 		{
 			if(pMessage.Length > 0)
 			{
+				Debug.LogError("UBS: " + pMessage);
 				EditorUtility.DisplayDialog("UBS: Error occured!", pMessage, "Ok - my fault.");
 			}
 			Cancel();
@@ -409,6 +410,7 @@ namespace UBS
 			_preStepWalker.Clear();
 			_postStepWalker.Clear();
 			
+			Debug.LogError("UBS: Build was cancelled");
 			_collection.RestoreLogTypes();
 		}
 
@@ -467,6 +469,8 @@ namespace UBS
 
 			if(_preStepWalker.IsDone())
 			{
+				_preStepWalker.End();
+
 				SetState(UBSState.building);
 			}
 			Save();
@@ -551,6 +555,7 @@ namespace UBS
 
 			if(_postStepWalker.IsDone())
 			{
+				_postStepWalker.End();
 				// this is invalid instead of done as we first need to check
 				// if there is another build process to run.
 				SetState(UBSState.invalid); 

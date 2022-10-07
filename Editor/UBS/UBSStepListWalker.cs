@@ -36,6 +36,11 @@ namespace UBS
             Steps = steps;
             Configuration = configuration;
         }
+        public void End()
+        {
+            _currentStep = null;
+            Index = Steps.Count;
+        }
         public void Clear()
         {
             if (_currentStep != null)
@@ -43,10 +48,7 @@ namespace UBS
                 _currentStep.BuildStepUpdate(); // call update one last time, to let the step know we are done. 
             }
 
-            _currentStep = null;
-            Index = 0;
-            Steps = null;
-            Configuration = null;
+            End();
         }
 
         public void MoveNext()
