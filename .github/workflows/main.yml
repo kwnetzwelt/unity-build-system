@@ -1,0 +1,18 @@
+name: Publish to edurino registry
+on:
+  workflow_dispatch:
+  push:
+    tags:        
+      - '*'
+      
+concurrency:
+  group: ${{github.ref}}
+  cancel-in-progress: false
+jobs:
+  publish:
+    - name: Create .npmrc file
+      run: |
+        echo "//registry.edurino.com/:_authToken=${{secrets.NPM_TOKEN}}" > ~/.npmrc
+    - name: Publish
+      run: |
+        npm publish --registry https://registry.edurino.com
