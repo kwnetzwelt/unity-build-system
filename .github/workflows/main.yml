@@ -13,6 +13,9 @@ jobs:
     name: Publish to Edurino Registry
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Create .npmrc file
         run: |
           echo "//registry.edurino.com/:_authToken=${{secrets.NPM_TOKEN}}" > ~/.npmrc
