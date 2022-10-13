@@ -18,6 +18,8 @@ jobs:
           echo "//registry.edurino.com/:_authToken=${{secrets.NPM_TOKEN}}" > ~/.npmrc
       - name: pwd
         run: pwd
+      - name: ls
+        run: ls -al
       - name: Publish
         run: |
           npm publish --registry https://registry.edurino.com
