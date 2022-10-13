@@ -14,6 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create .npmrc file
-        run: echo "//registry.edurino.com/:_authToken=${{secrets.NPM_TOKEN}}" > ~/.npmrc
+        run: |
+          echo "//registry.edurino.com/:_authToken=${{secrets.NPM_TOKEN}}" > ~/.npmrc
+      - name: pwd
+        run: pwd
       - name: Publish
-        run: npm publish --registry https://registry.edurino.com
+        run: |
+          npm publish --registry https://registry.edurino.com
