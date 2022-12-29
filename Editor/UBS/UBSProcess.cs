@@ -153,7 +153,7 @@ namespace UBS
         /// <param name="pPath">P path.</param>
         public static void SetProcessPath(string pPath)
         {
-            EditorPrefs.GetString(ProcessPathKey, ProcessPath);
+            EditorPrefs.GetString(ProcessPathKey, pPath);
         }
 
 		#region command line options
