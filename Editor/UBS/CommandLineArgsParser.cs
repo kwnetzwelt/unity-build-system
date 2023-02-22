@@ -6,14 +6,6 @@ using UnityEditor;
 
 namespace UBS
 {
-    public static class CLAP
-    {
-        [MenuItem("UBS/TestArgs")]
-        public static void MenuItem()
-        {
-            var clap = new CommandLineArgsParser(null);
-        }
-    }
     public class CommandLineArgsParser
     {
         private enum Context
