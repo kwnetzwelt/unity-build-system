@@ -320,127 +320,140 @@ namespace UBS
 
 			}
 
-			GUILayout.BeginVertical();
-
-			GUILayout.Label("Build Process", Styles.DetailsTitle);
-
-			Styles.HorizontalSeparator();
-
-			Undo.RecordObject(collection, "Edit Build Process Details");
-
-			_editedBuildProcess.Pretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build", 
-				"Will not trigger a unity build, but run everything else. "), _editedBuildProcess.Pretend);
-			pProcess.Name = EditorGUILayout.TextField("Name", _editedBuildProcess.Name);
-			_editedBuildProcess.Platform = (BuildTarget)EditorGUILayout.EnumPopup("Platform", 
-				_editedBuildProcess.Platform);
-			DrawOutputPathSelector(); 
-			_editedBuildProcess.UseEditorScenes = EditorGUILayout.Toggle(
-				new GUIContent("Use Scenes from Editor", 
-					"Instead of using its own Scene Collection, the Build Process will use whichever " +
-					"scenes are set in the EditorBuildSettings when it runs. "), _editedBuildProcess.UseEditorScenes);
-			
-			GUILayout.Space(5);
-			_showBuildOptions = EditorGUILayout.Foldout(_showBuildOptions, "Build Options");
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(25);
-
-			if (_showBuildOptions)
+			using (var check = new EditorGUI.ChangeCheckScope())
 			{
 				GUILayout.BeginVertical();
 
-				foreach (var buildOption in _buildOptions)
+				GUILayout.Label("Build Process", Styles.DetailsTitle);
+
+				Styles.HorizontalSeparator();
+
+				Undo.RecordObject(collection, "Edit Build Process Details");
+
+				_editedBuildProcess.Pretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build",
+					"Will not trigger a unity build, but run everything else. "), _editedBuildProcess.Pretend);
+				_editedBuildProcess.Name = EditorGUILayout.TextField("Name", _editedBuildProcess.Name);
+				_editedBuildProcess.Platform = (BuildTarget) EditorGUILayout.EnumPopup("Platform",
+					_editedBuildProcess.Platform);
+				DrawOutputPathSelector();
+				_editedBuildProcess.UseEditorScenes = EditorGUILayout.Toggle(
+					new GUIContent("Use Scenes from Editor",
+						"Instead of using its own Scene Collection, the Build Process will use whichever " +
+						"scenes are set in the EditorBuildSettings when it runs. "),
+					_editedBuildProcess.UseEditorScenes);
+
+				GUILayout.Space(5);
+				_showBuildOptions = EditorGUILayout.Foldout(_showBuildOptions, "Build Options");
+				GUILayout.BeginHorizontal();
+				GUILayout.Space(25);
+
+				if (_showBuildOptions)
 				{
-					bool selVal = (_editedBuildProcess.Options & buildOption) != 0;
-                    {
-                        string label = buildOption.ToString();
-                        label = label.Substring(label.LastIndexOf(',')+2); // to avoid having all zeroed entries in the name
-						bool resVal = EditorGUILayout.ToggleLeft(label, selVal);
-						if (resVal != selVal)
+					GUILayout.BeginVertical();
+
+					foreach (var buildOption in _buildOptions)
+					{
+						bool selVal = (_editedBuildProcess.Options & buildOption) != 0;
 						{
-							if (resVal)
-								_editedBuildProcess.Options = _editedBuildProcess.Options | buildOption;
-							else
-								_editedBuildProcess.Options = _editedBuildProcess.Options & ~buildOption;
-							UpdateSelectedOptions();
+							string label = buildOption.ToString();
+							label = label.Substring(label.LastIndexOf(',') +
+							                        2); // to avoid having all zeroed entries in the name
+							bool resVal = EditorGUILayout.ToggleLeft(label, selVal);
+							if (resVal != selVal)
+							{
+								if (resVal)
+									_editedBuildProcess.Options = _editedBuildProcess.Options | buildOption;
+								else
+									_editedBuildProcess.Options = _editedBuildProcess.Options & ~buildOption;
+								UpdateSelectedOptions();
+							}
 						}
 					}
+
+
+					GUILayout.EndVertical();
 				}
-
-				
-				GUILayout.EndVertical();
-			} else
-			{
-				if(!string.IsNullOrEmpty(_selectedOptionsString))
-					GUILayout.Label(_selectedOptionsString);
-			}
-
-
-			GUILayout.EndHorizontal();
-			GUILayout.Space(5);
-
-			
-			
-			GUI.enabled = !_editedBuildProcess.UseEditorScenes;
-			_showScenesList = EditorGUILayout.Foldout(_showScenesList, "Scene Collection (" + _sceneList.count + ")");
-			if (_showScenesList)
-			{
-				DrawList(_sceneList);
-			
-
-				GUILayout.BeginHorizontal();
-				GUILayout.FlexibleSpace();
-
-				
-				
-				if (GUILayout.Button("Copy scenes from settings"))
-					CopyScenesFromSettings();
-
-				if (GUILayout.Button("Clear scenes"))
-					_editedBuildProcess.SceneAssets.Clear();
-
-				GUILayout.EndHorizontal();
-			}
-			GUI.enabled = true;
-
-			GUILayout.Space(5);
-
-			_showExtraScriptingDefines = EditorGUILayout.Foldout(_showExtraScriptingDefines, "Extra Scripting Defines (" + _extraScriptingDefinesList.count + ")");
-			if (_showExtraScriptingDefines)
-			{
-				DrawList(_extraScriptingDefinesList);
-			
-				GUILayout.BeginHorizontal();
-				GUILayout.FlexibleSpace();
-
-				const string clearExtraScriptingDefines = "Clear Extra Scripting Defines";
-				if (GUILayout.Button(clearExtraScriptingDefines))
+				else
 				{
-					Undo.RecordObject(collection, clearExtraScriptingDefines);
-					_editedBuildProcess.ScriptingDefines.Clear();
-					_extraScriptingDefinesList.list.Clear();
+					if (!string.IsNullOrEmpty(_selectedOptionsString))
+						GUILayout.Label(_selectedOptionsString);
 				}
 
+
 				GUILayout.EndHorizontal();
+				GUILayout.Space(5);
+
+
+
+				GUI.enabled = !_editedBuildProcess.UseEditorScenes;
+				_showScenesList =
+					EditorGUILayout.Foldout(_showScenesList, "Scene Collection (" + _sceneList.count + ")");
+				if (_showScenesList)
+				{
+					DrawList(_sceneList);
+
+
+					GUILayout.BeginHorizontal();
+					GUILayout.FlexibleSpace();
+
+
+
+					if (GUILayout.Button("Copy scenes from settings"))
+						CopyScenesFromSettings();
+
+					if (GUILayout.Button("Clear scenes"))
+						_editedBuildProcess.SceneAssets.Clear();
+
+					GUILayout.EndHorizontal();
+				}
+
+				GUI.enabled = true;
+
+				GUILayout.Space(5);
+
+				_showExtraScriptingDefines = EditorGUILayout.Foldout(_showExtraScriptingDefines,
+					"Extra Scripting Defines (" + _extraScriptingDefinesList.count + ")");
+				if (_showExtraScriptingDefines)
+				{
+					DrawList(_extraScriptingDefinesList);
+
+					GUILayout.BeginHorizontal();
+					GUILayout.FlexibleSpace();
+
+					const string clearExtraScriptingDefines = "Clear Extra Scripting Defines";
+					if (GUILayout.Button(clearExtraScriptingDefines))
+					{
+						Undo.RecordObject(collection, clearExtraScriptingDefines);
+						_editedBuildProcess.ScriptingDefines.Clear();
+						_extraScriptingDefinesList.list.Clear();
+					}
+
+					GUILayout.EndHorizontal();
+				}
+
+				Styles.HorizontalSeparator();
+
+				_drawingBuildStepType = BuildStepType.PreBuildStep;
+
+				DrawList(_prebuildStepsList);
+
+
+				Styles.HorizontalSeparator();
+				GUILayout.Label("Actual Unity Build", Styles.MediumHint);
+				Styles.HorizontalSeparator();
+
+
+				_drawingBuildStepType = BuildStepType.PostBuildStep;
+
+				DrawList(_postbuildStepsList);
+
+				GUILayout.EndVertical();
+				if (check.changed)
+				{
+					EditorUtility.SetDirty(collection);
+					AssetDatabase.SaveAssets();
+				}
 			}
-
-			Styles.HorizontalSeparator();
-
-			_drawingBuildStepType = BuildStepType.PreBuildStep;
-
-            DrawList(_prebuildStepsList);
-
-
-			Styles.HorizontalSeparator();
-			GUILayout.Label("Actual Unity Build", Styles.MediumHint);
-			Styles.HorizontalSeparator();
-
-
-			_drawingBuildStepType = BuildStepType.PostBuildStep;
-
-            DrawList(_postbuildStepsList);
-			
-			GUILayout.EndVertical();
-
 		}
 
         private void DrawList(ReorderableList list)
