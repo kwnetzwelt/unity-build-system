@@ -64,6 +64,10 @@ namespace UBS
 			var logtypes= serializedObject.FindPropertyByAutoPropertyName("LogTypes");
 			EditorGUILayout.PropertyField(logtypes, new GUIContent("Logging Configuration"), true);
 			serializedObject.ApplyModifiedProperties();
+
+			data.cleanBuild = EditorGUILayout.Toggle("Run clean builds", data.cleanBuild);
+			Tooltip("If set to true adds CleanBuildCache to the BuildOptions when calling the buildpipeline. ");
+			
 			
 			GUILayout.BeginHorizontal();
 			{
@@ -97,7 +101,14 @@ namespace UBS
 			
 		}
 
-        
+		private void Tooltip(string text, MouseCursor cursor = MouseCursor.Arrow)
+		{
+			Rect rect = GUILayoutUtility.GetLastRect();
+			EditorGUIUtility.AddCursorRect(rect, cursor);
+			GUI.Label(rect, new GUIContent("", text));
+		}
+
+
 		[MenuItem("Assets/Create/UBS Build Collection")]
 		public static void CreateBuildCollectionMenuCommand()
 		{

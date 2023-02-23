@@ -182,12 +182,23 @@ namespace UBS
                 "-buildTag=", 
                 "-buildAll", 
                 "-commitID=", 
+                "-clean", // force clean builds on
+                "-noclean", // force clean builds off
                 "-tagName=", 
                 "-buildProcessByNames="
                 
             };
             
             bool batchMode = parser.Collection.HasArgument("batchmode");
+            CleanBuildArgument clean = CleanBuildArgument.NotAssigned;
+            if(parser.Collection.HasArgument("clean"))
+            {
+	            clean = CleanBuildArgument.Clean;
+            }else if (parser.Collection.HasArgument("noclean"))
+            {
+	            clean = CleanBuildArgument.NoClean;
+            }
+
             string collectionPath = parser.Collection.GetValue<string>("collection");
 			string androidSdkPath = parser.Collection.GetValue<string>("android-sdk");
 			string buildTag = parser.Collection.GetValue<string>("buildTag");            
@@ -245,11 +256,11 @@ namespace UBS
             {
                 string[] buildProcessNameList = startBuildProcessByNames.Split(',');
                 var lowerCaseTrimmedBuildProcessNameList = buildProcessNameList.Select(x => x.ToLower()).Select(x => x.Trim()).ToArray();
-                Create(collection, false, lowerCaseTrimmedBuildProcessNameList, batchMode, buildTag);
+                Create(collection, false, lowerCaseTrimmedBuildProcessNameList, batchMode, buildTag, clean);
             }
             else
             {
-                Create(collection, false, buildAll, batchMode, buildTag);
+                Create(collection, false, buildAll, batchMode, buildTag, clean);
             }
 			
 			
@@ -296,12 +307,14 @@ namespace UBS
 
 #endregion
 
-		public static void Create(BuildCollection collection, bool buildAndRun, bool pBatchMode = false, bool pBuildAll = false, string buildTag = "")
+		public static void Create(BuildCollection collection, bool buildAndRun, bool pBatchMode = false, bool pBuildAll = false, string buildTag = "", CleanBuildArgument clean = CleanBuildArgument.NotAssigned)
 		{
 			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
 			p._buildAndRun = buildAndRun;
 			p._batchMode = pBatchMode;
 			p._collection = collection;
+			if(clean != CleanBuildArgument.NotAssigned)
+				collection.cleanBuild = clean == CleanBuildArgument.Clean;
 			if(!pBuildAll)
 			{
 				p._selectedProcesses = p._collection.Processes.FindAll( obj => obj.Selected );
@@ -329,12 +342,14 @@ namespace UBS
         /// Builds a buildcollection by using an array of build process names (',' seperated!)
         /// By using a list of build process names, we reconfigure and retarget the actual build collection.
         /// </summary>
-        public static void Create(BuildCollection collection, bool buildAndRun, string[] namesToBuild, bool batchMode = false, string buildTag = "")
+        public static void Create(BuildCollection collection, bool buildAndRun, string[] namesToBuild, bool batchMode = false, string buildTag = "", CleanBuildArgument clean = CleanBuildArgument.NotAssigned)
         {
             UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
             p._buildAndRun = buildAndRun;
             p._batchMode = batchMode;
             p._collection = collection;
+            if(clean != CleanBuildArgument.NotAssigned)
+				collection.cleanBuild = clean == CleanBuildArgument.Clean;
             if (namesToBuild != null && namesToBuild.Length > 0)
             {
                 var selectedProcesses = p._collection.Processes
@@ -479,6 +494,9 @@ namespace UBS
 		{
             
 			BuildOptions bo = CurrentProcess.Options;
+			if(CurrentBuildConfiguration.GetCurrentBuildCollection().cleanBuild)
+				bo &= BuildOptions.CleanBuildCache;
+			
 			if (_buildAndRun)
 				bo |= BuildOptions.AutoRunPlayer;
 
@@ -612,8 +630,15 @@ namespace UBS
 
 		}
 	}
-    
-	public enum UBSState
+
+    public enum CleanBuildArgument
+    {
+	    NotAssigned,
+	    Clean,
+	    NoClean
+    }
+
+    public enum UBSState
 	{
 		invalid,
 		setup,
