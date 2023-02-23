@@ -223,6 +223,11 @@ namespace UBS
             
 
             GUILayout.EndArea();
+
+            if (mProcess.IsDone)
+            {
+	            Close();
+            }
 		}
 
 		void KeyValue(string pKey, object pValue)

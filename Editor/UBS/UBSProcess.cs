@@ -57,10 +57,6 @@ namespace UBS
         int
             _currentBuildProcessIndex;
 
-        [FormerlySerializedAs("mCurrent")] [SerializeField]
-        int
-            _current;
-
         [FormerlySerializedAs("mCurrentState")] [SerializeField]
         UBSState
             _currentState = UBSState.invalid;
@@ -405,12 +401,14 @@ namespace UBS
 
 		public void Cancel()
 		{
-			
+			Debug.LogError( $"UBS: Build Process \"{currentBuildConfiguration.GetCurrentBuildProcess().Name}\" was cancelled. ");
+
 			SetState(UBSState.aborted);
+			
+			
 			_preStepWalker.Clear();
 			_postStepWalker.Clear();
 			
-			Debug.LogError("UBS: Build was cancelled");
 			_collection.RestoreLogTypes();
 		}
 
@@ -433,6 +431,7 @@ namespace UBS
 		{
 			_collection.RestoreLogTypes();
 			SetState(UBSState.done);
+			Debug.Log("UBSProcess is done. ");
 		}
 		void NextBuild()
 		{
@@ -556,6 +555,7 @@ namespace UBS
 			if(_postStepWalker.IsDone())
 			{
 				_postStepWalker.End();
+				Debug.Log($"Build Process \"{ _postStepWalker.Configuration.GetCurrentBuildProcess().Name}\" is done. ");
 				// this is invalid instead of done as we first need to check
 				// if there is another build process to run.
 				SetState(UBSState.invalid); 
