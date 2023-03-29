@@ -271,9 +271,12 @@ namespace UBS
 				while(true)
 				{
 					process.MoveNext();
-					if(process.CurrentState == UBSState.done)
+					switch (process.CurrentState)
 					{
-						return;
+						case UBSState.done:
+							return;
+						case UBSState.aborted:
+							throw new Exception("Build aborted");
 					}
 				}
 			}catch(Exception pException)
