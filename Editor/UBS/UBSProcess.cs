@@ -409,7 +409,7 @@ namespace UBS
 		
 		public void Cancel(string pMessage)
 		{
-			if(pMessage.Length > 0)
+			if(pMessage.Length > 0 && !IsInBatchMode)
 			{
 				Debug.LogError("UBS: " + pMessage);
 				EditorUtility.DisplayDialog("UBS: Error occured!", pMessage, "Ok - my fault.");
