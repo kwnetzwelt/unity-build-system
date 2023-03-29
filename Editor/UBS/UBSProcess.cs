@@ -428,6 +428,11 @@ namespace UBS
 			_postStepWalker.Clear();
 			
 			_collection.RestoreLogTypes();
+
+			if (IsInBatchMode)
+			{
+				EditorApplication.Exit(1);
+			}
 		}
 
 		#endregion
@@ -447,6 +452,9 @@ namespace UBS
 		
 		void OnDone()
 		{
+			if(IsInBatchMode && _currentState == UBSState.aborted)
+				EditorApplication.Exit(1);
+			
 			_collection.RestoreLogTypes();
 			SetState(UBSState.done);
 			Debug.Log("UBSProcess is done. ");
