@@ -260,7 +260,7 @@ namespace UBS
             }
             else
             {
-                Create(collection, false, buildAll, batchMode, buildTag, clean);
+                Create(collection, false, batchMode, buildAll, buildTag, clean);
             }
 			
 			
