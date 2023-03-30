@@ -618,7 +618,8 @@ namespace UBS
 				DirectoryInfo dir;
 				if(pProcess.Platform == BuildTarget.Android
 				   || pProcess.Platform == BuildTarget.StandaloneWindows
-				   || pProcess.Platform == BuildTarget.StandaloneWindows64)
+				   || pProcess.Platform == BuildTarget.StandaloneWindows64
+				   || pProcess.Platform == BuildTarget.StandaloneLinux64)
 					dir = new DirectoryInfo(Path.GetDirectoryName(UBS.Helpers.GetAbsolutePathRelativeToProject( pProcess.OutputPath )));
 				else
 					dir = new DirectoryInfo(pProcess.OutputPath);
