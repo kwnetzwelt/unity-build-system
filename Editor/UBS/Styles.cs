@@ -186,6 +186,32 @@ namespace UBS
 				return _iconWindows;
 			}
 		}
+		static Texture2D _iconLinux;
+		public static Texture2D IconLinux
+		{ 
+			get
+			{
+				if (_iconLinux == null)
+				{
+					_iconLinux = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles._imagePath + "icons/ico_linux.png", typeof(Texture2D));
+					
+				}
+				return _iconLinux;
+			}
+		}
+		static Texture2D _iconMacOs;
+		public static Texture2D IconMacOs
+		{ 
+			get
+			{
+				if (_iconMacOs == null)
+				{
+					_iconMacOs = (Texture2D)AssetDatabase.LoadAssetAtPath(Styles._imagePath + "icons/ico_macos.png", typeof(Texture2D));
+					
+				}
+				return _iconMacOs;
+			}
+		}
 		static GUIStyle _icon;
 		public static GUIStyle Icon
 		{ 
