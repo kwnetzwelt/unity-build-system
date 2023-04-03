@@ -25,6 +25,7 @@ namespace UBS
 
         public string commitID = "";
         public string tagName = "";
+        public string buildTimestamp = "";
 
         /// <summary>
         /// Increases the build revision. 

@@ -604,6 +604,9 @@ namespace UBS
 
 		bool CheckOutputPath(BuildProcess pProcess)
 		{
+			// We don't need an output path for a pretend build
+			if (pProcess.Pretend) return true;
+				
 			string error = "";
 			
 			
