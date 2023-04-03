@@ -9,6 +9,9 @@
     "email": "kwnetzwelt@gmail.com",
     "url": "https://kaiwegner.online"
   },
+  "dependencies": {
+    "com.unity.addressables": "1.19.19"
+  },
   "licensesUrl": "MIT",
   "type": "library"
 }

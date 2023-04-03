@@ -2,7 +2,8 @@
     "name": "com.kwnetzwelt.ubs.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:de4b23ef42f5548d68f72b62e60627f1"
+        "GUID:de4b23ef42f5548d68f72b62e60627f1",
+        "GUID:69448af7b92c7f342b298e06a37122aa"
     ],
     "includePlatforms": [
         "Editor"

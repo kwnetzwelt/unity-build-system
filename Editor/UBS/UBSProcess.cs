@@ -4,6 +4,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Build;
+using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Build.Reporting;
 using UnityEngine.Serialization;
 
@@ -514,7 +517,27 @@ namespace UBS
 			if (!CurrentProcess.Pretend)
 			{
 				var scenePaths = GetScenePaths();
-				
+
+				// Does this project use addressables?
+				if (AddressableAssetSettingsDefaultObject.Settings != null)
+				{
+					// We'll need to apply the addressable group settings for the build
+					// to set which are included
+					CurrentProcess.ApplyAddressableGroupSettingsForBuild();
+					
+					// Build addressable content
+					Debug.Log("Building addressable content...");
+					AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
+					if (string.IsNullOrEmpty(result.Error))
+					{
+						Debug.Log("Addressable content built successfully.");
+					}
+					else
+					{
+						Debug.Log($"Error building addressable content - {result.Error}");
+					}
+				}
+
 				BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
 				{
 					scenes = scenePaths.ToArray(),

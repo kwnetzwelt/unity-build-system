@@ -2,16 +2,73 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System;
+using System.Linq;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEngine.Serialization;
 
 namespace UBS {
+	
 	[Serializable]
 	public class BuildProcess {
 
+		/// <summary>
+		/// Wrapper class for addressable groups, to allow them to be disabled/enabled for each build
+		/// </summary>
+		[Serializable]
+		public class AddressableGroupStatus
+		{
+			public string Guid;
+			public string Name;
+			public bool Enabled;
+		}
+
 		public BuildProcess()
 		{
-
+			
 		}
+
+		public void CheckAddressableGroupStatus()
+		{
+			// Check addressable groups are added to entries
+			if (AddressableAssetSettingsDefaultObject.Settings == null)
+			{
+				// No addressable asset settings, ignore
+				return;
+			}
+			
+			var allGroups = AddressableAssetSettingsDefaultObject.Settings.groups;
+
+			foreach (var addressableGroup in allGroups)
+			{
+				// Get schema for inclusion in bundled asset group 
+				var schema = addressableGroup.GetSchema<BundledAssetGroupSchema>();
+				//  if this is not present, we can ignore
+				if (schema==null) continue;
+				// Do we already have an entry for this group?
+				var matchingEntry = AddressableGroups.FirstOrDefault(group => group.Guid == addressableGroup.Guid);
+				// If not, create a new entry
+				if (matchingEntry==null)
+				{
+					AddressableGroups.Add(new AddressableGroupStatus() {Guid = addressableGroup.Guid, Enabled = schema.IncludeInBuild, Name = addressableGroup.Name});
+				}
+				else
+				{
+					matchingEntry.Name=addressableGroup.Name;
+				}
+			}
+			// Remove any entries that are no longer valid (group doesnt exist any more)
+			for (var i=0;i<AddressableGroups.Count;i++)
+			{
+				var entry = AddressableGroups[i];
+				if (allGroups.FirstOrDefault(group=>group.Guid==entry.Guid)==null)
+				{
+					AddressableGroups.RemoveAt(i);
+					i--;
+				}
+			}
+		}
+		
 		public BuildProcess(BuildProcess other)
 		{
 			foreach(var bs in other.PreBuildSteps)
@@ -85,7 +142,39 @@ namespace UBS {
 
         [field:SerializeField] 
         public List<string> ScriptingDefines { get; protected set; } = new();
+        
+        [field:SerializeField] 
+        public List<AddressableGroupStatus> AddressableGroups { get; protected set; } = new();
 
         #endregion
+
+        public void ApplyAddressableGroupSettingsForBuild()
+        {
+	        // Get all addressable asset groups
+	        var allGroups = AddressableAssetSettingsDefaultObject.Settings.groups;
+	        
+	        foreach (var groupEntry in AddressableGroups)
+	        {
+		       
+		        // Get schema for inclusion in bundled asset group 
+		        var matchingGroup = allGroups.FirstOrDefault(group => group.Guid == groupEntry.Guid);
+		        if (matchingGroup != null)
+		        {
+			        var schema = matchingGroup.GetSchema<BundledAssetGroupSchema>();
+			        if (schema != null)
+			        {
+				        schema.IncludeInBuild= groupEntry.Enabled;
+			        }
+			        else
+			        {
+				        Debug.Log($"Couldn't find BundledAssetGroupSchema - {groupEntry.Name}");
+			        }
+		        }
+		        else
+		        {
+			        Debug.LogWarning($"Couldn't find matching addressable group - {groupEntry.Name}");
+		        }
+	        }
+        }
 	}
 }

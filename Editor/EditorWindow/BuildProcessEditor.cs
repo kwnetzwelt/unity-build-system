@@ -136,6 +136,7 @@ namespace UBS
 		BuildCollection collection;
 
 		private bool _showExtraScriptingDefines;
+		private bool _showAddressableGroups;
 
 		
 		public BuildProcessEditor()
@@ -178,6 +179,7 @@ namespace UBS
         private ReorderableList _extraScriptingDefinesList;
         private ReorderableList _prebuildStepsList;
         private ReorderableList _postbuildStepsList;
+        private ReorderableList _addressableGroupsList;
 
         void OnEnable()
 		{
@@ -193,7 +195,6 @@ namespace UBS
             
             UpdateSelectedOptions();
             
-
             _sceneList = new ReorderableList(_editedBuildProcess.SceneAssets, typeof(SceneAsset));
             _sceneList.drawHeaderCallback = SceneHeaderDrawer;
             _sceneList.drawElementCallback = SceneDrawer;
@@ -204,7 +205,7 @@ namespace UBS
 	            else
 		            _editedBuildProcess.SceneAssets.Add(null);
             };
-
+            
             _extraScriptingDefinesList = new ReorderableList(_editedBuildProcess.ScriptingDefines.ToList(), typeof(string))
 	            {
 		            drawHeaderCallback = ExtraScriptingDefinesHeaderDrawer,
@@ -221,7 +222,17 @@ namespace UBS
             _postbuildStepsList = new ReorderableList(_editedBuildProcess.PostBuildSteps, typeof(BuildStep));
             _postbuildStepsList.drawHeaderCallback = PostStepHeaderDrawer;
             _postbuildStepsList.drawElementCallback = PostStepDrawer;
-
+			
+            // Check status of addressable groups used for this build - this will ensure list is up to date
+            _editedBuildProcess.CheckAddressableGroupStatus();
+            _addressableGroupsList = new ReorderableList(_editedBuildProcess.AddressableGroups, typeof(BuildProcess.AddressableGroupStatus))
+            {
+	            drawHeaderCallback = AddressableGroupsHeaderDrawer,
+	            drawElementCallback = AddressableGroupsElementDrawer,
+	            onReorderCallback = AddressableGroupsReorder,
+	            displayAdd = false,
+	            displayRemove = false
+            };
 
         }
 
@@ -259,6 +270,15 @@ namespace UBS
 	        }
         }
 
+        private void AddressableGroupsReorder(ReorderableList list)
+        {
+	        for (var index = 0; index < list.count; index++)
+	        {
+		        _editedBuildProcess.AddressableGroups[index] = list.list[index] as BuildProcess.AddressableGroupStatus;
+	        }
+        }
+        
+
         // https://stackoverflow.com/a/44811113
         public static bool IsObsolete(Enum value)
         {  
@@ -284,6 +304,11 @@ namespace UBS
         private void PostStepHeaderDrawer(Rect rect)
         {
             GUI.Label(rect, "Post Build Steps");
+        }
+        
+        private void AddressableGroupsHeaderDrawer(Rect rect)
+        {
+	        GUI.Label(rect, "Addressable Groups included in build");
         }
 
         void UpdateSelectedOptions()
@@ -333,7 +358,7 @@ namespace UBS
 				_editedBuildProcess.Pretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build",
 					"Will not trigger a unity build, but run everything else. "), _editedBuildProcess.Pretend);
 				_editedBuildProcess.Name = EditorGUILayout.TextField("Name", _editedBuildProcess.Name);
-				_editedBuildProcess.Platform = (BuildTarget) EditorGUILayout.EnumPopup("Platform",
+				_editedBuildProcess.Platform = (BuildTarget)EditorGUILayout.EnumPopup("Platform",
 					_editedBuildProcess.Platform);
 				DrawOutputPathSelector();
 				_editedBuildProcess.UseEditorScenes = EditorGUILayout.Toggle(
@@ -431,8 +456,17 @@ namespace UBS
 					GUILayout.EndHorizontal();
 				}
 
-				Styles.HorizontalSeparator();
+				GUILayout.Space(5);
 
+				_showAddressableGroups = EditorGUILayout.Foldout(_showAddressableGroups,
+					"Addressable Groups (" + _editedBuildProcess.AddressableGroups.Count + ")");
+				if (_showAddressableGroups)
+				{
+					DrawList(_addressableGroupsList);
+				}
+				
+				Styles.HorizontalSeparator();
+				
 				_drawingBuildStepType = BuildStepType.PreBuildStep;
 
 				DrawList(_prebuildStepsList);
@@ -500,6 +534,24 @@ namespace UBS
 	        _editedBuildProcess.ScriptingDefines[index] = newScriptingDefineAtIndex;
 	        _extraScriptingDefinesList.list[index] = newScriptingDefineAtIndex;
         }
+        
+        private void AddressableGroupsElementDrawer(Rect pRect, int index, bool isActive, bool isFocused)
+        {
+	        pRect.height -= 4;
+	        pRect.y += 2;
+	        var currentAddressableGroupAtIndex = _editedBuildProcess.AddressableGroups[index];
+	        var groupEnabled = EditorGUI.Toggle(pRect, currentAddressableGroupAtIndex.Enabled);
+	        if (groupEnabled != currentAddressableGroupAtIndex.Enabled)
+	        {
+		        Undo.RecordObject(collection, $"Update addressable group enabled at index {index}");
+		        _editedBuildProcess.AddressableGroups[index].Enabled = groupEnabled;
+		        _addressableGroupsList.list[index] = _editedBuildProcess.AddressableGroups[index];
+	        }
+	        pRect.x += 20;
+	        EditorGUI.LabelField(pRect,currentAddressableGroupAtIndex.Name);
+        }
+        
+        
         
         void PreStepDrawer(Rect pRect, int index, bool isActive, bool isFocused)
         {
