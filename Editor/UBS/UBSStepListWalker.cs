@@ -96,6 +96,9 @@ namespace UBS
                 _currentStep = Activator.CreateInstance(Steps[Index].StepType) as IBuildStepProvider;
                 _currentStepEntry = new BuildStepProviderEntry(Steps[Index].StepType);
                 Configuration.SetParams( Steps[Index].Parameters );
+                var ubsProcess = UBSProcess.LoadUBSProcess();
+                Configuration.CommandlineArgs =
+                    new CommandLineArgsParser.ArgsCollection(ubsProcess.config.CommandlineArgs);
             }
             else 
             {

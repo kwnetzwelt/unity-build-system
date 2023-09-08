@@ -173,25 +173,83 @@ namespace UBS
             {
                 return Name + " " + Value;
             }
+
+            public Argument(Argument other)
+            {
+                Name = other.Name;
+                Value = other.Value;
+            }
+
+            public Argument()
+            {
+                
+            }
         }
 
         public class ArgsCollection
         {
-            
+            public ArgsCollection(ArgsCollection other)
+            {
+                foreach (var argument in other.arguments)
+                {
+                    arguments.Add(new Argument(argument));
+                }
+            }
             public bool HasArgument(string argument)
             {
                 return arguments.Find( (a) => a.Name == argument) != null;
             }
 
-            public string GetValue<T>(string argument)
+            /// <summary>
+            /// Will extract the value of a commandline argument. 
+            /// </summary>
+            /// <returns>The value of the argument or null if the argument was not present or found. </returns>
+            public string GetValue(string argument)
             {
                 var found = arguments.Find((a) => a.Name == argument);
                 if (found == null)
                     return null;
                 return found.Value;
             }
-
+            
+            public bool TryGetValue(string argument, out bool value)
+            {
+                value = false;
+                var found = arguments.Find((a) => a.Name == argument);
+                if (found == null)
+                    return false;
+                return bool.TryParse(found.Value, out value);
+            }
+            public bool TryGetValue(string argument, out float value)
+            {
+                value = 0;
+                var found = arguments.Find((a) => a.Name == argument);
+                if (found == null)
+                    return false;
+                return float.TryParse(found.Value, out value);
+            }
+            public bool TryGetValue(string argument, out int value)
+            {
+                value = 0;
+                var found = arguments.Find((a) => a.Name == argument);
+                if (found == null)
+                    return false;
+                return int.TryParse(found.Value, out value);
+            }
+            public bool TryGetValue(string argument, ref string value)
+            {
+                var found = arguments.Find((a) => a.Name == argument);
+                if (found == null)
+                    return false;
+                value = found.Value;
+                return true;
+            }
+            
             internal List<Argument> arguments = new List<Argument>();
+
+            public ArgsCollection()
+            {
+            }
 
             public List<Argument> Arguments => arguments;
             internal void Next()

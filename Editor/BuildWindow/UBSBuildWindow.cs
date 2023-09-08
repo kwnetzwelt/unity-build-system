@@ -52,10 +52,10 @@ namespace UBS
 
         }
 
-		public void Run(BuildCollection pCollection, bool pBuildAndRun)
+		public void Run(BuildCollection collection, bool buildAndRun)
         {
             scrollPosition01 = Vector2.zero;
-            UBSProcess.Create(pCollection, pBuildAndRun);
+            UBSProcess.CreateFromCollection(collection, buildAndRun);
 		}
 
 		void Initialize()

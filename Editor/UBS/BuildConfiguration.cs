@@ -43,6 +43,7 @@ namespace UBS
 
         public string ProjectDirectory { get; set; }
 
+        public CommandLineArgsParser.ArgsCollection CommandlineArgs { get; set; }
 
 
         public BuildProcess GetCurrentBuildProcess()

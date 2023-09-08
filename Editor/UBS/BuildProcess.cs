@@ -34,6 +34,7 @@ namespace UBS {
 			SceneAssets = new List<SceneAsset>( other.SceneAssets );
 		}
 
+
 		#region data
 
 		/// <summary>

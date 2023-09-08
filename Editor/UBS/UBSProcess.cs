@@ -17,68 +17,53 @@ namespace UBS
 
 
 		#region data
-        
 
-        [SerializeField]
-        BuildConfiguration
-            currentBuildConfiguration;
+		public UBSProcessConfiguration config;
+
+        [SerializeField] BuildConfiguration currentBuildConfiguration;
         BuildConfiguration CurrentBuildConfiguration
         {
             get { return currentBuildConfiguration;}
 
         }
 
-        [FormerlySerializedAs("mBuildAndRun")] [SerializeField]
-        bool
-            _buildAndRun;
-
-        [FormerlySerializedAs("mBatchMode")] [SerializeField]
-        bool
-            _batchMode;
         public bool IsInBatchMode
         {
-            get { return _batchMode; }
+            get { return config.BatchMode; }
         }
 
-        [FormerlySerializedAs("mCollection")] [SerializeField]
-        BuildCollection
-            _collection;
         public BuildCollection BuildCollection
         {
-            get { return _collection; }
+            get { return config.Collection; }
         }
 
-        [FormerlySerializedAs("mSelectedProcesses")] [SerializeField]
-        List<BuildProcess>
-            _selectedProcesses;
 
-
-        [FormerlySerializedAs("mCurrentBuildProcessIndex")] [SerializeField]
+        [SerializeField]
         int
-            _currentBuildProcessIndex;
+            currentBuildProcessIndex;
 
-        [FormerlySerializedAs("mCurrentState")] [SerializeField]
+        [SerializeField]
         UBSState
-            _currentState = UBSState.invalid;
+            currentState = UBSState.invalid;
 
-        [FormerlySerializedAs("mPreStepWalker")] [SerializeField]
+        [SerializeField]
         UBSStepListWalker
-            _preStepWalker = new UBSStepListWalker();
+            preStepWalker = new UBSStepListWalker();
 
-        [FormerlySerializedAs("mPostStepWalker")] [SerializeField]
+        [SerializeField]
         UBSStepListWalker
-            _postStepWalker = new UBSStepListWalker();
+            postStepWalker = new UBSStepListWalker();
 
         public UBSState CurrentState
         {
-            get { return _currentState; }
+            get { return currentState; }
         }
 
         public UBSStepListWalker SubPreWalker
         {
             get
             {
-                return _preStepWalker;
+                return preStepWalker;
             }
         }
 
@@ -86,7 +71,7 @@ namespace UBS
         {
             get
             {
-                return _postStepWalker;
+                return postStepWalker;
             }
         }
 
@@ -96,7 +81,7 @@ namespace UBS
             {
 
                 return ((SubPreWalker.Progress + SubPostWalker.Progress) / 2.0f
-                    + System.Math.Max(0, _currentBuildProcessIndex - 1)) / (float)_selectedProcesses.Count;
+                    + Math.Max(0, currentBuildProcessIndex - 1)) / config.SelectedBuildProcesses.Count;
             }
         }
 
@@ -116,11 +101,11 @@ namespace UBS
         {
             get
             {
-                if(_selectedProcesses == null || _currentBuildProcessIndex >= _selectedProcesses.Count)
+                if(config.SelectedBuildProcesses == null || currentBuildProcessIndex >= config.SelectedBuildProcesses.Count)
                 {
                     return null;
                 }
-                return _selectedProcesses[_currentBuildProcessIndex];
+                return config.SelectedBuildProcesses[currentBuildProcessIndex];
             }
         }
 
@@ -156,39 +141,40 @@ namespace UBS
 
         /// <summary>
         /// Builds a given build collection from command line. Call this method directly from the command line using Unity in headless mode. 
-        /// <https://docs.unity3d.com/Documentation/Manual/CommandLineArguments.html>
-        /// 
+        /// https://docs.unity3d.com/Documentation/Manual/CommandLineArguments.html
+        /// <br /><br />
         /// Provide `collection` parameter to your command line build to specify the collection you want to build. 
-        /// All selected build processes within the collection will be build. 
-        /// 
-        /// Example: -collection "Assets/New\ BuildCollection.asset"
+        /// All selected build processes within the collection will be build.
+        /// <br /><br />
+        /// Provide `buildProcessByNames` parameter with a comma separated list of buildprocesses that are present
+        /// in your collection. Only these build processes will be built. Note that the names are cast to lowercase
+        /// for matching.
+        /// <br /><br />
+        /// Alternatively provide `buildAll` which will build all buildprocesses within a collection no matter
+        /// if they were selected in the editor. 
+        /// <br /><br />
+        /// Provide `buildTag` parameter to add a string to the output name of your builds.
+        /// <br /><br />
+        /// Provide `commitID` parameter. It will be stored in Editorprefs for use in Buildsteps. 
+        /// <br /><br />
+        /// Provide `tagName` parameter. It will be stored in Editorprefs for use in Buildsteps. 
+        /// <br /><br />
+        /// Provide `clean`or `noclean` parameter to either force a clean build or prevent a clean build. If no parameter is found 
+        /// Example: -batchmode  -collection "Assets/New\ BuildCollection.asset" -buildProcessByNames "Android,iOS"
+        /// <br /><br />
+        /// Other Arguments: android-sdk, android-ndk, jdk-path<br />
         /// </summary>
+        /// <example>/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath ~/UnityProjects/MyProject -collection "Assets/New\ BuildCollection.asset" -buildProcessByNames "Android,iOS" -executeMethod UBS.UBSProcess.BuildFromCommandLine</example>
         public static void BuildFromCommandLine()
         {
             
-            string[] arguments = System.Environment.GetCommandLineArgs();
+            string[] arguments = Environment.GetCommandLineArgs();
             CommandLineArgsParser parser = new CommandLineArgsParser(arguments);
             foreach (var argument in parser.Collection.Arguments)
             {
 	            UnityEngine.Debug.Log(argument.Name + " -> " + argument.Value);  
-            } 
+            }
 
-            string[] availableArgs = { 
-                "-batchmode", 
-                "-collection=", 
-                "-android-sdk=", 
-                "-android-ndk=", 
-                "-jdk-path=", 
-                "-buildTag=", 
-                "-buildAll", 
-                "-commitID=", 
-                "-clean", // force clean builds on
-                "-noclean", // force clean builds off
-                "-tagName=", 
-                "-buildProcessByNames="
-                
-            };
-            
             bool batchMode = parser.Collection.HasArgument("batchmode");
             CleanBuildArgument clean = CleanBuildArgument.NotAssigned;
             if(parser.Collection.HasArgument("clean"))
@@ -199,16 +185,16 @@ namespace UBS
 	            clean = CleanBuildArgument.NoClean;
             }
 
-            string collectionPath = parser.Collection.GetValue<string>("collection");
-			string androidSdkPath = parser.Collection.GetValue<string>("android-sdk");
-			string buildTag = parser.Collection.GetValue<string>("buildTag");            
-            string commitID = parser.Collection.GetValue<string>("commitID") ;
-			string tagName = parser.Collection.GetValue<string>("tagName");
-			string androidNdkPath = parser.Collection.GetValue<string>("android-ndk");
-			string jdkPath = parser.Collection.GetValue<string>("jdk-path");
+            string collectionPath = parser.Collection.GetValue("collection");
+			string androidSdkPath = parser.Collection.GetValue("android-sdk");
+			string buildTag = parser.Collection.GetValue("buildTag");            
+            string commitID = parser.Collection.GetValue("commitID") ;
+			string tagName = parser.Collection.GetValue("tagName");
+			string androidNdkPath = parser.Collection.GetValue("android-ndk");
+			string jdkPath = parser.Collection.GetValue("jdk-path");
             bool buildAll = parser.Collection.HasArgument("buildAll");
             
-            string startBuildProcessByNames = parser.Collection.GetValue<string>("buildProcessByNames");
+            string startBuildProcessByNames = parser.Collection.GetValue("buildProcessByNames");
 			
 			if(collectionPath == null)
 			{
@@ -252,15 +238,25 @@ namespace UBS
 			BuildCollection collection = AssetDatabase.LoadAssetAtPath(collectionPath, typeof(BuildCollection)) as BuildCollection;
 			// Run Create Command
 
+			UBSProcessConfiguration config = new UBSProcessConfiguration()
+			{
+				Collection = collection,
+				BuildAndRun = false,
+				BatchMode = batchMode,
+				BuildAll = buildAll,
+				BuildTag = buildTag,
+				Clean = clean,
+				CommandlineArgs = parser.Collection
+			};
+			
             if (!String.IsNullOrEmpty(startBuildProcessByNames))
             {
                 string[] buildProcessNameList = startBuildProcessByNames.Split(',');
-                var lowerCaseTrimmedBuildProcessNameList = buildProcessNameList.Select(x => x.ToLower()).Select(x => x.Trim()).ToArray();
-                Create(collection, false, lowerCaseTrimmedBuildProcessNameList, batchMode, buildTag, clean);
+                config.SelectedBuildProcessNames.AddRange(buildProcessNameList);
             }
             else
             {
-                Create(collection, false, batchMode, buildAll, buildTag, clean);
+	            CreateFromConfig(config);
             }
 			
 			
@@ -287,18 +283,18 @@ namespace UBS
 			}
 		}
 
-		public static string AddBuildTag(string pOutputPath, string pTag)
+		public static string AddBuildTag(string outputPath, string tag)
 		{
-			List<string> splittedPath = new List<string>(pOutputPath.Split('/'));
+			List<string> splittedPath = new List<string>(outputPath.Split('/'));
 
 			if(splittedPath[splittedPath.Count - 1].Contains("."))
 			{
 
-				splittedPath.Insert(splittedPath.Count - 2, pTag);
+				splittedPath.Insert(splittedPath.Count - 2, tag);
 			}
 			else
 			{
-				splittedPath.Add(pTag);
+				splittedPath.Add(tag);
 			}
 
 			splittedPath.RemoveAll((str) => {
@@ -310,75 +306,64 @@ namespace UBS
 
 #endregion
 
-		public static void Create(BuildCollection collection, bool buildAndRun, bool pBatchMode = false, bool pBuildAll = false, string buildTag = "", CleanBuildArgument clean = CleanBuildArgument.NotAssigned)
+		public static void CreateFromCollection(BuildCollection pCollection, bool pBuildAndRun)
 		{
-			UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
-			p._buildAndRun = buildAndRun;
-			p._batchMode = pBatchMode;
-			p._collection = collection;
-			if(clean != CleanBuildArgument.NotAssigned)
-				collection.cleanBuild = clean == CleanBuildArgument.Clean;
-			if(!pBuildAll)
+			var config = new UBSProcessConfiguration()
 			{
-				p._selectedProcesses = p._collection.Processes.FindAll( obj => obj.Selected );
+				BuildAndRun = pBuildAndRun,
+				Collection = pCollection
+			};
+			CreateFromConfig(config);
+		}
+		public static void CreateFromConfig(UBSProcessConfiguration config)
+		{
+			UBSProcess p = CreateInstance<UBSProcess>();
+			
+			
+			// clean build
+			if(config.Clean != CleanBuildArgument.NotAssigned)
+				config.Collection.cleanBuild = config.Clean == CleanBuildArgument.Clean;
+			
+			// build all or only selected ones?
+			if(!config.BuildAll)
+			{
+				config.SelectedBuildProcesses= config.Collection.Processes.FindAll( obj => obj.Selected );
+			}
+			else if (config.SelectedBuildProcessNames.Count > 0)
+			{
+				var lowerCaseTrimmedBuildProcessNameList = config.SelectedBuildProcessNames.Select(x => x.ToLower()).Select(x => x.Trim()).ToArray();
+
+				var selectedProcesses = config.Collection.Processes
+					.Where(buildProcess => lowerCaseTrimmedBuildProcessNameList.Contains(buildProcess.Name.ToLower())).ToList();
+				config.SelectedBuildProcesses = selectedProcesses;
 			}
 			else
 			{
-				p._selectedProcesses = p._collection.Processes;
+				config.SelectedBuildProcesses = config.Collection.Processes;
 			}
-			p._currentState = UBSState.invalid;
-
-			if(!string.IsNullOrEmpty(buildTag))
+			
+			// add a tag to all the outputpaths
+			if(!string.IsNullOrEmpty(config.BuildTag))
 			{
-				foreach(var sp in p._selectedProcesses)
+				foreach(var sp in config.SelectedBuildProcesses)
 				{
-					sp.OutputPath = AddBuildTag(sp.OutputPath, buildTag);
+					sp.OutputPath = AddBuildTag(sp.OutputPath, config.BuildTag);
 				}
 			}
-			collection.ActivateLogTypes();
+			
+			// set up logging
+			config.Collection.ActivateLogTypes();
+			
+			// set initial state to kick things off
+			p.currentState = UBSState.invalid;
 
+
+			// add config to the ubsprocess
+			p.config = config;
+			
 			AssetDatabase.CreateAsset( p, GetProcessPath());
 			AssetDatabase.SaveAssets();
 		}
-
-        /// <summary>
-        /// Builds a buildcollection by using an array of build process names (',' seperated!)
-        /// By using a list of build process names, we reconfigure and retarget the actual build collection.
-        /// </summary>
-        public static void Create(BuildCollection collection, bool buildAndRun, string[] namesToBuild, bool batchMode = false, string buildTag = "", CleanBuildArgument clean = CleanBuildArgument.NotAssigned)
-        {
-            UBSProcess p = ScriptableObject.CreateInstance<UBSProcess>();
-            p._buildAndRun = buildAndRun;
-            p._batchMode = batchMode;
-            p._collection = collection;
-            if(clean != CleanBuildArgument.NotAssigned)
-				collection.cleanBuild = clean == CleanBuildArgument.Clean;
-            if (namesToBuild != null && namesToBuild.Length > 0)
-            {
-                var selectedProcesses = p._collection.Processes
-                    .Where(buildProcess => namesToBuild.Contains(buildProcess.Name.ToLower())).ToList();
-                p._selectedProcesses = selectedProcesses;
-            }
-            else
-            {
-                p._selectedProcesses = p._collection.Processes;
-            }
-            p._currentState = UBSState.invalid;
-
-            if (!string.IsNullOrEmpty(buildTag))
-            {
-                foreach (var sp in p._selectedProcesses)
-                {
-                    sp.OutputPath = AddBuildTag(sp.OutputPath, buildTag);
-                }
-            }
-
-	        collection.ActivateLogTypes();
-            
-            
-            AssetDatabase.CreateAsset(p, GetProcessPath());
-            AssetDatabase.SaveAssets();
-        }
 
 		public static bool IsUBSProcessRunning()
 		{
@@ -424,10 +409,10 @@ namespace UBS
 			SetState(UBSState.aborted);
 			
 			
-			_preStepWalker.Clear();
-			_postStepWalker.Clear();
+			preStepWalker.Clear();
+			postStepWalker.Clear();
 			
-			_collection.RestoreLogTypes();
+			config.Collection.RestoreLogTypes();
 
 			if (IsInBatchMode)
 			{
@@ -443,25 +428,25 @@ namespace UBS
 		void SetState(UBSState newState)
 		{
 			
-			if (_currentState != newState)
+			if (currentState != newState)
 			{
-				_currentState = newState;
+				currentState = newState;
 				Save();
 			}
 		}
 		
 		void OnDone()
 		{
-			if(IsInBatchMode && _currentState == UBSState.aborted)
+			if(IsInBatchMode && currentState == UBSState.aborted)
 				EditorApplication.Exit(1);
 			
-			_collection.RestoreLogTypes();
+			config.Collection.RestoreLogTypes();
 			SetState(UBSState.done);
 			Debug.Log("UBSProcess is done. ");
 		}
 		void NextBuild()
 		{
-			if(_currentBuildProcessIndex >= _selectedProcesses.Count)
+			if(currentBuildProcessIndex >= config.SelectedBuildProcesses.Count)
 			{
 				SetState(UBSState.done);
 			}else
@@ -478,23 +463,23 @@ namespace UBS
 			if(!CheckOutputPath(CurrentProcess))
 				return;
 
-			_preStepWalker.Init( CurrentProcess.PreBuildSteps, currentBuildConfiguration );
+			preStepWalker.Init( CurrentProcess.PreBuildSteps, currentBuildConfiguration );
 
-			_postStepWalker.Init(CurrentProcess.PostBuildSteps, currentBuildConfiguration );
+			postStepWalker.Init(CurrentProcess.PostBuildSteps, currentBuildConfiguration );
 
 			SetState(UBSState.preSteps);
 		}
 
 		void DoPreSteps()
 		{
-			_preStepWalker.MoveNext();
+			preStepWalker.MoveNext();
 
-			if(_currentState == UBSState.aborted)
+			if(currentState == UBSState.aborted)
 				return;
 
-			if(_preStepWalker.IsDone())
+			if(preStepWalker.IsDone())
 			{
-				_preStepWalker.End();
+				preStepWalker.End();
 
 				SetState(UBSState.building);
 			}
@@ -508,7 +493,7 @@ namespace UBS
 			if(CurrentBuildConfiguration.GetCurrentBuildCollection().cleanBuild)
 				bo &= BuildOptions.CleanBuildCache;
 			
-			if (_buildAndRun)
+			if (config.BuildAndRun)
 				bo |= BuildOptions.AutoRunPlayer;
 
 			if (!CurrentProcess.Pretend)
@@ -524,7 +509,7 @@ namespace UBS
 					extraScriptingDefines = CurrentProcess.ScriptingDefines.ToArray()
 				};
 				BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
-				_collection.ActivateLogTypes();
+				config.Collection.ActivateLogTypes();
 				Debug.Log("Playerbuild Result: " + report.summary.result);
 				if (report.summary.result != BuildResult.Succeeded)
 				{
@@ -576,19 +561,19 @@ namespace UBS
         
 		void DoPostSteps()
 		{
-			_postStepWalker.MoveNext();
+			postStepWalker.MoveNext();
 			
-			if(_currentState == UBSState.aborted)
+			if(currentState == UBSState.aborted)
 				return;
 
-			if(_postStepWalker.IsDone())
+			if(postStepWalker.IsDone())
 			{
-				_postStepWalker.End();
-				Debug.Log($"Build Process \"{ _postStepWalker.Configuration.GetCurrentBuildProcess().Name}\" is done. ");
+				postStepWalker.End();
+				Debug.Log($"Build Process \"{ postStepWalker.Configuration.GetCurrentBuildProcess().Name}\" is done. ");
 				// this is invalid instead of done as we first need to check
 				// if there is another build process to run.
 				SetState(UBSState.invalid); 
-				_currentBuildProcessIndex++;
+				currentBuildProcessIndex++;
 			}
 			Save();
 		}
@@ -641,7 +626,9 @@ namespace UBS
 			return true;
 
 		}
-	}
+
+		
+    }
 
     public enum CleanBuildArgument
     {

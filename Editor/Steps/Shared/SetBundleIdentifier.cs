@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace UBS.Shared
 {
-	[BuildStepDescriptionAttribute("Sets the bundle identifier (shared between multiple platforms)")]
+	[BuildStepDescriptionAttribute("Sets the bundle identifier (shared between multiple platforms). Can be overridden by Commandline Argument `bundleIdentifier`. ")]
 	[BuildStepParameterFilterAttribute(BuildStepParameterType.String)]
 	public class SetBundleIdentifier : IBuildStepProvider
 	{
@@ -12,11 +12,9 @@ namespace UBS.Shared
 		
 		public void BuildStepStart (BuildConfiguration configuration)
 		{
-#if UNITY_5
-            PlayerSettings.bundleIdentifier = configuration.Parameters;
-#else
-            PlayerSettings.applicationIdentifier = configuration.Parameters;
-#endif
+			var stringParameter = configuration.Parameters.stringParameter;
+			configuration.CommandlineArgs.TryGetValue("bundleIdentifier", ref stringParameter);
+            PlayerSettings.applicationIdentifier = stringParameter;
 		}
 		
 		public void BuildStepUpdate ()
