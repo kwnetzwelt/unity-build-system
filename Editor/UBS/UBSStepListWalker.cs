@@ -98,7 +98,7 @@ namespace UBS
                 Configuration.SetParams( Steps[Index].Parameters );
                 var ubsProcess = UBSProcess.LoadUBSProcess();
                 Configuration.CommandlineArgs =
-                    new CommandLineArgsParser.ArgsCollection(ubsProcess.config.CommandlineArgs);
+                    new CommandlineArgsCollection(ubsProcess.config.CommandlineArgs);
             }
             else 
             {

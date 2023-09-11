@@ -8,7 +8,7 @@ namespace UBS
     public class UBSProcessConfiguration
     {
         [field: SerializeField]
-        public CommandLineArgsParser.ArgsCollection CommandlineArgs { get; set; } = new();
+        public CommandlineArgsCollection CommandlineArgs { get; set; } = new();
         [field: SerializeField]
         public List<string> SelectedBuildProcessNames { get; set; } = new();
         [field: SerializeField]
