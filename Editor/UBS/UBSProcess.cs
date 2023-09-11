@@ -254,10 +254,8 @@ namespace UBS
                 string[] buildProcessNameList = startBuildProcessByNames.Split(',');
                 config.SelectedBuildProcessNames.AddRange(buildProcessNameList);
             }
-            else
-            {
-	            CreateFromConfig(config);
-            }
+	        CreateFromConfig(config);
+            
 			
 			
 			UBSProcess process = LoadUBSProcess();
