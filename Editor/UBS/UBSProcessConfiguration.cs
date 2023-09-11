@@ -6,7 +6,7 @@ namespace UBS
     [Serializable]
     public class UBSProcessConfiguration
     {
-        public CommandLineArgsParser.ArgsCollection CommandlineArgs { get; set; }
+        public CommandLineArgsParser.ArgsCollection CommandlineArgs { get; set; } = new();
         public List<string> SelectedBuildProcessNames { get; set; } = new();
         public BuildCollection Collection { get; set; }
         public bool BuildAndRun { get; set; }
