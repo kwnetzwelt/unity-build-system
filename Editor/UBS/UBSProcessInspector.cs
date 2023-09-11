@@ -1,11 +1,10 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 
 namespace UBS
 {
 	[CustomEditor(typeof(UBSProcess))]
-	public class UBSProcessInspector : Editor
+	public class UBSProcessInspector : UnityEditor.Editor
 	{
 		UBSProcess process;
 

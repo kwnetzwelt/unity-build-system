@@ -13,7 +13,7 @@ namespace UBS.Shared
 		public void BuildStepStart (BuildConfiguration configuration)
 		{
 			var stringParameter = configuration.Parameters.stringParameter;
-			configuration.CommandlineArgs.TryGetValue("bundleIdentifier", ref stringParameter);
+			configuration.CommandLineArgs.TryGetValue("bundleIdentifier", ref stringParameter);
             PlayerSettings.applicationIdentifier = stringParameter;
 		}
 		

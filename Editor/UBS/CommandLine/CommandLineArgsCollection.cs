@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UBS
+namespace Editor.UBS.Commandline
 {
     [Serializable]
-    public class CommandlineArgsCollection
+    public class CommandLineArgsCollection
     {
-        public CommandlineArgsCollection(CommandlineArgsCollection other)
+        public CommandLineArgsCollection(CommandLineArgsCollection other)
         {
             foreach (var argument in other.arguments)
             {
@@ -66,7 +66,7 @@ namespace UBS
         [SerializeField]
         internal List<CommandLineArgsParser.Argument> arguments = new List<CommandLineArgsParser.Argument>();
 
-        public CommandlineArgsCollection()
+        public CommandLineArgsCollection()
         {
         }
 

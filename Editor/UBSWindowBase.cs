@@ -133,12 +133,12 @@ namespace UBS
         static void Build(object process)
         {
             BuildAndRunUserData data = process as BuildAndRunUserData;
-            UBSBuildWindow.Init(data.Collection, data.Process as BuildProcess, false);
+            UBSBuildWindow.Create(data.Collection, data.Process as BuildProcess, false);
         }
         static void BuildAndRun(object process)
         {
             BuildAndRunUserData data = process as BuildAndRunUserData;
-            UBSBuildWindow.Init(data.Collection, data.Process, true);
+            UBSBuildWindow.Create(data.Collection, data.Process, true);
         }
 
         internal class BuildAndRunUserData

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Editor.UBS.Commandline;
 using UnityEditor.Build.Reporting;
 using UnityEngine.Serialization;
 
@@ -12,7 +13,7 @@ namespace UBS
     [Serializable]
     public class UBSProcess : ScriptableObject
     {
-        const string ProcessPath = "Assets/UBSProcess.asset";
+        public const string ProcessPath = "Assets/UBSProcess.asset";
         const string ProcessPathKey = "UBSProcessPath";
 
 
@@ -139,7 +140,9 @@ namespace UBS
 
 		#region command line options
 
-        /// <summary>
+
+		
+		/// <summary>
         /// Builds a given build collection from command line. Call this method directly from the command line using Unity in headless mode. 
         /// https://docs.unity3d.com/Documentation/Manual/CommandLineArguments.html
         /// <br /><br />
@@ -165,11 +168,19 @@ namespace UBS
         /// Other Arguments: android-sdk, android-ndk, jdk-path<br />
         /// </summary>
         /// <example>/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath ~/UnityProjects/MyProject -collection "Assets/New\ BuildCollection.asset" -buildProcessByNames "Android,iOS" -executeMethod UBS.UBSProcess.BuildFromCommandLine</example>
-        public static void BuildFromCommandLine()
+		public static void BuildFromCommandLine()
+		{
+
+			string[] arguments = Environment.GetCommandLineArgs();
+			BuildFromCommandLine(arguments);
+		}
+
+		/// <inheritdoc cref="BuildFromCommandLine()"/>
+		/// <param name="args">Commandline Parameters as provided by Evironment.GetCommandLineArgs</param>
+		/// <exception cref="Exception"></exception>
+        public static void BuildFromCommandLine(string[] args)
         {
-            
-            string[] arguments = Environment.GetCommandLineArgs();
-            CommandLineArgsParser parser = new CommandLineArgsParser(arguments);
+	        CommandLineArgsParser parser = new CommandLineArgsParser(args);
             foreach (var argument in parser.Collection.Arguments)
             {
 	            UnityEngine.Debug.Log(argument.Name + " -> " + argument.Value);  
@@ -246,7 +257,7 @@ namespace UBS
 				BuildAll = buildAll,
 				BuildTag = buildTag,
 				Clean = clean,
-				CommandlineArgs = parser.Collection
+				CommandLineArgs = parser.Collection
 			};
 			
             if (!String.IsNullOrEmpty(startBuildProcessByNames))
@@ -277,7 +288,8 @@ namespace UBS
 			{
 				Debug.LogError("Build failed due to exception: ");
 				Debug.LogException(pException);
-				EditorApplication.Exit(1);
+				if(Application.isBatchMode)
+					EditorApplication.Exit(1);
 			}
 		}
 

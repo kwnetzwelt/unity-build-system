@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.IO;
+using Editor.UBS.Commandline;
 using UnityEngine.Serialization;
 
 
@@ -43,7 +44,7 @@ namespace UBS
 
         public string ProjectDirectory { get; set; }
 
-        public CommandlineArgsCollection CommandlineArgs { get; set; }
+        public CommandLineArgsCollection CommandLineArgs { get; set; }
 
 
         public BuildProcess GetCurrentBuildProcess()

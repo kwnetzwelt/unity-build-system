@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Editor.UBS.Commandline;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -97,8 +98,8 @@ namespace UBS
                 _currentStepEntry = new BuildStepProviderEntry(Steps[Index].StepType);
                 Configuration.SetParams( Steps[Index].Parameters );
                 var ubsProcess = UBSProcess.LoadUBSProcess();
-                Configuration.CommandlineArgs =
-                    new CommandlineArgsCollection(ubsProcess.config.CommandlineArgs);
+                Configuration.CommandLineArgs =
+                    new CommandLineArgsCollection(ubsProcess.config.CommandLineArgs);
             }
             else 
             {

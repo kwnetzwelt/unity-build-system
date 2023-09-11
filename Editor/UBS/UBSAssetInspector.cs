@@ -1,15 +1,15 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using UBS;
 using System.IO;
-using UnityEditorInternal;
 
 namespace UBS
 {
 	[CustomEditor(typeof(BuildCollection))]
-	public class UBSAssetInspector : Editor
+	public class UBSAssetInspector : UnityEditor.Editor
 	{
+		public const string DefaultBuildCollectionAssetName = "/New Build Collection.asset";
+
 		public override void OnInspectorGUI()
 		{
 			var data = target as BuildCollection;
@@ -80,14 +80,14 @@ namespace UBS
 
 				if (GUILayout.Button($"Build selected ({selectedCount})"))
 				{
-					UBSBuildWindow.Init(data);
+					UBSBuildWindow.Create(data);
 				}
 				GUILayout.Space(5);
 
 				GUI.enabled = selectedCount == 1;
 				if (GUILayout.Button("Build and run"))
 				{
-					UBSBuildWindow.Init(data, true);
+					UBSBuildWindow.Create(data, true);
 				}
 				GUI.enabled = true;
 
@@ -123,9 +123,9 @@ namespace UBS
 
 			var di = new FileInfo(path);
 			if ((di.Attributes & FileAttributes.Directory) != 0)
-				path = path + "/New Build Collection.asset";
+				path = path + DefaultBuildCollectionAssetName;
 			else
-				path = path.Substring(0, path.Length - di.Name.Length - 1) + "/New Build Collection.asset";
+				path = path.Substring(0, path.Length - di.Name.Length - 1) + DefaultBuildCollectionAssetName;
 
 			path = AssetDatabase.GenerateUniqueAssetPath(path);
 

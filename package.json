@@ -3,7 +3,7 @@
   "description": "Provides tooling to automate build processes inside the editor.",
   "unity": "2021.3",
   "name": "com.kwnetzwelt.ubs",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "author": {
     "name": "Kai Wegner",
     "email": "kwnetzwelt@gmail.com",

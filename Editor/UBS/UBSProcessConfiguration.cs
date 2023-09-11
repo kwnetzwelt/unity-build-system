@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Editor.UBS.Commandline;
 using UnityEngine;
 
 namespace UBS
@@ -8,7 +9,7 @@ namespace UBS
     public class UBSProcessConfiguration
     {
         [field: SerializeField]
-        public CommandlineArgsCollection CommandlineArgs { get; set; } = new();
+        public CommandLineArgsCollection CommandLineArgs { get; set; } = new();
         [field: SerializeField]
         public List<string> SelectedBuildProcessNames { get; set; } = new();
         [field: SerializeField]

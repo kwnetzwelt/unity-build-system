@@ -1,9 +1,8 @@
 using System;
 using System.IO;
 using System.Text;
-using UnityEditor;
 
-namespace UBS
+namespace Editor.UBS.Commandline
 {
     public class CommandLineArgsParser
     {
@@ -14,7 +13,7 @@ namespace UBS
             Value,
         }
 
-        public CommandlineArgsCollection Collection
+        public CommandLineArgsCollection Collection
         {
             get;
             private set;
@@ -24,7 +23,7 @@ namespace UBS
         {
             
             
-            Collection = new CommandlineArgsCollection();
+            Collection = new CommandLineArgsCollection();
             Parse(arguments);
         }
 
