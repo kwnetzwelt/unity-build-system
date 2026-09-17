@@ -473,6 +473,8 @@ namespace UBS
 			if(!CheckOutputPath(CurrentProcess))
 				return;
 
+			BuildCollection.ActivateLogTypes();
+
 			preStepWalker.Init( CurrentProcess.PreBuildSteps, currentBuildConfiguration );
 
 			postStepWalker.Init(CurrentProcess.PostBuildSteps, currentBuildConfiguration );
@@ -519,7 +521,6 @@ namespace UBS
 					extraScriptingDefines = CurrentProcess.ScriptingDefines.ToArray()
 				};
 				BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
-				config.Collection.ActivateLogTypes();
 				Debug.Log("Playerbuild Result: " + report.summary.result);
 				if (report.summary.result != BuildResult.Succeeded)
 				{
