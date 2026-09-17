@@ -1,3 +1,4 @@
+using Editor.UBS.Commandline;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEditor.VersionControl;
@@ -28,6 +29,17 @@ namespace UBS.Tests
             UBSProcess.BuildFromCommandLine(arguments);
         }
 
-        
+        [Test]
+        public void CommandLineParser_WithEmptyArgument_DoesNotThrow()
+        {
+            var arguments = new[] { "-collection", "Assets/Test.asset", "", "-batchmode" };
+            Assert.DoesNotThrow(() =>
+            {
+                var parser = new CommandLineArgsParser(arguments);
+                Assert.IsTrue(parser.Collection.HasArgument("collection"));
+                Assert.AreEqual("Assets/Test.asset", parser.Collection.GetValue("collection"));
+                Assert.IsTrue(parser.Collection.HasArgument("batchmode"));
+            });
+        }
     }
 }
