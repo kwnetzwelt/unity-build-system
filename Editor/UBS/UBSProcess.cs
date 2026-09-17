@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using Editor.UBS.Commandline;
 using UnityEditor.Build.Reporting;
-using UnityEngine.Serialization;
 
 namespace UBS
 {
@@ -473,6 +472,8 @@ namespace UBS
 			if(!CheckOutputPath(CurrentProcess))
 				return;
 
+			BuildCollection.ActivateLogTypes();
+			
 			preStepWalker.Init( CurrentProcess.PreBuildSteps, currentBuildConfiguration );
 
 			postStepWalker.Init(CurrentProcess.PostBuildSteps, currentBuildConfiguration );
@@ -501,7 +502,7 @@ namespace UBS
             
 			BuildOptions bo = CurrentProcess.Options;
 			if(CurrentBuildConfiguration.GetCurrentBuildCollection().cleanBuild)
-				bo &= BuildOptions.CleanBuildCache;
+				bo |= BuildOptions.CleanBuildCache;
 			
 			if (config.BuildAndRun)
 				bo |= BuildOptions.AutoRunPlayer;
@@ -519,7 +520,6 @@ namespace UBS
 					extraScriptingDefines = CurrentProcess.ScriptingDefines.ToArray()
 				};
 				BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
-				config.Collection.ActivateLogTypes();
 				Debug.Log("Playerbuild Result: " + report.summary.result);
 				if (report.summary.result != BuildResult.Succeeded)
 				{
