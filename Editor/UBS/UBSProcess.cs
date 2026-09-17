@@ -501,7 +501,7 @@ namespace UBS
             
 			BuildOptions bo = CurrentProcess.Options;
 			if(CurrentBuildConfiguration.GetCurrentBuildCollection().cleanBuild)
-				bo &= BuildOptions.CleanBuildCache;
+				bo |= BuildOptions.CleanBuildCache;
 			
 			if (config.BuildAndRun)
 				bo |= BuildOptions.AutoRunPlayer;
