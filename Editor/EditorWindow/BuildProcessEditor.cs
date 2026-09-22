@@ -334,7 +334,7 @@ namespace UBS
 
 				_editedBuildProcess.Pretend = EditorGUILayout.Toggle(new GUIContent("Pretend Build",
 					"Will not trigger a unity build, but run everything else. "), _editedBuildProcess.Pretend);
-				_editedBuildProcess.Name = EditorGUILayout.TextField("Name", _editedBuildProcess.Name);
+				_editedBuildProcess.Name = EditorGUILayout.DelayedTextField("Name", _editedBuildProcess.Name);
 				_editedBuildProcess.Platform = (BuildTarget) EditorGUILayout.EnumPopup("Platform",
 					_editedBuildProcess.Platform);
 				DrawOutputPathSelector();
@@ -492,7 +492,7 @@ namespace UBS
 	        pRect.height -= 4;
 	        pRect.y += 2;
 	        var currentScriptingDefineAtIndex = _editedBuildProcess.ScriptingDefines[index];
-	        var newScriptingDefineAtIndex = EditorGUI.TextField(pRect, currentScriptingDefineAtIndex);
+	        var newScriptingDefineAtIndex = EditorGUI.DelayedTextField(pRect, currentScriptingDefineAtIndex);
 
 	        if (string.Equals(currentScriptingDefineAtIndex, newScriptingDefineAtIndex)) return;
 	        Undo.RecordObject(collection, $"Update Scripting Define at index {index}");
@@ -614,7 +614,7 @@ namespace UBS
 				
 			case BuildStepParameterType.String:
 			{
-				pStep.Parameters.stringParameter = EditorGUI.TextField(r5, pStep.Parameters );
+				pStep.Parameters.stringParameter = EditorGUI.DelayedTextField(r5, pStep.Parameters );
 			}
 				break;
 				
@@ -758,7 +758,7 @@ namespace UBS
 		{
 			GUILayout.BeginHorizontal();
 			{
-				_editedBuildProcess.OutputPath = EditorGUILayout.TextField("Output Path", _editedBuildProcess.OutputPath);
+				_editedBuildProcess.OutputPath = EditorGUILayout.DelayedTextField("Output Path", _editedBuildProcess.OutputPath);
 				if (GUILayout.Button("...", GUILayout.Width(40)))
 				{
 					_editedBuildProcess.OutputPath = UBS.Helpers.GetProjectRelativePath(OpenPlatformSpecificOutputSelector());

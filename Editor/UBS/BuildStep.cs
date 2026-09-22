@@ -13,8 +13,10 @@ namespace UBS
 		public class BuildStepParameters
 		{
 			public bool boolParameter;
+			[Delayed]
 			public string stringParameter;
 			public UnityEngine.Object objectParameter;
+			[Delayed]
 			public int intParameter;
 			public static implicit operator string(BuildStepParameters p)
 			{
