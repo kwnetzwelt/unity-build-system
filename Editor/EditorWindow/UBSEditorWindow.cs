@@ -172,6 +172,11 @@ namespace UBS
 			{
 				return;
 			}
+			if (data)
+			{
+				EditorUtility.SetDirty(data);
+				AssetDatabase.SaveAssets();
+			}
 			_currentBuildCollectionIndex = newIndex;
 			data = _buildCollections[_currentBuildCollectionIndex];
 			Repaint();
@@ -341,6 +346,15 @@ namespace UBS
             _selectedBuildProcessIndex = data.Processes.IndexOf(process);
 			_selectedBuildProcess = process;
         }
+
+		void OnLostFocus()
+		{
+			if (data)
+			{
+				EditorUtility.SetDirty(data);
+				AssetDatabase.SaveAssets();
+			}
+		}
 
 		void OnDestroy()
 		{

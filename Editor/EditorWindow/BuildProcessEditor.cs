@@ -451,7 +451,6 @@ namespace UBS
 				if (check.changed)
 				{
 					EditorUtility.SetDirty(collection);
-					AssetDatabase.SaveAssets();
 				}
 			}
 		}
@@ -535,9 +534,9 @@ namespace UBS
 			int listIndex = 0;
             bool enabled = pStep.Enabled;
             bool couldInferType = true;
-			if (pStep.TypeName != null)
+			if (pStep.StepType != null || !string.IsNullOrEmpty(pStep.TypeName))
 			{
-				couldInferType = pStep.TryInferType(false);
+				couldInferType = pStep.StepType != null || pStep.TryInferType(false);
 				if (couldInferType)
 				{
 					listIndex = filtered.FindIndex((obj) => { return obj.StepType == pStep.StepType; });
