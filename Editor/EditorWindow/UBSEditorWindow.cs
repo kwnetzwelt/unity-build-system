@@ -172,6 +172,7 @@ namespace UBS
 			{
 				return;
 			}
+			Persist();
 			_currentBuildCollectionIndex = newIndex;
 			data = _buildCollections[_currentBuildCollectionIndex];
 			Repaint();
@@ -220,21 +221,21 @@ namespace UBS
 
 			int v;
 
-			v = EditorGUILayout.IntField( data.version.major, GUILayout.Width(50));
+			v = EditorGUILayout.DelayedIntField( data.version.major, GUILayout.Width(50));
 			if(v != data.version.major)
 			{
 				data.version.major = v;
 				data.SaveVersion(false);
 			}
 
-			v = EditorGUILayout.IntField( data.version.minor, GUILayout.Width(50));
+			v = EditorGUILayout.DelayedIntField( data.version.minor, GUILayout.Width(50));
 			if(v != data.version.minor)
 			{
 				data.version.minor = v;
 				data.SaveVersion(false);
 			}
 
-			v = EditorGUILayout.IntField( data.version.build, GUILayout.Width(50));
+			v = EditorGUILayout.DelayedIntField( data.version.build, GUILayout.Width(50));
 			if(v != data.version.build)
 			{
 				data.version.build = v;
@@ -249,7 +250,7 @@ namespace UBS
 			}
 
 			GUILayout.Label("Revision:");
-			v = EditorGUILayout.IntField( data.version.revision, GUILayout.Width(80));
+			v = EditorGUILayout.DelayedIntField( data.version.revision, GUILayout.Width(80));
 			if(v != data.version.revision)
 			{
 				data.version.revision = v;
@@ -342,21 +343,28 @@ namespace UBS
 			_selectedBuildProcess = process;
         }
 
+		void OnLostFocus() => Persist();
+
 		void OnDestroy()
 		{
 			if(_editor != null)
 				_editor.OnDestroy();
 
-			if (data)
-				EditorUtility.SetDirty(data);
-
-			AssetDatabase.SaveAssets();
+			Persist();
 
 			Undo.undoRedoPerformed -= OnUndoRedoPerformed;
 			data = null;
 			_initialized = false;
 		}
 
+		private void Persist()
+		{
+			if (!data)
+				return;
+			EditorUtility.SetDirty(data);
+			AssetDatabase.SaveAssetIfDirty(data);
+		}
+		
 #endregion
     }
 }
