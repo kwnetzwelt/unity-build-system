@@ -172,11 +172,7 @@ namespace UBS
 			{
 				return;
 			}
-			if (data)
-			{
-				EditorUtility.SetDirty(data);
-				AssetDatabase.SaveAssetIfDirty(data);
-			}
+			Persist();
 			_currentBuildCollectionIndex = newIndex;
 			data = _buildCollections[_currentBuildCollectionIndex];
 			Repaint();
@@ -347,30 +343,28 @@ namespace UBS
 			_selectedBuildProcess = process;
         }
 
-		void OnLostFocus()
-		{
-			if (data)
-			{
-				EditorUtility.SetDirty(data);
-				AssetDatabase.SaveAssetIfDirty(data);
-			}
-		}
+		void OnLostFocus() => Persist();
 
 		void OnDestroy()
 		{
 			if(_editor != null)
 				_editor.OnDestroy();
 
-			if (data)
-				EditorUtility.SetDirty(data);
-
-			AssetDatabase.SaveAssetIfDirty(data);
+			Persist();
 
 			Undo.undoRedoPerformed -= OnUndoRedoPerformed;
 			data = null;
 			_initialized = false;
 		}
 
+		private void Persist()
+		{
+			if (!data)
+				return;
+			EditorUtility.SetDirty(data);
+			AssetDatabase.SaveAssetIfDirty(data);
+		}
+		
 #endregion
     }
 }
