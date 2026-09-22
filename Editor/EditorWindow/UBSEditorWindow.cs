@@ -175,7 +175,7 @@ namespace UBS
 			if (data)
 			{
 				EditorUtility.SetDirty(data);
-				AssetDatabase.SaveAssets();
+				AssetDatabase.SaveAssetIfDirty(data);
 			}
 			_currentBuildCollectionIndex = newIndex;
 			data = _buildCollections[_currentBuildCollectionIndex];
@@ -352,7 +352,7 @@ namespace UBS
 			if (data)
 			{
 				EditorUtility.SetDirty(data);
-				AssetDatabase.SaveAssets();
+				AssetDatabase.SaveAssetIfDirty(data);
 			}
 		}
 
@@ -364,7 +364,7 @@ namespace UBS
 			if (data)
 				EditorUtility.SetDirty(data);
 
-			AssetDatabase.SaveAssets();
+			AssetDatabase.SaveAssetIfDirty(data);
 
 			Undo.undoRedoPerformed -= OnUndoRedoPerformed;
 			data = null;

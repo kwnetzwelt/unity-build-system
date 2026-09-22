@@ -451,6 +451,7 @@ namespace UBS
 				if (check.changed)
 				{
 					EditorUtility.SetDirty(collection);
+					AssetDatabase.SaveAssetIfDirty(collection);
 				}
 			}
 		}
