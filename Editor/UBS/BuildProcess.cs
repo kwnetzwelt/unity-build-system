@@ -53,11 +53,11 @@ namespace UBS {
         public List<BuildStep> PostBuildSteps { get; private set;} = new List<BuildStep>();
 
         [field: FormerlySerializedAs("mName")]
-        [field: SerializeField, field: Delayed]
+        [field: SerializeField, Delayed]
         public string Name { get; set; } = "Build Process";
 
         [field: FormerlySerializedAs("mOutputPath")]
-        [field: SerializeField, field: Delayed]
+        [field: SerializeField, Delayed]
         public string OutputPath { get; set; } = "";
 
         /// <summary>
