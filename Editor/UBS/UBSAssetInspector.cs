@@ -130,7 +130,6 @@ namespace UBS
 			path = AssetDatabase.GenerateUniqueAssetPath(path);
 
 			AssetDatabase.CreateAsset(asset, path);
-			AssetDatabase.SaveAssets();
 			Selection.activeObject = asset;
 		}
 
