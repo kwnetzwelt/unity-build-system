@@ -169,6 +169,8 @@ namespace UBS
 
 		public void OnDestroy()
 		{
+			if (collection)
+				AssetDatabase.SaveAssetIfDirty(collection);
 			_editedBuildProcess = null;
 		}
         List<BuildOptions> _buildOptions;
@@ -449,10 +451,7 @@ namespace UBS
 
 				GUILayout.EndVertical();
 				if (check.changed)
-				{
 					EditorUtility.SetDirty(collection);
-					AssetDatabase.SaveAssetIfDirty(collection);
-				}
 			}
 		}
 
