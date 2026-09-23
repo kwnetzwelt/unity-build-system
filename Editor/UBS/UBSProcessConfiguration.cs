@@ -19,6 +19,8 @@ namespace UBS
         [field: SerializeField]
         public bool BatchMode { get; set; }
         [field: SerializeField]
+        public bool DevelopmentBuild { get; set; }
+        [field: SerializeField]
         public bool BuildAll { get; set; }
         [field: SerializeField]
         public string BuildTag { get; set; }
