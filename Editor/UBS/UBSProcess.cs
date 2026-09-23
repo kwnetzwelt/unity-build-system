@@ -213,10 +213,6 @@ namespace UBS
             bool buildAll = parser.Collection.HasArgument("buildAll");
             
             string startBuildProcessByNames = parser.Collection.GetValue("buildProcessByNames");
-            if (string.IsNullOrEmpty(startBuildProcessByNames))
-            {
-                startBuildProcessByNames = parser.Collection.GetValue("buildProcessNames");
-            }
 			
 			if(collectionPath == null)
 			{
