@@ -372,7 +372,6 @@ namespace UBS
 			p.config = config;
 			
 			AssetDatabase.CreateAsset( p, GetProcessPath());
-			AssetDatabase.SaveAssets();
 		}
 
 		public static bool IsUBSProcessRunning()
@@ -593,7 +592,7 @@ namespace UBS
 		{
 			if(this != null) {
 				EditorUtility.SetDirty(this);
-				AssetDatabase.SaveAssets();
+				AssetDatabase.SaveAssetIfDirty(this);
 			}
 		}
 
