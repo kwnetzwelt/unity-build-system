@@ -37,6 +37,9 @@ namespace Editor.UBS.Commandline
             
             foreach (var argument in arguments)
             {
+                if (string.IsNullOrEmpty(argument))
+                    continue;
+
                 if( Array.IndexOf(argSeparators, argument[0]) != -1)
                     ParseAsArgument(argument);
                 else
@@ -162,9 +165,12 @@ namespace Editor.UBS.Commandline
             
         }
 
+        [Serializable]
         public class Argument
         {
+            [field: SerializeField]
             public string Name { get; internal set; }
+            [field: SerializeField]
             public string Value { get; internal set; }
 
             public override string ToString()
