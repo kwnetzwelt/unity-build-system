@@ -183,6 +183,7 @@ namespace UBS
 		/// <exception cref="Exception"></exception>
         public static void BuildFromCommandLine(string[] args)
         {
+	        UnityEngine.Debug.Log("[UBS] Version: " + UBSVersion.version);
 	        CommandLineArgsParser parser = new CommandLineArgsParser(args);
             foreach (var argument in parser.Collection.Arguments)
             {
@@ -267,10 +268,9 @@ namespace UBS
 				CommandLineArgs = parser.Collection
 			};
 			
-            if (!String.IsNullOrEmpty(startBuildProcessByNames))
+            if (!string.IsNullOrEmpty(startBuildProcessByNames))
             {
-                string[] buildProcessNameList = startBuildProcessByNames.Split(',');
-                config.SelectedBuildProcessNames.AddRange(buildProcessNameList);
+                SetSelectedBuildProcessNames(config, startBuildProcessByNames);
             }
 	        CreateFromConfig(config);
             
@@ -348,15 +348,16 @@ namespace UBS
 			}
 			else if (config.SelectedBuildProcessNames.Count > 0)
 			{
-				var lowerCaseTrimmedBuildProcessNameList = config.SelectedBuildProcessNames.Select(x => x.ToLower()).Select(x => x.Trim()).ToArray();
-
-				var selectedProcesses = config.Collection.Processes
-					.Where(buildProcess => lowerCaseTrimmedBuildProcessNameList.Contains(buildProcess.Name.ToLower())).ToList();
-				config.SelectedBuildProcesses = selectedProcesses;
+				SetSelectedBuildProcessesByNames(config);
 			}
 			else
 			{
-				config.SelectedBuildProcesses= config.Collection.Processes.FindAll( obj => obj.Selected );
+				config.SelectedBuildProcesses = config.Collection.Processes.FindAll( obj => obj.Selected );
+			}
+
+			if (config.BatchMode)
+			{
+				Debug.Log($"[UBS] {config}");
 			}
 			
 			// add a tag to all the outputpaths
@@ -379,6 +380,47 @@ namespace UBS
 			p.config = config;
 			
 			AssetDatabase.CreateAsset( p, GetProcessPath());
+		}
+
+		private static void SetSelectedBuildProcessNames(UBSProcessConfiguration config, string rawProcessNames)
+		{
+			string[] buildProcessNameList = rawProcessNames
+				.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(name => name.Trim().Trim('\"', '\''))
+				.Where(name => !string.IsNullOrEmpty(name))
+				.ToArray();
+			config.SelectedBuildProcessNames.AddRange(buildProcessNameList);
+		}
+
+		private static void SetSelectedBuildProcessesByNames(UBSProcessConfiguration config)
+		{
+			var requestedNames = config.SelectedBuildProcessNames
+				.Where(x => !string.IsNullOrWhiteSpace(x))
+				.Select(x => x.Trim())
+				.ToList();
+
+			var selectedProcesses = new List<BuildProcess>();
+			foreach (var requestedName in requestedNames)
+			{
+				var match = config.Collection.Processes.Find(p => p != null && string.Equals(p.Name?.Trim(), requestedName, StringComparison.OrdinalIgnoreCase));
+				if (match != null)
+				{
+					if (!selectedProcesses.Contains(match))
+						selectedProcesses.Add(match);
+				}
+				else
+				{
+					var availableNames = string.Join(", ", config.Collection.Processes.Where(p => p != null).Select(p => $"\"{p.Name}\""));
+					Debug.LogWarning($"[UBS] Build process \"{requestedName}\" was not found in collection \"{config.Collection.name}\". Available processes: {availableNames}");
+				}
+			}
+
+			if (selectedProcesses.Count == 0)
+			{
+				Debug.LogError($"[UBS] No matching build processes found for requested names: {string.Join(", ", requestedNames)}");
+			}
+
+			config.SelectedBuildProcesses = selectedProcesses;
 		}
 
 		public static bool IsUBSProcessRunning()
@@ -475,6 +517,12 @@ namespace UBS
 		{
 			currentBuildConfiguration = new BuildConfiguration();
             currentBuildConfiguration.Initialize();
+
+			if (IsInBatchMode && CurrentProcess != null)
+			{
+				Debug.Log($"[UBS] Running process [{currentBuildProcessIndex + 1}/{config.SelectedBuildProcesses.Count}]: \"{CurrentProcess.Name}\" " +
+				          $"(Platform: {CurrentProcess.Platform}, OutputPath: \"{CurrentProcess.OutputPath}\", Options: {GetBuildOptions(CurrentProcess)}, Pretend: {CurrentProcess.Pretend})");
+			}
 
 			if(!CheckOutputPath(CurrentProcess))
 				return;

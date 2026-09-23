@@ -14,9 +14,14 @@ namespace Editor.UBS.Commandline
                 arguments.Add(new CommandLineArgsParser.Argument(argument));
             }
         }
+        private CommandLineArgsParser.Argument FindArgument(string argument)
+        {
+            return arguments.Find(a => string.Equals(a.Name, argument, StringComparison.OrdinalIgnoreCase));
+        }
+
         public bool HasArgument(string argument)
         {
-            return arguments.Find( (a) => a.Name == argument) != null;
+            return FindArgument(argument) != null;
         }
 
         /// <summary>
@@ -25,7 +30,7 @@ namespace Editor.UBS.Commandline
         /// <returns>The value of the argument or null if the argument was not present or found. </returns>
         public string GetValue(string argument)
         {
-            var found = arguments.Find((a) => a.Name == argument);
+            var found = FindArgument(argument);
             if (found == null)
                 return null;
             return found.Value;
@@ -34,7 +39,7 @@ namespace Editor.UBS.Commandline
         public bool TryGetValue(string argument, out bool value)
         {
             value = false;
-            var found = arguments.Find((a) => a.Name == argument);
+            var found = FindArgument(argument);
             if (found == null)
                 return false;
             return bool.TryParse(found.Value, out value);
@@ -42,7 +47,7 @@ namespace Editor.UBS.Commandline
         public bool TryGetValue(string argument, out float value)
         {
             value = 0;
-            var found = arguments.Find((a) => a.Name == argument);
+            var found = FindArgument(argument);
             if (found == null)
                 return false;
             return float.TryParse(found.Value, out value);
@@ -50,14 +55,14 @@ namespace Editor.UBS.Commandline
         public bool TryGetValue(string argument, out int value)
         {
             value = 0;
-            var found = arguments.Find((a) => a.Name == argument);
+            var found = FindArgument(argument);
             if (found == null)
                 return false;
             return int.TryParse(found.Value, out value);
         }
         public bool TryGetValue(string argument, ref string value)
         {
-            var found = arguments.Find((a) => a.Name == argument);
+            var found = FindArgument(argument);
             if (found == null)
                 return false;
             value = found.Value;

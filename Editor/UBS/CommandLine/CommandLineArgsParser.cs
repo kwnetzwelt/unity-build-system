@@ -51,12 +51,29 @@ namespace Editor.UBS.Commandline
         void ParseAsArgument(string argumentSection)
         {
             Collection.Next();
-            Collection.Last.Name = argumentSection.TrimStart(argSeparators);
+            string trimmed = argumentSection.TrimStart(argSeparators);
+            int sepIndex = trimmed.IndexOfAny(new[] { '=', ':' });
+            if (sepIndex != -1)
+            {
+                Collection.Last.Name = trimmed.Substring(0, sepIndex);
+                Collection.Last.Value = trimmed.Substring(sepIndex + 1);
+            }
+            else
+            {
+                Collection.Last.Name = trimmed;
+            }
         }
 
         void ParseAsValue(string argumentSection)
         {
-            Collection.Last.Value = argumentSection;
+            if (string.IsNullOrEmpty(Collection.Last.Value))
+            {
+                Collection.Last.Value = argumentSection;
+            }
+            else
+            {
+                Collection.Last.Value += "," + argumentSection;
+            }
         }
         
         void Parse(string arguments)
