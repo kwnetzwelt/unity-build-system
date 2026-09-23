@@ -125,5 +125,101 @@ namespace UBS.Tests
             Assert.IsTrue(ubsProcess.config.DevelopmentBuild);
             Assert.IsFalse((ubsProcess.GetBuildOptions(process) & BuildOptions.Development) != 0);
         }
+
+        [Test]
+        public void CommandLineParser_WithKeyValueSeparator_ParsesCorrectly()
+        {
+            var parserEquals = new CommandLineArgsParser(new[] { "-buildProcessByNames=Android,iOS" });
+            Assert.IsTrue(parserEquals.Collection.HasArgument("buildProcessByNames"));
+            Assert.AreEqual("Android,iOS", parserEquals.Collection.GetValue("buildProcessByNames"));
+
+            var parserColon = new CommandLineArgsParser(new[] { "-buildProcessByNames:Android,iOS" });
+            Assert.IsTrue(parserColon.Collection.HasArgument("buildProcessByNames"));
+            Assert.AreEqual("Android,iOS", parserColon.Collection.GetValue("buildProcessByNames"));
+        }
+
+        [Test]
+        public void CommandLineParser_WithMultipleValues_AppendsCommaSeparated()
+        {
+            var parser = new CommandLineArgsParser(new[] { "-buildProcessByNames", "Android", "iOS" });
+            Assert.IsTrue(parser.Collection.HasArgument("buildProcessByNames"));
+            Assert.AreEqual("Android,iOS", parser.Collection.GetValue("buildProcessByNames"));
+        }
+
+        [Test]
+        public void BuildFromCommandLine_WithBuildProcessByNames_FiltersSelectedProcesses()
+        {
+            var collection = CreateTestBuildCollection();
+            var p1 = CreateBuildProcess(collection);
+            p1.Name = "Android_Dev";
+            p1.Platform = BuildTarget.Android;
+            p1.OutputPath = "builds/android.apk";
+            p1.Pretend = true;
+
+            var p2 = CreateBuildProcess(collection);
+            p2.Name = "iOS_Release";
+            p2.Platform = BuildTarget.iOS;
+            p2.OutputPath = "builds/ios";
+            p2.Pretend = true;
+
+            var p3 = CreateBuildProcess(collection);
+            p3.Name = "Standalone_Mac";
+            p3.Platform = BuildTarget.StandaloneOSX;
+            p3.OutputPath = "builds/mac.app";
+            p3.Pretend = true;
+
+            SaveBuildCollection(collection);
+
+            var arguments = new[]
+            {
+                "-collection",
+                TestCollectionLocation,
+                "-buildProcessByNames",
+                "Android_Dev, Standalone_Mac",
+                "-batchmode"
+            };
+
+            UBSProcess.BuildFromCommandLine(arguments);
+
+            var ubsProcess = UBSProcess.LoadUBSProcess();
+            Assert.AreEqual(2, ubsProcess.config.SelectedBuildProcesses.Count);
+            Assert.IsTrue(ubsProcess.config.SelectedBuildProcesses.Exists(p => p.Name == "Android_Dev"));
+            Assert.IsTrue(ubsProcess.config.SelectedBuildProcesses.Exists(p => p.Name == "Standalone_Mac"));
+            Assert.IsFalse(ubsProcess.config.SelectedBuildProcesses.Exists(p => p.Name == "iOS_Release"));
+        }
+
+        [Test]
+        public void BuildFromCommandLine_WithSingleBuildProcessByName_FiltersSingleProcess()
+        {
+            var collection = CreateTestBuildCollection();
+            var p1 = CreateBuildProcess(collection);
+            p1.Name = "Android_Dev";
+            p1.Platform = BuildTarget.Android;
+            p1.OutputPath = "builds/android.apk";
+            p1.Pretend = true;
+
+            var p2 = CreateBuildProcess(collection);
+            p2.Name = "iOS_Release";
+            p2.Platform = BuildTarget.iOS;
+            p2.OutputPath = "builds/ios";
+            p2.Pretend = true;
+
+            SaveBuildCollection(collection);
+
+            var arguments = new[]
+            {
+                "-collection",
+                TestCollectionLocation,
+                "-buildProcessByNames",
+                "Android_Dev",
+                "-batchmode"
+            };
+
+            UBSProcess.BuildFromCommandLine(arguments);
+
+            var ubsProcess = UBSProcess.LoadUBSProcess();
+            Assert.AreEqual(1, ubsProcess.config.SelectedBuildProcesses.Count);
+            Assert.AreEqual("Android_Dev", ubsProcess.config.SelectedBuildProcesses[0].Name);
+        }
     }
 }

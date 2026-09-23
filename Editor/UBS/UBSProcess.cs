@@ -183,6 +183,7 @@ namespace UBS
 		/// <exception cref="Exception"></exception>
         public static void BuildFromCommandLine(string[] args)
         {
+	        UnityEngine.Debug.Log("[UBS] Version: " + UBSVersion.version);
 	        CommandLineArgsParser parser = new CommandLineArgsParser(args);
             foreach (var argument in parser.Collection.Arguments)
             {
@@ -212,6 +213,10 @@ namespace UBS
             bool buildAll = parser.Collection.HasArgument("buildAll");
             
             string startBuildProcessByNames = parser.Collection.GetValue("buildProcessByNames");
+            if (string.IsNullOrEmpty(startBuildProcessByNames))
+            {
+                startBuildProcessByNames = parser.Collection.GetValue("buildProcessNames");
+            }
 			
 			if(collectionPath == null)
 			{
@@ -267,9 +272,13 @@ namespace UBS
 				CommandLineArgs = parser.Collection
 			};
 			
-            if (!String.IsNullOrEmpty(startBuildProcessByNames))
+            if (!string.IsNullOrEmpty(startBuildProcessByNames))
             {
-                string[] buildProcessNameList = startBuildProcessByNames.Split(',');
+                string[] buildProcessNameList = startBuildProcessByNames
+                    .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(name => name.Trim().Trim('\"', '\''))
+                    .Where(name => !string.IsNullOrEmpty(name))
+                    .ToArray();
                 config.SelectedBuildProcessNames.AddRange(buildProcessNameList);
             }
 	        CreateFromConfig(config);
@@ -348,15 +357,49 @@ namespace UBS
 			}
 			else if (config.SelectedBuildProcessNames.Count > 0)
 			{
-				var lowerCaseTrimmedBuildProcessNameList = config.SelectedBuildProcessNames.Select(x => x.ToLower()).Select(x => x.Trim()).ToArray();
+				var requestedNames = config.SelectedBuildProcessNames
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.Select(x => x.Trim())
+					.ToList();
 
-				var selectedProcesses = config.Collection.Processes
-					.Where(buildProcess => lowerCaseTrimmedBuildProcessNameList.Contains(buildProcess.Name.ToLower())).ToList();
+				var selectedProcesses = new List<BuildProcess>();
+				foreach (var requestedName in requestedNames)
+				{
+					var match = config.Collection.Processes.Find(p => p != null && string.Equals(p.Name?.Trim(), requestedName, StringComparison.OrdinalIgnoreCase));
+					if (match != null)
+					{
+						if (!selectedProcesses.Contains(match))
+							selectedProcesses.Add(match);
+					}
+					else
+					{
+						var availableNames = string.Join(", ", config.Collection.Processes.Where(p => p != null).Select(p => $"\"{p.Name}\""));
+						Debug.LogWarning($"[UBS] Build process \"{requestedName}\" was not found in collection \"{config.Collection.name}\". Available processes: {availableNames}");
+					}
+				}
+
+				if (selectedProcesses.Count == 0)
+				{
+					Debug.LogError($"[UBS] No matching build processes found for requested names: {string.Join(", ", requestedNames)}");
+				}
+
 				config.SelectedBuildProcesses = selectedProcesses;
 			}
 			else
 			{
-				config.SelectedBuildProcesses= config.Collection.Processes.FindAll( obj => obj.Selected );
+				config.SelectedBuildProcesses = config.Collection.Processes.FindAll( obj => obj.Selected );
+			}
+
+			if (config.BatchMode)
+			{
+				Debug.Log($"[UBS] Batchmode Configuration initialized for collection \"{config.Collection?.name}\":\n" +
+				          $"  - Clean: {config.Clean}\n" +
+				          $"  - BuildAll: {config.BuildAll}\n" +
+				          $"  - DevelopmentBuild: {config.DevelopmentBuild}\n" +
+				          $"  - BuildTag: {config.BuildTag}\n" +
+				          $"  - Requested Processes: {(config.SelectedBuildProcessNames.Count > 0 ? string.Join(", ", config.SelectedBuildProcessNames) : "(none)")}\n" +
+				          $"  - Selected Processes to build ({config.SelectedBuildProcesses.Count}):\n" +
+				          string.Join("\n", config.SelectedBuildProcesses.Select((bp, idx) => $"    [{idx + 1}/{config.SelectedBuildProcesses.Count}] {bp.Name} (Platform: {bp.Platform}, OutputPath: \"{bp.OutputPath}\")")));
 			}
 			
 			// add a tag to all the outputpaths
@@ -475,6 +518,12 @@ namespace UBS
 		{
 			currentBuildConfiguration = new BuildConfiguration();
             currentBuildConfiguration.Initialize();
+
+			if (IsInBatchMode && CurrentProcess != null)
+			{
+				Debug.Log($"[UBS] Running process [{currentBuildProcessIndex + 1}/{config.SelectedBuildProcesses.Count}]: \"{CurrentProcess.Name}\" " +
+				          $"(Platform: {CurrentProcess.Platform}, OutputPath: \"{CurrentProcess.OutputPath}\", Options: {GetBuildOptions(CurrentProcess)}, Pretend: {CurrentProcess.Pretend})");
+			}
 
 			if(!CheckOutputPath(CurrentProcess))
 				return;
