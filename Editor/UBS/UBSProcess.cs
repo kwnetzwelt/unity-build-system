@@ -163,6 +163,9 @@ namespace UBS
         /// Provide `tagName` parameter. It will be stored in Editorprefs for use in Buildsteps. 
         /// <br /><br />
         /// Provide `clean`or `noclean` parameter to either force a clean build or prevent a clean build. If no parameter is found 
+        /// <br /><br />
+        /// Provide `developmentBuild` parameter to enable BuildOptions.Development when running in batchmode.
+        /// <br /><br />
         /// Example: -batchmode  -collection "Assets/New\ BuildCollection.asset" -buildProcessByNames "Android,iOS"
         /// <br /><br />
         /// Other Arguments: android-sdk, android-ndk, jdk-path<br />
@@ -187,6 +190,9 @@ namespace UBS
             }
 
             bool batchMode = parser.Collection.HasArgument("batchmode");
+            bool developmentBuild = parser.Collection.TryGetValue("developmentBuild", out bool devBuild)
+                ? devBuild
+                : parser.Collection.HasArgument("developmentBuild");
             CleanBuildArgument clean = CleanBuildArgument.NotAssigned;
             if(parser.Collection.HasArgument("clean"))
             {
@@ -254,6 +260,7 @@ namespace UBS
 				Collection = collection,
 				BuildAndRun = false,
 				BatchMode = batchMode,
+				DevelopmentBuild = developmentBuild,
 				BuildAll = buildAll,
 				BuildTag = buildTag,
 				Clean = clean,
@@ -495,15 +502,26 @@ namespace UBS
 			Save();
 		}
 
-		void DoBuilding()
+		internal BuildOptions GetBuildOptions(BuildProcess process)
 		{
-            
-			BuildOptions bo = CurrentProcess.Options;
-			if(CurrentBuildConfiguration.GetCurrentBuildCollection().cleanBuild)
+			BuildOptions bo = process.Options;
+			if (CurrentBuildConfiguration != null && CurrentBuildConfiguration.GetCurrentBuildCollection().cleanBuild)
+				bo |= BuildOptions.CleanBuildCache;
+			else if (config.Collection != null && config.Collection.cleanBuild)
 				bo |= BuildOptions.CleanBuildCache;
 			
 			if (config.BuildAndRun)
 				bo |= BuildOptions.AutoRunPlayer;
+
+			if (IsInBatchMode && config.DevelopmentBuild)
+				bo |= BuildOptions.Development;
+
+			return bo;
+		}
+
+		void DoBuilding()
+		{
+			BuildOptions bo = GetBuildOptions(CurrentProcess);
 
 			if (!CurrentProcess.Pretend)
 			{
