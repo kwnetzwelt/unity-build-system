@@ -270,12 +270,7 @@ namespace UBS
 			
             if (!string.IsNullOrEmpty(startBuildProcessByNames))
             {
-                string[] buildProcessNameList = startBuildProcessByNames
-                    .Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(name => name.Trim().Trim('\"', '\''))
-                    .Where(name => !string.IsNullOrEmpty(name))
-                    .ToArray();
-                config.SelectedBuildProcessNames.AddRange(buildProcessNameList);
+                SetSelectedBuildProcessNames(config, startBuildProcessByNames);
             }
 	        CreateFromConfig(config);
             
@@ -353,33 +348,7 @@ namespace UBS
 			}
 			else if (config.SelectedBuildProcessNames.Count > 0)
 			{
-				var requestedNames = config.SelectedBuildProcessNames
-					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.Select(x => x.Trim())
-					.ToList();
-
-				var selectedProcesses = new List<BuildProcess>();
-				foreach (var requestedName in requestedNames)
-				{
-					var match = config.Collection.Processes.Find(p => p != null && string.Equals(p.Name?.Trim(), requestedName, StringComparison.OrdinalIgnoreCase));
-					if (match != null)
-					{
-						if (!selectedProcesses.Contains(match))
-							selectedProcesses.Add(match);
-					}
-					else
-					{
-						var availableNames = string.Join(", ", config.Collection.Processes.Where(p => p != null).Select(p => $"\"{p.Name}\""));
-						Debug.LogWarning($"[UBS] Build process \"{requestedName}\" was not found in collection \"{config.Collection.name}\". Available processes: {availableNames}");
-					}
-				}
-
-				if (selectedProcesses.Count == 0)
-				{
-					Debug.LogError($"[UBS] No matching build processes found for requested names: {string.Join(", ", requestedNames)}");
-				}
-
-				config.SelectedBuildProcesses = selectedProcesses;
+				SetSelectedBuildProcessesByNames(config);
 			}
 			else
 			{
@@ -411,6 +380,47 @@ namespace UBS
 			p.config = config;
 			
 			AssetDatabase.CreateAsset( p, GetProcessPath());
+		}
+
+		private static void SetSelectedBuildProcessNames(UBSProcessConfiguration config, string rawProcessNames)
+		{
+			string[] buildProcessNameList = rawProcessNames
+				.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(name => name.Trim().Trim('\"', '\''))
+				.Where(name => !string.IsNullOrEmpty(name))
+				.ToArray();
+			config.SelectedBuildProcessNames.AddRange(buildProcessNameList);
+		}
+
+		private static void SetSelectedBuildProcessesByNames(UBSProcessConfiguration config)
+		{
+			var requestedNames = config.SelectedBuildProcessNames
+				.Where(x => !string.IsNullOrWhiteSpace(x))
+				.Select(x => x.Trim())
+				.ToList();
+
+			var selectedProcesses = new List<BuildProcess>();
+			foreach (var requestedName in requestedNames)
+			{
+				var match = config.Collection.Processes.Find(p => p != null && string.Equals(p.Name?.Trim(), requestedName, StringComparison.OrdinalIgnoreCase));
+				if (match != null)
+				{
+					if (!selectedProcesses.Contains(match))
+						selectedProcesses.Add(match);
+				}
+				else
+				{
+					var availableNames = string.Join(", ", config.Collection.Processes.Where(p => p != null).Select(p => $"\"{p.Name}\""));
+					Debug.LogWarning($"[UBS] Build process \"{requestedName}\" was not found in collection \"{config.Collection.name}\". Available processes: {availableNames}");
+				}
+			}
+
+			if (selectedProcesses.Count == 0)
+			{
+				Debug.LogError($"[UBS] No matching build processes found for requested names: {string.Join(", ", requestedNames)}");
+			}
+
+			config.SelectedBuildProcesses = selectedProcesses;
 		}
 
 		public static bool IsUBSProcessRunning()
