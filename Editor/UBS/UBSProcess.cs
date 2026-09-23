@@ -388,14 +388,7 @@ namespace UBS
 
 			if (config.BatchMode)
 			{
-				Debug.Log($"[UBS] Batchmode Configuration initialized for collection \"{config.Collection?.name}\":\n" +
-				          $"  - Clean: {config.Clean}\n" +
-				          $"  - BuildAll: {config.BuildAll}\n" +
-				          $"  - DevelopmentBuild: {config.DevelopmentBuild}\n" +
-				          $"  - BuildTag: {config.BuildTag}\n" +
-				          $"  - Requested Processes: {(config.SelectedBuildProcessNames.Count > 0 ? string.Join(", ", config.SelectedBuildProcessNames) : "(none)")}\n" +
-				          $"  - Selected Processes to build ({config.SelectedBuildProcesses.Count}):\n" +
-				          string.Join("\n", config.SelectedBuildProcesses.Select((bp, idx) => $"    [{idx + 1}/{config.SelectedBuildProcesses.Count}] {bp.Name} (Platform: {bp.Platform}, OutputPath: \"{bp.OutputPath}\")")));
+				Debug.Log($"[UBS] {config}");
 			}
 			
 			// add a tag to all the outputpaths
