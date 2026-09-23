@@ -342,9 +342,9 @@ namespace UBS
 				config.Collection.cleanBuild = config.Clean == CleanBuildArgument.Clean;
 			
 			// build all or only selected ones?
-			if(!config.BuildAll)
+			if (config.BuildAll)
 			{
-				config.SelectedBuildProcesses= config.Collection.Processes.FindAll( obj => obj.Selected );
+				config.SelectedBuildProcesses = config.Collection.Processes;
 			}
 			else if (config.SelectedBuildProcessNames.Count > 0)
 			{
@@ -356,7 +356,7 @@ namespace UBS
 			}
 			else
 			{
-				config.SelectedBuildProcesses = config.Collection.Processes;
+				config.SelectedBuildProcesses= config.Collection.Processes.FindAll( obj => obj.Selected );
 			}
 			
 			// add a tag to all the outputpaths
