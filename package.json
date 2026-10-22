@@ -1,9 +1,9 @@
 {
   "displayName": "Unity Build System",
   "description": "Provides tooling to automate build processes inside the editor.",
-  "unity": "2022.3",
+  "unity": "2021.3",
   "name": "com.kwnetzwelt.ubs",
-  "version": "2.0.0",
+  "version": "1.4.0",
   "author": {
     "name": "Kai Wegner",
     "email": "kwnetzwelt@gmail.com",

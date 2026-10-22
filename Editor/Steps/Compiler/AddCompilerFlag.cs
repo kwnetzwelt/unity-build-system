@@ -14,15 +14,15 @@ namespace UBS.Compiler
 		
 		public void BuildStepStart (BuildConfiguration configuration)
 		{
-			UnityEditor.Build.NamedBuildTarget btg = UBS.Helpers.NamedBuildTargetFromBuildTarget( configuration.GetCurrentBuildProcess().Platform );
-			string symbols = PlayerSettings.GetScriptingDefineSymbols(btg);
+			UnityEditor.Build.NamedBuildTarget namedBuildTarget = UBS.Helpers.NamedBuildTargetFromBuildTarget( configuration.GetCurrentBuildProcess().Platform );
+			string symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
 			List<string> symbolsArray = new List<string>(symbols.Split(';'));
 
 			if(!symbolsArray.Contains(configuration.Parameters))
 				symbolsArray.Add(configuration.Parameters);
 			symbols = string.Join(";", symbolsArray.ToArray());
 
-			PlayerSettings.SetScriptingDefineSymbols(btg, symbols);
+			PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, symbols);
 		}
 		
 		public void BuildStepUpdate ()

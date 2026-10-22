@@ -44,6 +44,12 @@ namespace UBS
 			return outList;
 		}
 
+		/// <summary>
+		/// Maps a <see cref="BuildTarget"/> to the <see cref="UnityEditor.Build.NamedBuildTarget"/> expected by the
+		/// non-obsolete PlayerSettings APIs (e.g. scripting define symbols). Available since Unity 2021.2.
+		/// </summary>
+		/// <param name="target">The build target of the current build process.</param>
+		/// <returns>The matching named build target; <see cref="UnityEditor.Build.NamedBuildTarget.Unknown"/> for unsupported targets.</returns>
 		public static UnityEditor.Build.NamedBuildTarget NamedBuildTargetFromBuildTarget(BuildTarget target)
 		{
 			return UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(GroupFromBuildTarget(target));
