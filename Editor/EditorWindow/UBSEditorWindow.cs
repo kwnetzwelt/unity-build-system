@@ -27,7 +27,7 @@ namespace UBS
 		[OnOpenAsset]
 		public static bool OpenEditor(int instanceId)
 		{
-			var buildCollection = EditorUtility.InstanceIDToObject(instanceId) as BuildCollection;
+			var buildCollection = Helpers.ObjectFromInstanceId(instanceId) as BuildCollection;
 			if (!buildCollection) return false;
 			Init(buildCollection);
 			return true;

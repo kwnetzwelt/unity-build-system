@@ -44,6 +44,29 @@ namespace UBS
 			return outList;
 		}
 
+		/// <summary>
+		/// Maps a <see cref="BuildTarget"/> to the <see cref="UnityEditor.Build.NamedBuildTarget"/> expected by the
+		/// non-obsolete PlayerSettings APIs (e.g. scripting define symbols). Available since Unity 2021.2.
+		/// </summary>
+		/// <param name="target">The build target of the current build process.</param>
+		/// <returns>The matching named build target; <see cref="UnityEditor.Build.NamedBuildTarget.Unknown"/> for unsupported targets.</returns>
+		public static UnityEditor.Build.NamedBuildTarget NamedBuildTargetFromBuildTarget(BuildTarget target)
+		{
+			return UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(GroupFromBuildTarget(target));
+		}
+
+		/// <summary>
+		/// Resolves an object from its instance id. Unity 6.3 deprecated InstanceIDToObject in favor of EntityIdToObject.
+		/// </summary>
+		public static UnityEngine.Object ObjectFromInstanceId(int instanceId)
+		{
+#if UNITY_6000_3_OR_NEWER
+			return EditorUtility.EntityIdToObject(instanceId);
+#else
+			return EditorUtility.InstanceIDToObject(instanceId);
+#endif
+		}
+
 		public static BuildTargetGroup GroupFromBuildTarget(BuildTarget target)
 		{
 
@@ -124,7 +147,7 @@ namespace UBS
                     bool objectIdParseSucceeded = int.TryParse(config.Parameters, out objectId);
                     if (objectIdParseSucceeded)
                     {
-                        objectAssigned = EditorUtility.InstanceIDToObject(objectId);
+                        objectAssigned = ObjectFromInstanceId(objectId);
                     }
 
                     if (objectAssigned is T)

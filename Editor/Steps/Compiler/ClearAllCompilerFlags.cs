@@ -27,8 +27,8 @@ namespace UBS.Compiler
         
         public void BuildStepStart(BuildConfiguration configuration)
         {
-            BuildTargetGroup btg = Helpers.GroupFromBuildTarget(configuration.GetCurrentBuildProcess().Platform);
-            string symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(btg);
+            UnityEditor.Build.NamedBuildTarget namedBuildTarget = Helpers.NamedBuildTargetFromBuildTarget(configuration.GetCurrentBuildProcess().Platform);
+            string symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
             
             List<string> symbolsArray = new List<string>(symbols.Split(';'));
             List<string> systemSymbols = UnitySystemRelatedSymbols();
@@ -41,7 +41,7 @@ namespace UBS.Compiler
                 clearedSymbols = string.Join(";", interesection);
             }
 
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(btg, clearedSymbols);
+            PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, clearedSymbols);
         }
         
         public void BuildStepUpdate()

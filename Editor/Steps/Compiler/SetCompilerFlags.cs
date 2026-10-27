@@ -14,8 +14,8 @@ namespace UBS.Compiler
                
         public void BuildStepStart(BuildConfiguration configuration)
         {
-            BuildTargetGroup btg = Helpers.GroupFromBuildTarget(configuration.GetCurrentBuildProcess().Platform);            
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(btg, configuration.Parameters);
+            UnityEditor.Build.NamedBuildTarget namedBuildTarget = Helpers.NamedBuildTargetFromBuildTarget(configuration.GetCurrentBuildProcess().Platform);            
+            PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, configuration.Parameters);
         }
         
         public void BuildStepUpdate()
